@@ -1,0 +1,20 @@
+{
+  "app": {
+    "title": "iNLighT Bérlés Kezelő",
+    "welcome": "Üdvözöljük az iNLighT Bérlés Kezelőben"
+  },
+  "auth": {
+    "login": "Bejelentkezés",
+    "logout": "Kijelentkezés",
+    "email": "E-mail",
+    "password": "Jelszó"
+  },
+  "common": {
+    "save": "Mentés",
+    "cancel": "Mégse",
+    "delete": "Törlés",
+    "edit": "Szerkesztés",
+    "search": "Keresés",
+    "loading": "Töltés..."
+  }
+}

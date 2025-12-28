@@ -1,0 +1,20 @@
+{
+  "app": {
+    "title": "iNLighT Rental Manager",
+    "welcome": "Welcome to iNLighT Rental Manager"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "loading": "Loading..."
+  }
+}
