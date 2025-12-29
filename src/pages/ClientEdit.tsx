@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,14 +17,16 @@ import {
   AlertCircle
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { useCreateClient } from '@/hooks/api/useClients'
-import { useAuth } from '@/contexts/AuthContext'
+import { useClient, useUpdateClient } from '@/hooks/api/useClients'
 
-export function NewClient() {
+export function ClientEdit() {
+  const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const { user } = useAuth()
-  const createClient = useCreateClient()
+
+  // Fetch client data
+  const { data: client, isLoading: isLoadingClient, error: loadError } = useClient(id)
+  const updateClient = useUpdateClient()
 
   // Form states
   const [name, setName] = useState('')
@@ -39,37 +41,88 @@ export function NewClient() {
   const [notes, setNotes] = useState('')
   const [error, setError] = useState<string | null>(null)
 
+  // Initialize form with client data
+  useEffect(() => {
+    if (client) {
+      setName(client.name)
+      setCompanyName(client.company || '')
+      setEmail(client.email || '')
+      setPhone(client.phone || '')
+      setAddress(client.address || '')
+      setTaxNumber(client.tax_number || '')
+      setContactPersonName(client.contact_person_name || '')
+      setContactPersonEmail(client.contact_person_email || '')
+      setContactPersonPhone(client.contact_person_phone || '')
+      setNotes(client.notes || '')
+    }
+  }, [client])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
 
-    if (!user) {
-      setError('You must be logged in to create a client')
+    if (!id) {
+      setError('Client ID is missing')
       return
     }
 
     try {
-      await createClient.mutateAsync({
-        name,
-        company: companyName || null,
-        email,
-        phone,
-        address: address || null,
-        tax_number: taxNumber || null,
-        contact_person_name: contactPersonName || null,
-        contact_person_email: contactPersonEmail || null,
-        contact_person_phone: contactPersonPhone || null,
-        notes: notes || null,
-        is_active: true,
-        created_by: user.id,
+      await updateClient.mutateAsync({
+        id,
+        updates: {
+          name,
+          company: companyName || null,
+          email,
+          phone,
+          address: address || null,
+          tax_number: taxNumber || null,
+          contact_person_name: contactPersonName || null,
+          contact_person_email: contactPersonEmail || null,
+          contact_person_phone: contactPersonPhone || null,
+          notes: notes || null,
+        }
       })
 
-      // Navigate to clients list on success
-      navigate('/clients')
+      // Navigate back to client detail on success
+      navigate(`/clients/${id}`)
     } catch (err) {
-      console.error('Failed to create client:', err)
-      setError(err instanceof Error ? err.message : 'Failed to create client')
+      console.error('Failed to update client:', err)
+      setError(err instanceof Error ? err.message : 'Failed to update client')
     }
+  }
+
+  // Loading State
+  if (isLoadingClient) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  // Error State
+  if (loadError || !client) {
+    return (
+      <div className="p-8">
+        <Card cinematic className="border-destructive/50">
+          <CardContent className="p-8 flex items-center gap-4 text-destructive">
+            <AlertCircle className="h-6 w-6" />
+            <div>
+              <p className="font-medium">Failed to load client</p>
+              <p className="text-sm opacity-80">{loadError?.message || 'Client not found'}</p>
+            </div>
+          </CardContent>
+        </Card>
+        <div className="mt-6">
+          <Button variant="outline" asChild>
+            <Link to="/clients">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Clients
+            </Link>
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -78,13 +131,13 @@ export function NewClient() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" asChild>
-            <Link to="/clients">
+            <Link to={`/clients/${id}`}>
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
           <div>
-            <h1 className="text-4xl font-bold tracking-tight">{t('clients.form.title')}</h1>
-            <p className="text-muted-foreground mt-1 text-sm">{t('clients.form.subtitle')}</p>
+            <h1 className="text-4xl font-bold tracking-tight">{t('clients.edit.title')}</h1>
+            <p className="text-muted-foreground mt-1 text-sm">{t('clients.edit.subtitle')}</p>
           </div>
         </div>
       </div>
@@ -95,7 +148,7 @@ export function NewClient() {
           <CardContent className="p-4 flex items-center gap-3 text-destructive">
             <AlertCircle className="h-5 w-5" />
             <div>
-              <p className="font-medium">Failed to create client</p>
+              <p className="font-medium">Failed to update client</p>
               <p className="text-sm opacity-80">{error}</p>
             </div>
           </CardContent>
@@ -351,13 +404,6 @@ export function NewClient() {
                       )}
                     </div>
                   )}
-
-                  {!name && !email && !phone && (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <User className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                      <p className="text-sm">{t('clients.form.previewPlaceholder')}</p>
-                    </div>
-                  )}
                 </div>
 
                 {/* Action Buttons */}
@@ -366,17 +412,17 @@ export function NewClient() {
                     type="submit"
                     size="lg"
                     className="w-full gap-2"
-                    disabled={!name || !email || !phone || createClient.isPending}
+                    disabled={!name || !email || !phone || updateClient.isPending}
                   >
-                    {createClient.isPending ? (
+                    {updateClient.isPending ? (
                       <>
                         <Loader2 className="h-5 w-5 animate-spin" />
-                        {t('clients.form.saving')}
+                        {t('clients.edit.saving')}
                       </>
                     ) : (
                       <>
                         <Save className="h-5 w-5" />
-                        {t('clients.form.submit')}
+                        {t('clients.edit.submit')}
                       </>
                     )}
                   </Button>
@@ -386,9 +432,9 @@ export function NewClient() {
                     size="lg"
                     className="w-full"
                     asChild
-                    disabled={createClient.isPending}
+                    disabled={updateClient.isPending}
                   >
-                    <Link to="/clients">{t('clients.form.cancel')}</Link>
+                    <Link to={`/clients/${id}`}>{t('clients.form.cancel')}</Link>
                   </Button>
                 </div>
               </CardContent>

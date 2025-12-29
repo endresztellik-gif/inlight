@@ -77,11 +77,30 @@
       "notesPlaceholder": "Speciális igények, fizetési feltételek, kedvezmények...",
       "previewPlaceholder": "Töltse ki az űrlapot az előnézet megjelenítéséhez",
       "submit": "Ügyfél Létrehozása",
+      "saving": "Létrehozás...",
       "cancel": "Mégse"
     },
     "noResults": {
       "title": "Nem található ügyfél",
       "subtitle": "Próbálja módosítani a keresést"
+    },
+    "detail": {
+      "edit": "Ügyfél Szerkesztése",
+      "contactInfo": "Kapcsolattartási Információk",
+      "rentalHistory": "Bérlési Történet",
+      "noRentals": "Még nincs bérlés",
+      "clientInfo": "Ügyfél Információk",
+      "status": "Állapot",
+      "active": "Aktív",
+      "inactive": "Inaktív",
+      "createdAt": "Létrehozva",
+      "updatedAt": "Utoljára Frissítve"
+    },
+    "edit": {
+      "title": "Ügyfél Szerkesztése",
+      "subtitle": "Ügyfél adatainak frissítése",
+      "submit": "Ügyfél Frissítése",
+      "saving": "Frissítés..."
     }
   },
   "rentals": {

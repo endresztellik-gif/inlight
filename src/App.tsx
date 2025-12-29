@@ -9,6 +9,8 @@ import { RentalDetail } from './pages/RentalDetail'
 import { NewRental } from './pages/NewRental'
 import { ClientsList } from './pages/ClientsList'
 import { NewClient } from './pages/NewClient'
+import { ClientDetail } from './pages/ClientDetail'
+import { ClientEdit } from './pages/ClientEdit'
 import { ProductCatalog } from './pages/ProductCatalog'
 
 // Layout wrapper for authenticated pages
@@ -67,6 +69,18 @@ function App() {
         <Route path="/clients/new" element={
           <AuthenticatedLayout>
             <NewClient />
+          </AuthenticatedLayout>
+        } />
+
+        <Route path="/clients/:id/edit" element={
+          <AuthenticatedLayout>
+            <ClientEdit />
+          </AuthenticatedLayout>
+        } />
+
+        <Route path="/clients/:id" element={
+          <AuthenticatedLayout>
+            <ClientDetail />
           </AuthenticatedLayout>
         } />
 

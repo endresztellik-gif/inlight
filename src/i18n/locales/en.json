@@ -77,11 +77,30 @@
       "notesPlaceholder": "Special requirements, payment terms, discounts...",
       "previewPlaceholder": "Fill in the form to see preview",
       "submit": "Create Client",
+      "saving": "Creating...",
       "cancel": "Cancel"
     },
     "noResults": {
       "title": "No clients found",
       "subtitle": "Try adjusting your search"
+    },
+    "detail": {
+      "edit": "Edit Client",
+      "contactInfo": "Contact Information",
+      "rentalHistory": "Rental History",
+      "noRentals": "No rentals yet",
+      "clientInfo": "Client Information",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "createdAt": "Created At",
+      "updatedAt": "Last Updated"
+    },
+    "edit": {
+      "title": "Edit Client",
+      "subtitle": "Update client information",
+      "submit": "Update Client",
+      "saving": "Updating..."
     }
   },
   "rentals": {

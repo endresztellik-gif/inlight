@@ -81,7 +81,10 @@ export type Database = {
       clients: {
         Row: {
           address: string | null
-          contact_person: string | null
+          company: string | null
+          contact_person_email: string | null
+          contact_person_name: string | null
+          contact_person_phone: string | null
           created_at: string
           created_by: string
           email: string | null
@@ -95,7 +98,10 @@ export type Database = {
         }
         Insert: {
           address?: string | null
-          contact_person?: string | null
+          company?: string | null
+          contact_person_email?: string | null
+          contact_person_name?: string | null
+          contact_person_phone?: string | null
           created_at?: string
           created_by: string
           email?: string | null
@@ -109,7 +115,10 @@ export type Database = {
         }
         Update: {
           address?: string | null
-          contact_person?: string | null
+          company?: string | null
+          contact_person_email?: string | null
+          contact_person_name?: string | null
+          contact_person_phone?: string | null
           created_at?: string
           created_by?: string
           email?: string | null
@@ -133,6 +142,8 @@ export type Database = {
           currency: string | null
           daily_rate: number
           description: string | null
+          description_en: string | null
+          description_hu: string | null
           id: string
           image_url: string | null
           is_active: boolean | null
@@ -155,6 +166,8 @@ export type Database = {
           currency?: string | null
           daily_rate: number
           description?: string | null
+          description_en?: string | null
+          description_hu?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null
@@ -177,6 +190,8 @@ export type Database = {
           currency?: string | null
           daily_rate?: number
           description?: string | null
+          description_en?: string | null
+          description_hu?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null
@@ -363,7 +378,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never
