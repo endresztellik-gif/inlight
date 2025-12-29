@@ -13,14 +13,15 @@ import {
   Package,
   Info
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
-// Mock data
+// Mock data - category keys for translation
 const categories = [
-  { id: 'all', name: 'All Equipment', icon: Grid3x3, count: 24 },
-  { id: 'cameras', name: 'Cameras', icon: Camera, count: 8 },
-  { id: 'lenses', name: 'Lenses', icon: Film, count: 12 },
-  { id: 'lighting', name: 'Lighting', icon: Lightbulb, count: 6 },
-  { id: 'audio', name: 'Audio', icon: Mic, count: 4 }
+  { id: 'all', key: 'all', icon: Grid3x3, count: 24 },
+  { id: 'cameras', key: 'cameras', icon: Camera, count: 8 },
+  { id: 'lenses', key: 'lenses', icon: Film, count: 12 },
+  { id: 'lighting', key: 'lighting', icon: Lightbulb, count: 6 },
+  { id: 'audio', key: 'audio', icon: Mic, count: 4 }
 ]
 
 const products = [
@@ -117,6 +118,7 @@ const products = [
 export function ProductCatalog() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
+  const { t } = useTranslation()
 
   const filteredProducts = products.filter(product => {
     const matchesSearch =
@@ -135,16 +137,16 @@ export function ProductCatalog() {
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-3xl mx-auto text-center space-y-4 animate-in fade-in slide-in-from-bottom duration-700">
             <h1 className="text-5xl font-bold tracking-tight">
-              Professional Equipment Catalog
+              {t('catalog.title')}
             </h1>
             <p className="text-xl text-muted-foreground">
-              Premium cinema cameras, lenses, lighting, and audio gear for your production
+              {t('catalog.subtitle')}
             </p>
             <div className="pt-4">
               <div className="relative max-w-2xl mx-auto">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
-                  placeholder="Search equipment..."
+                  placeholder={t('catalog.searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-12 h-14 text-lg bg-background"
@@ -167,7 +169,7 @@ export function ProductCatalog() {
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <category.icon className="h-4 w-4" />
-              {category.name}
+              {t(`catalog.categories.${category.key}`)}
               <span className="font-mono text-xs opacity-70">({category.count})</span>
             </Button>
           ))}
@@ -218,7 +220,7 @@ export function ProductCatalog() {
                   <div>
                     <p className="text-xs text-muted-foreground flex items-center gap-1">
                       <DollarSign className="h-3 w-3" />
-                      Daily
+                      {t('catalog.pricing.daily')}
                     </p>
                     <p className="font-mono font-bold text-lg text-primary">
                       €{product.dailyRate}
@@ -227,7 +229,7 @@ export function ProductCatalog() {
                   <div>
                     <p className="text-xs text-muted-foreground flex items-center gap-1">
                       <DollarSign className="h-3 w-3" />
-                      Weekly
+                      {t('catalog.pricing.weekly')}
                     </p>
                     <p className="font-mono font-bold text-lg text-primary">
                       €{product.weeklyRate}
@@ -239,11 +241,11 @@ export function ProductCatalog() {
                 <div className="flex items-center justify-between pt-2 text-sm">
                   <div className="flex items-center gap-1.5 text-muted-foreground">
                     <Package className="h-4 w-4" />
-                    <span>{product.ownStock} in stock</span>
+                    <span>{product.ownStock} {t('catalog.inStock')}</span>
                   </div>
                   <Button size="sm" variant="ghost" className="gap-1.5">
                     <Info className="h-3 w-3" />
-                    Details
+                    {t('catalog.details')}
                   </Button>
                 </div>
               </CardContent>
@@ -256,9 +258,9 @@ export function ProductCatalog() {
             <CardContent className="py-16">
               <div className="text-center">
                 <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <p className="text-lg font-medium text-muted-foreground">No equipment found</p>
+                <p className="text-lg font-medium text-muted-foreground">{t('catalog.noResults.title')}</p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Try adjusting your search or category filter
+                  {t('catalog.noResults.subtitle')}
                 </p>
               </div>
             </CardContent>
@@ -268,18 +270,18 @@ export function ProductCatalog() {
         {/* CTA Section */}
         <Card cinematic className="mt-12 border-primary/20">
           <CardContent className="p-8 text-center">
-            <h2 className="text-2xl font-bold mb-2">Need a Custom Package?</h2>
+            <h2 className="text-2xl font-bold mb-2">{t('catalog.cta.title')}</h2>
             <p className="text-muted-foreground mb-6">
-              Contact us for personalized equipment packages and long-term rental discounts
+              {t('catalog.cta.subtitle')}
             </p>
             <div className="flex gap-4 justify-center">
               <Button size="lg" className="gap-2">
                 <Film className="h-5 w-5" />
-                Request Quote
+                {t('catalog.cta.requestQuote')}
               </Button>
               <Button variant="outline" size="lg" className="gap-2">
                 <Info className="h-5 w-5" />
-                Contact Us
+                {t('catalog.cta.contactUs')}
               </Button>
             </div>
           </CardContent>

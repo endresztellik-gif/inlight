@@ -14,6 +14,7 @@ import {
   DollarSign,
   Save
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 // Mock data - clients
 const clients = [
@@ -93,6 +94,7 @@ interface RentalItem {
 
 export function NewRental() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   // Form state
   const [selectedClientId, setSelectedClientId] = useState('')
@@ -191,8 +193,8 @@ export function NewRental() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-4xl font-bold tracking-tight">New Rental</h1>
-            <p className="text-muted-foreground mt-1 text-sm">Create a new equipment rental</p>
+            <h1 className="text-4xl font-bold tracking-tight">{t('newRental.title')}</h1>
+            <p className="text-muted-foreground mt-1 text-sm">{t('newRental.subtitle')}</p>
           </div>
         </div>
       </div>
@@ -206,14 +208,14 @@ export function NewRental() {
               <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
                   <User className="h-5 w-5 text-primary" />
-                  Client & Project
+                  {t('newRental.sections.clientProject')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Client Selection */}
                 <div>
                   <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                    Client *
+                    {t('newRental.fields.client')} *
                   </label>
                   <select
                     required
@@ -221,7 +223,7 @@ export function NewRental() {
                     onChange={(e) => setSelectedClientId(e.target.value)}
                     className="mt-2 w-full h-11 px-4 rounded-md border border-border bg-background text-foreground font-medium"
                   >
-                    <option value="">Select a client...</option>
+                    <option value="">{t('newRental.fields.clientPlaceholder')}</option>
                     {clients.map(client => (
                       <option key={client.id} value={client.id}>
                         {client.name}
@@ -238,13 +240,13 @@ export function NewRental() {
                 {/* Project Name */}
                 <div>
                   <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                    Project Name *
+                    {t('newRental.fields.project')} *
                   </label>
                   <Input
                     required
                     value={projectName}
                     onChange={(e) => setProjectName(e.target.value)}
-                    placeholder="e.g., Winter Campaign 2025"
+                    placeholder={t('newRental.fields.projectPlaceholder')}
                     className="mt-2 h-11"
                   />
                 </div>
