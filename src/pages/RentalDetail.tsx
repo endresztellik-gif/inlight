@@ -18,6 +18,7 @@ import {
   Trash2,
   RotateCcw
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 // Mock data
 const rentalData = {
@@ -89,13 +90,14 @@ const rentalData = {
 }
 
 const statusConfig = {
-  active: { label: 'Active', color: 'text-primary bg-primary/20 border-primary/30' },
-  pending_return: { label: 'Pending Return', color: 'text-amber-400 bg-amber-400/20 border-amber-400/30' },
-  completed: { label: 'Completed', color: 'text-green-500 bg-green-500/20 border-green-500/30' },
-  cancelled: { label: 'Cancelled', color: 'text-red-500 bg-red-500/20 border-red-500/30' }
+  active: { color: 'text-primary bg-primary/20 border-primary/30' },
+  pending_return: { color: 'text-amber-400 bg-amber-400/20 border-amber-400/30' },
+  completed: { color: 'text-green-500 bg-green-500/20 border-green-500/30' },
+  cancelled: { color: 'text-red-500 bg-red-500/20 border-red-500/30' }
 }
 
 export function RentalDetail() {
+  const { t } = useTranslation()
   const [rental] = useState(rentalData)
   const [returnMode, setReturnMode] = useState(false)
 
@@ -117,18 +119,18 @@ export function RentalDetail() {
             statusConfig[rental.status as keyof typeof statusConfig].color
           }`}>
             <CheckCircle className="h-4 w-4" />
-            {statusConfig[rental.status as keyof typeof statusConfig].label}
+            {t(`rentals.status.${rental.status}`)}
           </span>
         </div>
 
         <div className="flex gap-3">
           <Button variant="outline" size="lg" className="gap-2">
             <Download className="h-5 w-5" />
-            Export PDF
+            {t('rentalDetail.exportPdf')}
           </Button>
           <Button variant="outline" size="lg" className="gap-2">
             <Edit className="h-5 w-5" />
-            Edit
+            {t('rentalDetail.edit')}
           </Button>
           {rental.status === 'active' && (
             <Button
@@ -137,7 +139,7 @@ export function RentalDetail() {
               onClick={() => setReturnMode(!returnMode)}
             >
               <RotateCcw className="h-5 w-5" />
-              {returnMode ? 'Cancel Return' : 'Process Return'}
+              {returnMode ? t('rentalDetail.cancelReturn') : t('rentalDetail.processReturn')}
             </Button>
           )}
         </div>
@@ -151,7 +153,7 @@ export function RentalDetail() {
             <CardHeader>
               <CardTitle className="text-xl flex items-center gap-2">
                 <User className="h-5 w-5 text-primary" />
-                Client Information
+                {t('rentalDetail.clientInfo')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -181,12 +183,12 @@ export function RentalDetail() {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-xl flex items-center gap-2">
                   <Package className="h-5 w-5 text-primary" />
-                  Rental Items ({rental.items.length})
+                  {t('rentalDetail.rentalItems')} ({rental.items.length})
                 </CardTitle>
                 {returnMode && (
                   <span className="text-sm text-amber-400 flex items-center gap-1.5">
                     <AlertCircle className="h-4 w-4" />
-                    Return Mode Active
+                    {t('rentalDetail.returnModeActive')}
                   </span>
                 )}
               </div>

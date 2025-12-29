@@ -258,14 +258,14 @@ export function NewRental() {
               <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
                   <Calendar className="h-5 w-5 text-primary" />
-                  Rental Period
+                  {t('newRental.sections.rentalPeriod')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                      Start Date *
+                      {t('newRental.fields.startDate')} *
                     </label>
                     <Input
                       required
@@ -277,7 +277,7 @@ export function NewRental() {
                   </div>
                   <div>
                     <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                      End Date *
+                      {t('newRental.fields.endDate')} *
                     </label>
                     <Input
                       required
@@ -290,9 +290,9 @@ export function NewRental() {
                 </div>
                 {days > 0 && (
                   <div className="pt-3 border-t border-border">
-                    <p className="text-sm text-muted-foreground">Duration</p>
+                    <p className="text-sm text-muted-foreground">{t('newRental.fields.duration')}</p>
                     <p className="text-2xl font-bold font-mono text-primary mt-1">
-                      {days} day{days !== 1 ? 's' : ''}
+                      {days} {days !== 1 ? t('newRental.fields.days') : t('newRental.fields.day')}
                     </p>
                   </div>
                 )}
@@ -305,7 +305,7 @@ export function NewRental() {
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-xl flex items-center gap-2">
                     <Package className="h-5 w-5 text-primary" />
-                    Equipment ({items.length} items)
+                    {t('newRental.sections.equipment')} ({items.length} {t('newRental.equipment.items')})
                   </CardTitle>
                   <Button
                     type="button"
@@ -315,7 +315,7 @@ export function NewRental() {
                     onClick={() => setShowProductPicker(!showProductPicker)}
                   >
                     <Plus className="h-4 w-4" />
-                    Add Item
+                    {t('newRental.equipment.addItem')}
                   </Button>
                 </div>
               </CardHeader>
@@ -328,7 +328,7 @@ export function NewRental() {
                       <Input
                         value={productSearch}
                         onChange={(e) => setProductSearch(e.target.value)}
-                        placeholder="Search equipment..."
+                        placeholder={t('newRental.equipment.searchPlaceholder')}
                         className="pl-10 h-11"
                       />
                     </div>
@@ -345,13 +345,13 @@ export function NewRental() {
                             <div>
                               <p className="font-medium">{product.name}</p>
                               <p className="text-xs text-muted-foreground">
-                                {product.stock} in stock
+                                {product.stock} {t('newRental.equipment.inStock')}
                               </p>
                             </div>
                           </div>
                           <div className="text-right">
                             <p className="font-mono font-semibold text-primary">
-                              €{product.dailyRate}/day
+                              €{product.dailyRate}/{t('newRental.fields.day')}
                             </p>
                           </div>
                         </button>
@@ -366,11 +366,11 @@ export function NewRental() {
                     <table className="w-full">
                       <thead className="border-b border-border">
                         <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground">
-                          <th className="p-3 font-medium">Item</th>
-                          <th className="p-3 font-medium">Qty</th>
-                          <th className="p-3 font-medium">Daily Rate</th>
-                          <th className="p-3 font-medium">Days</th>
-                          <th className="p-3 font-medium">Subtotal</th>
+                          <th className="p-3 font-medium">{t('newRental.equipment.table.item')}</th>
+                          <th className="p-3 font-medium">{t('newRental.equipment.table.qty')}</th>
+                          <th className="p-3 font-medium">{t('newRental.equipment.table.dailyRate')}</th>
+                          <th className="p-3 font-medium">{t('newRental.equipment.table.days')}</th>
+                          <th className="p-3 font-medium">{t('newRental.equipment.table.subtotal')}</th>
                           <th className="p-3 font-medium"></th>
                         </tr>
                       </thead>
@@ -419,8 +419,8 @@ export function NewRental() {
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
                     <Package className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                    <p className="text-sm">No items added yet</p>
-                    <p className="text-xs mt-1">Click "Add Item" to get started</p>
+                    <p className="text-sm">{t('newRental.equipment.empty.title')}</p>
+                    <p className="text-xs mt-1">{t('newRental.equipment.empty.subtitle')}</p>
                   </div>
                 )}
               </CardContent>
@@ -433,20 +433,20 @@ export function NewRental() {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <DollarSign className="h-5 w-5 text-primary" />
-                  Financial Summary
+                  {t('newRental.sections.financial')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="text-muted-foreground">{t('newRental.financial.subtotal')}</span>
                     <span className="font-mono">€{subtotal.toFixed(2)}</span>
                   </div>
 
                   {/* Discount Input */}
                   <div>
                     <label className="text-xs text-muted-foreground uppercase tracking-wider">
-                      Discount %
+                      {t('newRental.financial.discount')} %
                     </label>
                     <Input
                       type="number"
@@ -460,19 +460,19 @@ export function NewRental() {
 
                   {discount > 0 && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Discount ({discount}%)</span>
+                      <span className="text-muted-foreground">{t('newRental.financial.discount')} ({discount}%)</span>
                       <span className="font-mono text-primary">-€{discountAmount.toFixed(2)}</span>
                     </div>
                   )}
 
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Tax (27%)</span>
+                    <span className="text-muted-foreground">{t('newRental.financial.tax')} (27%)</span>
                     <span className="font-mono">€{tax.toFixed(2)}</span>
                   </div>
                 </div>
 
                 <div className="pt-3 border-t border-border flex justify-between items-center">
-                  <span className="font-semibold">Total</span>
+                  <span className="font-semibold">{t('newRental.financial.total')}</span>
                   <span className="text-2xl font-bold font-mono text-primary">
                     €{total.toFixed(2)}
                   </span>
@@ -481,12 +481,12 @@ export function NewRental() {
                 {/* Notes */}
                 <div className="pt-3 border-t border-border">
                   <label className="text-xs text-muted-foreground uppercase tracking-wider">
-                    Notes
+                    {t('newRental.financial.notes')}
                   </label>
                   <textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Payment terms, special conditions..."
+                    placeholder={t('newRental.financial.notesPlaceholder')}
                     rows={3}
                     className="mt-1 w-full px-3 py-2 rounded-md border border-border bg-background text-foreground text-sm resize-none"
                   />
@@ -500,7 +500,7 @@ export function NewRental() {
                   disabled={!selectedClientId || !projectName || !startDate || !endDate || items.length === 0}
                 >
                   <Save className="h-5 w-5" />
-                  Create Rental
+                  {t('newRental.financial.submit')}
                 </Button>
               </CardContent>
             </Card>

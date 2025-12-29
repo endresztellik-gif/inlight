@@ -90,6 +90,8 @@
     "newRental": "Új Bérlés",
     "export": "Exportálás",
     "search": "Keresés bérlésszám, ügyfél vagy projekt alapján...",
+    "rental": "Bérlés",
+    "rentalPlural": "Bérlés",
     "filters": {
       "all": "Összes",
       "active": "Aktív",

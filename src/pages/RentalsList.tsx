@@ -260,7 +260,7 @@ export function RentalsList() {
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-2">
             <Filter className="h-5 w-5 text-primary" />
-            {filteredRentals.length} Rental{filteredRentals.length !== 1 ? 's' : ''}
+            {filteredRentals.length} {filteredRentals.length !== 1 ? t('rentals.rentalPlural') : t('rentals.rental')}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
@@ -268,14 +268,14 @@ export function RentalsList() {
             <table className="w-full">
               <thead className="border-b border-border">
                 <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground">
-                  <th className="p-4 font-medium">Rental #</th>
-                  <th className="p-4 font-medium">Client</th>
-                  <th className="p-4 font-medium">Project</th>
-                  <th className="p-4 font-medium">Period</th>
-                  <th className="p-4 font-medium">Items</th>
-                  <th className="p-4 font-medium">Total</th>
-                  <th className="p-4 font-medium">Status</th>
-                  <th className="p-4 font-medium">Actions</th>
+                  <th className="p-4 font-medium">{t('rentals.table.rentalNumber')}</th>
+                  <th className="p-4 font-medium">{t('rentals.table.client')}</th>
+                  <th className="p-4 font-medium">{t('rentals.table.project')}</th>
+                  <th className="p-4 font-medium">{t('rentals.table.period')}</th>
+                  <th className="p-4 font-medium">{t('rentals.table.items')}</th>
+                  <th className="p-4 font-medium">{t('rentals.table.total')}</th>
+                  <th className="p-4 font-medium">{t('rentals.table.status')}</th>
+                  <th className="p-4 font-medium">{t('rentals.table.actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -309,7 +309,7 @@ export function RentalsList() {
                         </div>
                         {rental.status === 'active' && (
                           <div className="text-xs text-muted-foreground mt-1">
-                            {rental.daysLeft} days left
+                            {rental.daysLeft} {t('rentals.table.daysLeft')}
                           </div>
                         )}
                       </td>
@@ -329,14 +329,14 @@ export function RentalsList() {
                           statusConfig[rental.status as keyof typeof statusConfig].color
                         }`}>
                           <StatusIcon className="h-3 w-3" />
-                          {statusConfig[rental.status as keyof typeof statusConfig].label}
+                          {t(`rentals.status.${rental.status}`)}
                         </span>
                       </td>
                       <td className="p-4">
                         <Button variant="ghost" size="sm" className="gap-1.5" asChild>
                           <Link to={`/rentals/${rental.id}`}>
                             <Eye className="h-4 w-4" />
-                            View
+                            {t('rentals.table.view')}
                           </Link>
                         </Button>
                       </td>
@@ -350,9 +350,9 @@ export function RentalsList() {
           {filteredRentals.length === 0 && (
             <div className="text-center py-16">
               <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <p className="text-lg font-medium text-muted-foreground">No rentals found</p>
+              <p className="text-lg font-medium text-muted-foreground">{t('rentals.noResults.title')}</p>
               <p className="text-sm text-muted-foreground mt-1">
-                Try adjusting your search or filters
+                {t('rentals.noResults.subtitle')}
               </p>
             </div>
           )}

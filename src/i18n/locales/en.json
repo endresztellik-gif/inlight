@@ -90,6 +90,8 @@
     "newRental": "New Rental",
     "export": "Export",
     "search": "Search by rental number, client, or project...",
+    "rental": "Rental",
+    "rentalPlural": "Rentals",
     "filters": {
       "all": "All",
       "active": "Active",
