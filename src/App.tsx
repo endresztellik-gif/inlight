@@ -4,6 +4,7 @@ import { Dashboard } from './pages/Dashboard'
 import { Login } from './pages/Login'
 import { RentalsList } from './pages/RentalsList'
 import { RentalDetail } from './pages/RentalDetail'
+import { NewRental } from './pages/NewRental'
 import { ClientsList } from './pages/ClientsList'
 import { ProductCatalog } from './pages/ProductCatalog'
 
@@ -36,6 +37,12 @@ function App() {
         <Route path="/rentals" element={
           <AuthenticatedLayout>
             <RentalsList />
+          </AuthenticatedLayout>
+        } />
+
+        <Route path="/rentals/new" element={
+          <AuthenticatedLayout>
+            <NewRental />
           </AuthenticatedLayout>
         } />
 
