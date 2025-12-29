@@ -1,27 +1,42 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Film, Loader2 } from 'lucide-react'
+import { Film, Loader2, AlertCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '@/contexts/AuthContext'
 
 export function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
   const { i18n } = useTranslation()
+  const { signIn, user, loading: authLoading } = useAuth()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user && !authLoading) {
+      navigate('/dashboard')
+    }
+  }, [user, authLoading, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
+    setError(null)
+    setIsSubmitting(true)
 
-    // Simulate login - replace with actual Supabase auth
-    setTimeout(() => {
-      setLoading(false)
-      navigate('/dashboard')
-    }, 1500)
+    try {
+      await signIn(email, password)
+      // Navigation happens automatically via useEffect
+    } catch (err) {
+      console.error('Login error:', err)
+      setError(err instanceof Error ? err.message : 'Invalid email or password')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const toggleLanguage = () => {
@@ -57,6 +72,13 @@ export function Login() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {error && (
+              <div className="mb-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 flex items-start gap-2 text-sm text-destructive">
+                <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium">
@@ -101,9 +123,9 @@ export function Login() {
               <Button
                 type="submit"
                 className="w-full h-11"
-                disabled={loading}
+                disabled={isSubmitting || authLoading}
               >
-                {loading ? (
+                {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Signing in...

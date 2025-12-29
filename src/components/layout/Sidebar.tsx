@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
   Package,
@@ -14,6 +14,7 @@ import {
 import { cn } from '@/lib/utils'
 import { useTheme } from '@/hooks/useTheme'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '@/contexts/AuthContext'
 
 const navigation = [
   { key: 'dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -26,8 +27,35 @@ const navigation = [
 
 export function Sidebar() {
   const location = useLocation()
+  const navigate = useNavigate()
   const { theme, toggleTheme } = useTheme()
   const { t, i18n } = useTranslation()
+  const { user, profile, signOut } = useAuth()
+
+  const handleLogout = async () => {
+    try {
+      await signOut()
+      navigate('/login')
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
+
+  // Get user initials for avatar
+  const getUserInitials = () => {
+    if (profile?.full_name) {
+      return profile.full_name
+        .split(' ')
+        .map(n => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
+    }
+    if (user?.email) {
+      return user.email[0].toUpperCase()
+    }
+    return 'U'
+  }
 
   return (
     <div className="flex h-screen w-64 flex-col border-r border-border bg-card film-perforation">
@@ -93,16 +121,23 @@ export function Sidebar() {
         </button>
 
         {/* User info & logout */}
-        <div className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-secondary transition-all cursor-pointer">
+        <button
+          onClick={handleLogout}
+          className="flex w-full items-center gap-3 rounded-md px-3 py-2 hover:bg-destructive/10 hover:text-destructive transition-all cursor-pointer"
+        >
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary font-mono text-sm font-bold">
-            SA
+            {getUserInitials()}
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">Super Admin</p>
-            <p className="text-xs text-muted-foreground font-mono">admin@inlight.hu</p>
+          <div className="flex-1 min-w-0 text-left">
+            <p className="text-sm font-medium truncate">
+              {profile?.full_name || user?.email?.split('@')[0] || 'User'}
+            </p>
+            <p className="text-xs text-muted-foreground font-mono truncate">
+              {user?.email || 'Not logged in'}
+            </p>
           </div>
-          <LogOut className="h-4 w-4 text-muted-foreground" />
-        </div>
+          <LogOut className="h-4 w-4" />
+        </button>
       </div>
     </div>
   )
