@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Sidebar } from './components/layout/Sidebar'
 import { Dashboard } from './pages/Dashboard'
 import { Login } from './pages/Login'
+import { RentalsList } from './pages/RentalsList'
+import { RentalDetail } from './pages/RentalDetail'
 
 // Layout wrapper for authenticated pages
 function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
@@ -31,7 +33,13 @@ function App() {
 
         <Route path="/rentals" element={
           <AuthenticatedLayout>
-            <div className="p-8"><h1 className="text-3xl font-bold">Rentals</h1></div>
+            <RentalsList />
+          </AuthenticatedLayout>
+        } />
+
+        <Route path="/rentals/:id" element={
+          <AuthenticatedLayout>
+            <RentalDetail />
           </AuthenticatedLayout>
         } />
 
