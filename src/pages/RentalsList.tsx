@@ -17,6 +17,7 @@ import {
   XCircle,
   Clock
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 // Mock data
 const rentals = [
@@ -119,6 +120,7 @@ const statusConfig = {
 export function RentalsList() {
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const { t } = useTranslation()
 
   const filteredRentals = rentals.filter(rental => {
     const matchesSearch =
@@ -136,20 +138,20 @@ export function RentalsList() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight">Rentals</h1>
+          <h1 className="text-4xl font-bold tracking-tight">{t('rentals.title')}</h1>
           <p className="text-muted-foreground mt-1 font-mono text-sm">
-            Manage your equipment rentals
+            {t('rentals.subtitle')}
           </p>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" size="lg" className="gap-2">
             <Download className="h-5 w-5" />
-            Export
+            {t('rentals.export')}
           </Button>
           <Button size="lg" className="gap-2" asChild>
             <Link to="/rentals/new">
               <Plus className="h-5 w-5" />
-              New Rental
+              {t('rentals.newRental')}
             </Link>
           </Button>
         </div>
@@ -163,7 +165,7 @@ export function RentalsList() {
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search by rental number, client, or project..."
+                placeholder={t('rentals.search')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 h-11"
@@ -177,28 +179,28 @@ export function RentalsList() {
                 onClick={() => setStatusFilter('all')}
                 size="sm"
               >
-                All
+                {t('rentals.filters.all')}
               </Button>
               <Button
                 variant={statusFilter === 'active' ? 'default' : 'outline'}
                 onClick={() => setStatusFilter('active')}
                 size="sm"
               >
-                Active
+                {t('rentals.filters.active')}
               </Button>
               <Button
                 variant={statusFilter === 'pending_return' ? 'default' : 'outline'}
                 onClick={() => setStatusFilter('pending_return')}
                 size="sm"
               >
-                Pending
+                {t('rentals.filters.pending')}
               </Button>
               <Button
                 variant={statusFilter === 'completed' ? 'default' : 'outline'}
                 onClick={() => setStatusFilter('completed')}
                 size="sm"
               >
-                Completed
+                {t('rentals.filters.completed')}
               </Button>
             </div>
           </div>

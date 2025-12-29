@@ -14,6 +14,7 @@ import {
   Eye,
   Edit
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 // Mock data
 const clients = [
@@ -86,6 +87,7 @@ const clients = [
 
 export function ClientsList() {
   const [searchQuery, setSearchQuery] = useState('')
+  const { t } = useTranslation()
 
   const filteredClients = clients.filter(client =>
     client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -102,15 +104,15 @@ export function ClientsList() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight">Clients</h1>
+          <h1 className="text-4xl font-bold tracking-tight">{t('clients.title')}</h1>
           <p className="text-muted-foreground mt-1 font-mono text-sm">
-            Manage your client database
+            {t('clients.subtitle')}
           </p>
         </div>
         <Button size="lg" className="gap-2" asChild>
           <Link to="/clients/new">
             <Plus className="h-5 w-5" />
-            New Client
+            {t('clients.newClient')}
           </Link>
         </Button>
       </div>
@@ -122,7 +124,7 @@ export function ClientsList() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                  Total Clients
+                  {t('clients.stats.totalClients')}
                 </p>
                 <p className="text-2xl font-bold font-mono mt-1">{totalClients}</p>
               </div>
@@ -135,7 +137,7 @@ export function ClientsList() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                  Active Clients
+                  {t('clients.stats.activeClients')}
                 </p>
                 <p className="text-2xl font-bold font-mono mt-1">{activeClients}</p>
               </div>
@@ -148,7 +150,7 @@ export function ClientsList() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                  Total Revenue
+                  {t('clients.stats.totalRevenue')}
                 </p>
                 <p className="text-2xl font-bold font-mono mt-1">€{totalRevenue.toLocaleString()}</p>
               </div>
@@ -164,7 +166,7 @@ export function ClientsList() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by name, email, or phone..."
+              placeholder={t('clients.search')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 h-11"
@@ -188,7 +190,7 @@ export function ClientsList() {
                   <CardTitle className="text-xl">{client.name}</CardTitle>
                   {client.activeRentals > 0 && (
                     <span className="inline-block mt-2 px-2 py-0.5 text-xs rounded bg-primary/20 text-primary border border-primary/30">
-                      {client.activeRentals} active rental{client.activeRentals > 1 ? 's' : ''}
+                      {client.activeRentals} {client.activeRentals > 1 ? t('clients.card.activeRentals') : t('clients.card.activeRental')}
                     </span>
                   )}
                 </div>
@@ -220,11 +222,11 @@ export function ClientsList() {
 
               <div className="pt-3 border-t border-border grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-xs text-muted-foreground">Total Rentals</p>
+                  <p className="text-xs text-muted-foreground">{t('clients.card.totalRentals')}</p>
                   <p className="font-mono font-semibold text-lg">{client.totalRentals}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Revenue</p>
+                  <p className="text-xs text-muted-foreground">{t('clients.card.revenue')}</p>
                   <p className="font-mono font-semibold text-lg text-primary">
                     €{(client.totalRevenue / 1000).toFixed(1)}k
                   </p>
@@ -232,7 +234,7 @@ export function ClientsList() {
               </div>
 
               <div className="pt-2 text-xs text-muted-foreground">
-                Last rental: <span className="font-mono">{client.lastRental}</span>
+                {t('clients.card.lastRental')}: <span className="font-mono">{client.lastRental}</span>
               </div>
             </CardContent>
           </Card>
@@ -244,9 +246,9 @@ export function ClientsList() {
           <CardContent className="py-16">
             <div className="text-center">
               <Building2 className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <p className="text-lg font-medium text-muted-foreground">No clients found</p>
+              <p className="text-lg font-medium text-muted-foreground">{t('clients.noResults.title')}</p>
               <p className="text-sm text-muted-foreground mt-1">
-                Try adjusting your search
+                {t('clients.noResults.subtitle')}
               </p>
             </div>
           </CardContent>
