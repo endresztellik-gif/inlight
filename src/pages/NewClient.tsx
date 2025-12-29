@@ -14,9 +14,11 @@ import {
   FileText,
   Users
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export function NewClient() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   // Form states
   const [name, setName] = useState('')
@@ -59,8 +61,8 @@ export function NewClient() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-4xl font-bold tracking-tight">New Client</h1>
-            <p className="text-muted-foreground mt-1 text-sm">Add a new client to your database</p>
+            <h1 className="text-4xl font-bold tracking-tight">{t('clients.form.title')}</h1>
+            <p className="text-muted-foreground mt-1 text-sm">{t('clients.form.subtitle')}</p>
           </div>
         </div>
       </div>
@@ -74,7 +76,7 @@ export function NewClient() {
               <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
                   <Building2 className="h-5 w-5 text-primary" />
-                  Basic Information
+                  {t('clients.form.basicInfo')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -82,7 +84,7 @@ export function NewClient() {
                   {/* Name */}
                   <div>
                     <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                      Name *
+                      {t('clients.form.name')} *
                     </label>
                     <Input
                       required
@@ -96,7 +98,7 @@ export function NewClient() {
                   {/* Company Name */}
                   <div>
                     <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                      Company Name
+                      {t('clients.form.companyName')}
                     </label>
                     <Input
                       value={companyName}
@@ -111,7 +113,7 @@ export function NewClient() {
                   {/* Email */}
                   <div>
                     <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                      Email *
+                      {t('clients.form.email')} *
                     </label>
                     <Input
                       required
@@ -126,7 +128,7 @@ export function NewClient() {
                   {/* Phone */}
                   <div>
                     <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                      Phone *
+                      {t('clients.form.phone')} *
                     </label>
                     <Input
                       required
@@ -142,7 +144,7 @@ export function NewClient() {
                 {/* Address */}
                 <div>
                   <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                    Address
+                    {t('clients.form.address')}
                   </label>
                   <textarea
                     value={address}
@@ -156,7 +158,7 @@ export function NewClient() {
                 {/* Tax Number */}
                 <div>
                   <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                    Tax Number
+                    {t('clients.form.taxNumber')}
                   </label>
                   <Input
                     value={taxNumber}
@@ -164,7 +166,7 @@ export function NewClient() {
                     placeholder="12345678-2-41"
                     className="mt-2 h-11 font-mono"
                   />
-                  <p className="text-xs text-muted-foreground mt-1">Hungarian format: XXXXXXXX-X-XX</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('clients.form.taxNumberHint')}</p>
                 </div>
               </CardContent>
             </Card>
@@ -174,14 +176,14 @@ export function NewClient() {
               <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
                   <Users className="h-5 w-5 text-primary" />
-                  Contact Person (Optional)
+                  {t('clients.form.contactPerson')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Contact Person Name */}
                 <div>
                   <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                    Contact Person Name
+                    {t('clients.form.contactPersonName')}
                   </label>
                   <Input
                     value={contactPersonName}
@@ -195,7 +197,7 @@ export function NewClient() {
                   {/* Contact Person Email */}
                   <div>
                     <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                      Contact Person Email
+                      {t('clients.form.contactPersonEmail')}
                     </label>
                     <Input
                       type="email"
@@ -209,7 +211,7 @@ export function NewClient() {
                   {/* Contact Person Phone */}
                   <div>
                     <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                      Contact Person Phone
+                      {t('clients.form.contactPersonPhone')}
                     </label>
                     <Input
                       type="tel"
@@ -228,18 +230,18 @@ export function NewClient() {
               <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
                   <FileText className="h-5 w-5 text-primary" />
-                  Additional Information
+                  {t('clients.form.additionalInfo')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                    Notes
+                    {t('clients.form.notes')}
                   </label>
                   <textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Special requirements, payment terms, discounts..."
+                    placeholder={t('clients.form.notesPlaceholder')}
                     rows={4}
                     className="mt-2 w-full px-3 py-2 rounded-md border border-border bg-background text-foreground text-sm resize-none"
                   />
@@ -254,7 +256,7 @@ export function NewClient() {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <User className="h-5 w-5 text-primary" />
-                  Client Summary
+                  {t('clients.form.summary')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -262,14 +264,14 @@ export function NewClient() {
                 <div className="space-y-3">
                   {name && (
                     <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Name</p>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">{t('clients.form.name')}</p>
                       <p className="font-semibold mt-1">{name}</p>
                     </div>
                   )}
 
                   {companyName && (
                     <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Company</p>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">{t('clients.form.companyName')}</p>
                       <p className="font-semibold mt-1">{companyName}</p>
                     </div>
                   )}
@@ -297,14 +299,14 @@ export function NewClient() {
 
                   {taxNumber && (
                     <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Tax Number</p>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">{t('clients.form.taxNumber')}</p>
                       <p className="font-mono text-sm mt-1">{taxNumber}</p>
                     </div>
                   )}
 
                   {contactPersonName && (
                     <div className="pt-3 border-t border-border">
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Contact Person</p>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">{t('clients.form.contactPerson')}</p>
                       <p className="font-semibold mt-1">{contactPersonName}</p>
                       {contactPersonEmail && (
                         <p className="text-sm text-muted-foreground font-mono mt-0.5">{contactPersonEmail}</p>
@@ -318,7 +320,7 @@ export function NewClient() {
                   {!name && !email && !phone && (
                     <div className="text-center py-8 text-muted-foreground">
                       <User className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                      <p className="text-sm">Fill in the form to see preview</p>
+                      <p className="text-sm">{t('clients.form.previewPlaceholder')}</p>
                     </div>
                   )}
                 </div>
@@ -332,7 +334,7 @@ export function NewClient() {
                     disabled={!name || !email || !phone}
                   >
                     <Save className="h-5 w-5" />
-                    Create Client
+                    {t('clients.form.submit')}
                   </Button>
                   <Button
                     type="button"
@@ -341,7 +343,7 @@ export function NewClient() {
                     className="w-full"
                     asChild
                   >
-                    <Link to="/clients">Cancel</Link>
+                    <Link to="/clients">{t('clients.form.cancel')}</Link>
                   </Button>
                 </div>
               </CardContent>

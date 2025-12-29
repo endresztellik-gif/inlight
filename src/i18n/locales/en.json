@@ -3,11 +3,242 @@
     "title": "iNLighT Rental Manager",
     "welcome": "Welcome to iNLighT Rental Manager"
   },
+  "nav": {
+    "dashboard": "Dashboard",
+    "rentals": "Rentals",
+    "clients": "Clients",
+    "catalog": "Catalog",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Overview of your rental operations",
+    "newRental": "New Rental",
+    "stats": {
+      "activeRentals": "Active Rentals",
+      "totalRevenue": "Total Revenue",
+      "activeClients": "Active Clients",
+      "pendingReturns": "Pending Returns",
+      "fromLastMonth": "from last month"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "createRental": "Create New Rental",
+      "addClient": "Add New Client",
+      "checkInventory": "Check Inventory"
+    },
+    "recentRentals": {
+      "title": "Recent Rentals",
+      "viewAll": "View All",
+      "due": "Due"
+    },
+    "topEquipment": {
+      "title": "Top Equipment",
+      "subtitle": "Most rented this month",
+      "rentals": "rentals"
+    }
+  },
+  "clients": {
+    "title": "Clients",
+    "subtitle": "Manage your client database",
+    "newClient": "New Client",
+    "search": "Search by name, email, or phone...",
+    "stats": {
+      "totalClients": "Total Clients",
+      "activeClients": "Active Clients",
+      "totalRevenue": "Total Revenue"
+    },
+    "card": {
+      "activeRental": "active rental",
+      "activeRentals": "active rentals",
+      "totalRentals": "Total Rentals",
+      "revenue": "Revenue",
+      "lastRental": "Last rental"
+    },
+    "form": {
+      "title": "New Client",
+      "subtitle": "Add a new client to your database",
+      "basicInfo": "Basic Information",
+      "contactPerson": "Contact Person (Optional)",
+      "additionalInfo": "Additional Information",
+      "summary": "Client Summary",
+      "name": "Name",
+      "companyName": "Company Name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "taxNumber": "Tax Number",
+      "taxNumberHint": "Hungarian format: XXXXXXXX-X-XX",
+      "contactPersonName": "Contact Person Name",
+      "contactPersonEmail": "Contact Person Email",
+      "contactPersonPhone": "Contact Person Phone",
+      "notes": "Notes",
+      "notesPlaceholder": "Special requirements, payment terms, discounts...",
+      "previewPlaceholder": "Fill in the form to see preview",
+      "submit": "Create Client",
+      "cancel": "Cancel"
+    },
+    "noResults": {
+      "title": "No clients found",
+      "subtitle": "Try adjusting your search"
+    }
+  },
+  "rentals": {
+    "title": "Rentals",
+    "subtitle": "Manage your equipment rentals",
+    "newRental": "New Rental",
+    "export": "Export",
+    "search": "Search by rental number, client, or project...",
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "pending": "Pending",
+      "completed": "Completed"
+    },
+    "status": {
+      "active": "Active",
+      "pending_return": "Pending Return",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "draft": "Draft"
+    },
+    "stats": {
+      "active": "Active",
+      "pending": "Pending",
+      "completed": "Completed",
+      "totalValue": "Total Value"
+    },
+    "table": {
+      "rentalNumber": "Rental #",
+      "client": "Client",
+      "project": "Project",
+      "period": "Period",
+      "items": "Items",
+      "total": "Total",
+      "status": "Status",
+      "actions": "Actions",
+      "view": "View",
+      "daysLeft": "days left"
+    },
+    "noResults": {
+      "title": "No rentals found",
+      "subtitle": "Try adjusting your search or filters"
+    }
+  },
+  "newRental": {
+    "title": "New Rental",
+    "subtitle": "Create a new equipment rental",
+    "sections": {
+      "clientProject": "Client & Project",
+      "rentalPeriod": "Rental Period",
+      "equipment": "Equipment",
+      "financial": "Financial Summary"
+    },
+    "fields": {
+      "client": "Client",
+      "clientPlaceholder": "Select a client...",
+      "project": "Project Name",
+      "projectPlaceholder": "e.g., Winter Campaign 2025",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "duration": "Duration",
+      "day": "day",
+      "days": "days"
+    },
+    "equipment": {
+      "items": "items",
+      "addItem": "Add Item",
+      "searchPlaceholder": "Search equipment...",
+      "inStock": "in stock",
+      "table": {
+        "item": "Item",
+        "qty": "Qty",
+        "dailyRate": "Daily Rate",
+        "days": "Days",
+        "subtotal": "Subtotal"
+      },
+      "empty": {
+        "title": "No items added yet",
+        "subtitle": "Click \"Add Item\" to get started"
+      }
+    },
+    "financial": {
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "tax": "Tax",
+      "total": "Total",
+      "notes": "Notes",
+      "notesPlaceholder": "Payment terms, special conditions...",
+      "submit": "Create Rental"
+    }
+  },
+  "rentalDetail": {
+    "exportPdf": "Export PDF",
+    "edit": "Edit",
+    "processReturn": "Process Return",
+    "cancelReturn": "Cancel Return",
+    "clientInfo": "Client Information",
+    "rentalItems": "Rental Items",
+    "returnModeActive": "Return Mode Active",
+    "rentalPeriod": "Rental Period",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "timeRemaining": "Time remaining",
+    "financialSummary": "Financial Summary",
+    "returnReady": "Ready to complete return?",
+    "returnCheck": "Make sure all items are checked and conditions are noted",
+    "completeReturn": "Complete Return",
+    "downloadInvoice": "Download Invoice",
+    "downloadContract": "Download Contract",
+    "cancelRental": "Cancel Rental"
+  },
+  "catalog": {
+    "title": "Professional Equipment Catalog",
+    "subtitle": "Premium cinema cameras, lenses, lighting, and audio gear for your production",
+    "searchPlaceholder": "Search equipment...",
+    "categories": {
+      "all": "All Equipment",
+      "cameras": "Cameras",
+      "lenses": "Lenses",
+      "lighting": "Lighting",
+      "audio": "Audio"
+    },
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "inStock": "in stock",
+    "details": "Details",
+    "cta": {
+      "title": "Need a Custom Package?",
+      "subtitle": "Contact us for personalized equipment packages and long-term rental discounts",
+      "requestQuote": "Request Quote",
+      "contactUs": "Contact Us"
+    },
+    "noResults": {
+      "title": "No equipment found",
+      "subtitle": "Try adjusting your search or category filter"
+    }
+  },
+  "reports": {
+    "title": "Reports",
+    "subtitle": "Analytics and exports"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Application preferences"
+  },
   "auth": {
     "login": "Login",
     "logout": "Logout",
     "email": "Email",
-    "password": "Password"
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "welcome": "Welcome back",
+    "subtitle": "Enter your credentials to access your account",
+    "footer": "Professional Film Equipment Rental Management"
   },
   "common": {
     "save": "Save",
@@ -15,6 +246,19 @@
     "delete": "Delete",
     "edit": "Edit",
     "search": "Search",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "back": "Back",
+    "view": "View",
+    "actions": "Actions",
+    "status": "Status",
+    "required": "Required"
+  },
+  "theme": {
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode"
+  },
+  "language": {
+    "english": "English",
+    "hungarian": "Magyar"
   }
 }

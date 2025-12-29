@@ -3,11 +3,242 @@
     "title": "iNLighT Bérlés Kezelő",
     "welcome": "Üdvözöljük az iNLighT Bérlés Kezelőben"
   },
+  "nav": {
+    "dashboard": "Irányítópult",
+    "rentals": "Bérlések",
+    "clients": "Ügyfelek",
+    "catalog": "Katalógus",
+    "reports": "Jelentések",
+    "settings": "Beállítások"
+  },
+  "dashboard": {
+    "title": "Irányítópult",
+    "subtitle": "Bérlési műveletek áttekintése",
+    "newRental": "Új Bérlés",
+    "stats": {
+      "activeRentals": "Aktív Bérlések",
+      "totalRevenue": "Összes Bevétel",
+      "activeClients": "Aktív Ügyfelek",
+      "pendingReturns": "Függő Visszavételek",
+      "fromLastMonth": "az előző hónaphoz képest"
+    },
+    "quickActions": {
+      "title": "Gyors Műveletek",
+      "createRental": "Új Bérlés Létrehozása",
+      "addClient": "Új Ügyfél Hozzáadása",
+      "checkInventory": "Készlet Ellenőrzése"
+    },
+    "recentRentals": {
+      "title": "Legutóbbi Bérlések",
+      "viewAll": "Mind Megtekintése",
+      "due": "Esedékes"
+    },
+    "topEquipment": {
+      "title": "Népszerű Eszközök",
+      "subtitle": "Leggyakrabban bérelt ebben a hónapban",
+      "rentals": "bérlés"
+    }
+  },
+  "clients": {
+    "title": "Ügyfelek",
+    "subtitle": "Ügyfél adatbázis kezelése",
+    "newClient": "Új Ügyfél",
+    "search": "Keresés név, email vagy telefon alapján...",
+    "stats": {
+      "totalClients": "Összes Ügyfél",
+      "activeClients": "Aktív Ügyfelek",
+      "totalRevenue": "Összes Bevétel"
+    },
+    "card": {
+      "activeRental": "aktív bérlés",
+      "activeRentals": "aktív bérlés",
+      "totalRentals": "Összes Bérlés",
+      "revenue": "Bevétel",
+      "lastRental": "Utolsó bérlés"
+    },
+    "form": {
+      "title": "Új Ügyfél",
+      "subtitle": "Új ügyfél hozzáadása az adatbázishoz",
+      "basicInfo": "Alapadatok",
+      "contactPerson": "Kapcsolattartó (Opcionális)",
+      "additionalInfo": "További Információk",
+      "summary": "Ügyfél Összefoglalója",
+      "name": "Név",
+      "companyName": "Cégnév",
+      "email": "E-mail",
+      "phone": "Telefon",
+      "address": "Cím",
+      "taxNumber": "Adószám",
+      "taxNumberHint": "Magyar formátum: XXXXXXXX-X-XX",
+      "contactPersonName": "Kapcsolattartó Neve",
+      "contactPersonEmail": "Kapcsolattartó E-mail",
+      "contactPersonPhone": "Kapcsolattartó Telefon",
+      "notes": "Megjegyzések",
+      "notesPlaceholder": "Speciális igények, fizetési feltételek, kedvezmények...",
+      "previewPlaceholder": "Töltse ki az űrlapot az előnézet megjelenítéséhez",
+      "submit": "Ügyfél Létrehozása",
+      "cancel": "Mégse"
+    },
+    "noResults": {
+      "title": "Nem található ügyfél",
+      "subtitle": "Próbálja módosítani a keresést"
+    }
+  },
+  "rentals": {
+    "title": "Bérlések",
+    "subtitle": "Eszközbérlések kezelése",
+    "newRental": "Új Bérlés",
+    "export": "Exportálás",
+    "search": "Keresés bérlésszám, ügyfél vagy projekt alapján...",
+    "filters": {
+      "all": "Összes",
+      "active": "Aktív",
+      "pending": "Függőben",
+      "completed": "Befejezett"
+    },
+    "status": {
+      "active": "Aktív",
+      "pending_return": "Visszavétel Folyamatban",
+      "completed": "Befejezett",
+      "cancelled": "Törölve",
+      "draft": "Piszkozat"
+    },
+    "stats": {
+      "active": "Aktív",
+      "pending": "Függőben",
+      "completed": "Befejezett",
+      "totalValue": "Összes Érték"
+    },
+    "table": {
+      "rentalNumber": "Bérlésszám",
+      "client": "Ügyfél",
+      "project": "Projekt",
+      "period": "Időszak",
+      "items": "Tételek",
+      "total": "Összesen",
+      "status": "Státusz",
+      "actions": "Műveletek",
+      "view": "Megtekintés",
+      "daysLeft": "nap van hátra"
+    },
+    "noResults": {
+      "title": "Nem található bérlés",
+      "subtitle": "Próbálja módosítani a keresést vagy szűrőket"
+    }
+  },
+  "newRental": {
+    "title": "Új Bérlés",
+    "subtitle": "Új eszközbérlés létrehozása",
+    "sections": {
+      "clientProject": "Ügyfél és Projekt",
+      "rentalPeriod": "Bérlési Időszak",
+      "equipment": "Eszközök",
+      "financial": "Pénzügyi Összesítő"
+    },
+    "fields": {
+      "client": "Ügyfél",
+      "clientPlaceholder": "Válasszon ügyfelet...",
+      "project": "Projekt Neve",
+      "projectPlaceholder": "pl. Téli Kampány 2025",
+      "startDate": "Kezdő Dátum",
+      "endDate": "Befejező Dátum",
+      "duration": "Időtartam",
+      "day": "nap",
+      "days": "nap"
+    },
+    "equipment": {
+      "items": "tétel",
+      "addItem": "Tétel Hozzáadása",
+      "searchPlaceholder": "Eszközök keresése...",
+      "inStock": "készleten",
+      "table": {
+        "item": "Tétel",
+        "qty": "Menny.",
+        "dailyRate": "Napi Díj",
+        "days": "Napok",
+        "subtotal": "Részösszeg"
+      },
+      "empty": {
+        "title": "Még nincs hozzáadott tétel",
+        "subtitle": "Kattintson a \"Tétel Hozzáadása\" gombra a kezdéshez"
+      }
+    },
+    "financial": {
+      "subtotal": "Részösszeg",
+      "discount": "Kedvezmény",
+      "tax": "ÁFA",
+      "total": "Végösszeg",
+      "notes": "Megjegyzések",
+      "notesPlaceholder": "Fizetési feltételek, speciális feltételek...",
+      "submit": "Bérlés Létrehozása"
+    }
+  },
+  "rentalDetail": {
+    "exportPdf": "PDF Exportálás",
+    "edit": "Szerkesztés",
+    "processReturn": "Visszavétel Feldolgozása",
+    "cancelReturn": "Visszavétel Megszakítása",
+    "clientInfo": "Ügyfél Információk",
+    "rentalItems": "Bérelt Tételek",
+    "returnModeActive": "Visszavételi Mód Aktív",
+    "rentalPeriod": "Bérlési Időszak",
+    "startDate": "Kezdő Dátum",
+    "endDate": "Befejező Dátum",
+    "timeRemaining": "Hátralévő idő",
+    "financialSummary": "Pénzügyi Összesítő",
+    "returnReady": "Készen áll a visszavétel befejezésére?",
+    "returnCheck": "Győződjön meg róla, hogy minden tétel ellenőrizve van és az állapotok rögzítve lettek",
+    "completeReturn": "Visszavétel Befejezése",
+    "downloadInvoice": "Számla Letöltése",
+    "downloadContract": "Szerződés Letöltése",
+    "cancelRental": "Bérlés Törlése"
+  },
+  "catalog": {
+    "title": "Professzionális Eszköz Katalógus",
+    "subtitle": "Prémium filmes kamerák, objektívek, világítás és hangtechnika a produkciójához",
+    "searchPlaceholder": "Eszközök keresése...",
+    "categories": {
+      "all": "Összes Eszköz",
+      "cameras": "Kamerák",
+      "lenses": "Objektívek",
+      "lighting": "Világítás",
+      "audio": "Hangtechnika"
+    },
+    "daily": "Napi",
+    "weekly": "Heti",
+    "inStock": "készleten",
+    "details": "Részletek",
+    "cta": {
+      "title": "Egyedi Csomagra Van Szüksége?",
+      "subtitle": "Lépjen kapcsolatba velünk személyre szabott eszközcsomagokért és hosszú távú bérleti kedvezményekért",
+      "requestQuote": "Árajánlat Kérése",
+      "contactUs": "Kapcsolat"
+    },
+    "noResults": {
+      "title": "Nem található eszköz",
+      "subtitle": "Próbálja módosítani a keresést vagy a kategória szűrőt"
+    }
+  },
+  "reports": {
+    "title": "Jelentések",
+    "subtitle": "Analitika és exportok"
+  },
+  "settings": {
+    "title": "Beállítások",
+    "subtitle": "Alkalmazás beállítások"
+  },
   "auth": {
     "login": "Bejelentkezés",
     "logout": "Kijelentkezés",
     "email": "E-mail",
-    "password": "Jelszó"
+    "password": "Jelszó",
+    "rememberMe": "Emlékezz rám",
+    "forgotPassword": "Elfelejtett jelszó?",
+    "signIn": "Bejelentkezés",
+    "signingIn": "Bejelentkezés...",
+    "welcome": "Üdvözöljük újra",
+    "subtitle": "Adja meg bejelentkezési adatait a fiókjához való hozzáféréshez",
+    "footer": "Professzionális Film Eszköz Bérlés Kezelés"
   },
   "common": {
     "save": "Mentés",
@@ -15,6 +246,19 @@
     "delete": "Törlés",
     "edit": "Szerkesztés",
     "search": "Keresés",
-    "loading": "Töltés..."
+    "loading": "Töltés...",
+    "back": "Vissza",
+    "view": "Megtekintés",
+    "actions": "Műveletek",
+    "status": "Státusz",
+    "required": "Kötelező"
+  },
+  "theme": {
+    "lightMode": "Világos Mód",
+    "darkMode": "Sötét Mód"
+  },
+  "language": {
+    "english": "English",
+    "hungarian": "Magyar"
   }
 }

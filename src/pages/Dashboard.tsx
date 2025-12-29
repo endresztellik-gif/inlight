@@ -11,11 +11,12 @@ import {
   Plus,
   ArrowRight
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 // Mock data for demonstration
 const stats = [
   {
-    title: 'Active Rentals',
+    titleKey: 'activeRentals',
     value: '24',
     change: '+12%',
     trend: 'up',
@@ -23,7 +24,7 @@ const stats = [
     color: 'text-primary'
   },
   {
-    title: 'Total Revenue',
+    titleKey: 'totalRevenue',
     value: '€12,450',
     change: '+8.2%',
     trend: 'up',
@@ -31,7 +32,7 @@ const stats = [
     color: 'text-primary'
   },
   {
-    title: 'Active Clients',
+    titleKey: 'activeClients',
     value: '18',
     change: '+3',
     trend: 'up',
@@ -39,7 +40,7 @@ const stats = [
     color: 'text-primary'
   },
   {
-    title: 'Pending Returns',
+    titleKey: 'pendingReturns',
     value: '7',
     change: '-2',
     trend: 'down',
@@ -83,21 +84,22 @@ const topEquipment = [
 ]
 
 export function Dashboard() {
+  const { t } = useTranslation()
 
   return (
     <div className="space-y-8 p-8 animate-in fade-in duration-500">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-4xl font-bold tracking-tight">{t('dashboard.title')}</h1>
           <p className="text-muted-foreground mt-1 font-mono text-sm">
-            Overview of your rental operations
+            {t('dashboard.subtitle')}
           </p>
         </div>
         <Button size="lg" className="gap-2" asChild>
           <Link to="/rentals/new">
             <Plus className="h-5 w-5" />
-            New Rental
+            {t('dashboard.newRental')}
           </Link>
         </Button>
       </div>
@@ -106,14 +108,14 @@ export function Dashboard() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, index) => (
           <Card
-            key={stat.title}
+            key={stat.titleKey}
             cinematic
             className="transition-all hover:shadow-lg hover:shadow-primary/10 animate-in slide-in-from-bottom duration-500"
             style={{ animationDelay: `${index * 100}ms` }}
           >
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                {stat.title}
+                {t(`dashboard.stats.${stat.titleKey}`)}
               </CardTitle>
               <stat.icon className={`h-5 w-5 ${stat.color}`} />
             </CardHeader>
@@ -128,7 +130,7 @@ export function Dashboard() {
                 <span className={stat.trend === 'up' ? 'text-primary' : 'text-muted-foreground'}>
                   {stat.change}
                 </span>
-                <span className="text-muted-foreground">from last month</span>
+                <span className="text-muted-foreground">{t('dashboard.stats.fromLastMonth')}</span>
               </div>
             </CardContent>
           </Card>
@@ -140,9 +142,9 @@ export function Dashboard() {
         <Card cinematic className="col-span-1">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-xl">Recent Rentals</CardTitle>
+              <CardTitle className="text-xl">{t('dashboard.recentRentals.title')}</CardTitle>
               <Button variant="ghost" size="sm" className="gap-1">
-                View All
+                {t('dashboard.recentRentals.viewAll')}
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
@@ -161,7 +163,7 @@ export function Dashboard() {
                   </div>
                   <div className="text-right space-y-1">
                     <p className="font-mono font-semibold">{rental.total}</p>
-                    <p className="text-xs text-muted-foreground">Due {rental.dueDate}</p>
+                    <p className="text-xs text-muted-foreground">{t('dashboard.recentRentals.due')} {rental.dueDate}</p>
                     <span className={`inline-block px-2 py-0.5 text-xs rounded ${
                       rental.status === 'active'
                         ? 'bg-primary/20 text-primary'
@@ -179,8 +181,8 @@ export function Dashboard() {
         {/* Top Equipment */}
         <Card cinematic className="col-span-1">
           <CardHeader>
-            <CardTitle className="text-xl">Top Equipment</CardTitle>
-            <p className="text-sm text-muted-foreground">Most rented this month</p>
+            <CardTitle className="text-xl">{t('dashboard.topEquipment.title')}</CardTitle>
+            <p className="text-sm text-muted-foreground">{t('dashboard.topEquipment.subtitle')}</p>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -195,7 +197,7 @@ export function Dashboard() {
                   <div className="flex-1 min-w-0">
                     <p className="font-medium truncate">{item.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {item.rentals} rentals
+                      {item.rentals} {t('dashboard.topEquipment.rentals')}
                     </p>
                   </div>
                   <div className="text-right">
@@ -211,26 +213,26 @@ export function Dashboard() {
       {/* Quick Actions */}
       <Card cinematic className="border-primary/20">
         <CardHeader>
-          <CardTitle className="text-xl">Quick Actions</CardTitle>
+          <CardTitle className="text-xl">{t('dashboard.quickActions.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3">
             <Button variant="outline" className="h-auto flex-col gap-2 py-6" asChild>
               <Link to="/rentals/new">
                 <Plus className="h-6 w-6" />
-                <span>Create New Rental</span>
+                <span>{t('dashboard.quickActions.createRental')}</span>
               </Link>
             </Button>
             <Button variant="outline" className="h-auto flex-col gap-2 py-6" asChild>
               <Link to="/clients/new">
                 <Users className="h-6 w-6" />
-                <span>Add New Client</span>
+                <span>{t('dashboard.quickActions.addClient')}</span>
               </Link>
             </Button>
             <Button variant="outline" className="h-auto flex-col gap-2 py-6" asChild>
               <Link to="/catalog">
                 <Package className="h-6 w-6" />
-                <span>Check Inventory</span>
+                <span>{t('dashboard.quickActions.checkInventory')}</span>
               </Link>
             </Button>
           </div>

@@ -8,23 +8,26 @@ import {
   LogOut,
   Film,
   Moon,
-  Sun
+  Sun,
+  Languages
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTheme } from '@/hooks/useTheme'
+import { useTranslation } from 'react-i18next'
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Rentals', href: '/rentals', icon: Film },
-  { name: 'Clients', href: '/clients', icon: Users },
-  { name: 'Catalog', href: '/catalog', icon: Package },
-  { name: 'Reports', href: '/reports', icon: FileText },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  { key: 'dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { key: 'rentals', href: '/rentals', icon: Film },
+  { key: 'clients', href: '/clients', icon: Users },
+  { key: 'catalog', href: '/catalog', icon: Package },
+  { key: 'reports', href: '/reports', icon: FileText },
+  { key: 'settings', href: '/settings', icon: Settings },
 ]
 
 export function Sidebar() {
   const location = useLocation()
   const { theme, toggleTheme } = useTheme()
+  const { t, i18n } = useTranslation()
 
   return (
     <div className="flex h-screen w-64 flex-col border-r border-border bg-card film-perforation">
@@ -45,7 +48,7 @@ export function Sidebar() {
           const isActive = location.pathname === item.href
           return (
             <Link
-              key={item.name}
+              key={item.key}
               to={item.href}
               className={cn(
                 "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all",
@@ -55,7 +58,7 @@ export function Sidebar() {
               )}
             >
               <item.icon className="h-5 w-5" />
-              <span>{item.name}</span>
+              <span>{t(`nav.${item.key}`)}</span>
             </Link>
           )
         })}
@@ -74,7 +77,18 @@ export function Sidebar() {
             <Moon className="h-4 w-4 text-primary" />
           )}
           <span className="text-sm font-medium">
-            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+            {t(theme === 'dark' ? 'theme.lightMode' : 'theme.darkMode')}
+          </span>
+        </button>
+
+        {/* Language Toggle */}
+        <button
+          onClick={() => i18n.changeLanguage(i18n.language === 'en' ? 'hu' : 'en')}
+          className="flex w-full items-center gap-3 rounded-md px-3 py-2 hover:bg-secondary transition-all cursor-pointer"
+        >
+          <Languages className="h-4 w-4 text-primary" />
+          <span className="text-sm font-medium">
+            {i18n.language === 'en' ? '🇭🇺 Magyar' : '🇬🇧 English'}
           </span>
         </button>
 
