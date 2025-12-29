@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -106,9 +107,11 @@ export function ClientsList() {
             Manage your client database
           </p>
         </div>
-        <Button size="lg" className="gap-2">
-          <Plus className="h-5 w-5" />
-          New Client
+        <Button size="lg" className="gap-2" asChild>
+          <Link to="/clients/new">
+            <Plus className="h-5 w-5" />
+            New Client
+          </Link>
         </Button>
       </div>
 

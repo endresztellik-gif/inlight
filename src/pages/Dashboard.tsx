@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
@@ -93,9 +94,11 @@ export function Dashboard() {
             Overview of your rental operations
           </p>
         </div>
-        <Button size="lg" className="gap-2">
-          <Plus className="h-5 w-5" />
-          New Rental
+        <Button size="lg" className="gap-2" asChild>
+          <Link to="/rentals/new">
+            <Plus className="h-5 w-5" />
+            New Rental
+          </Link>
         </Button>
       </div>
 
@@ -212,17 +215,23 @@ export function Dashboard() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3">
-            <Button variant="outline" className="h-auto flex-col gap-2 py-6">
-              <Plus className="h-6 w-6" />
-              <span>Create New Rental</span>
+            <Button variant="outline" className="h-auto flex-col gap-2 py-6" asChild>
+              <Link to="/rentals/new">
+                <Plus className="h-6 w-6" />
+                <span>Create New Rental</span>
+              </Link>
             </Button>
-            <Button variant="outline" className="h-auto flex-col gap-2 py-6">
-              <Users className="h-6 w-6" />
-              <span>Add New Client</span>
+            <Button variant="outline" className="h-auto flex-col gap-2 py-6" asChild>
+              <Link to="/clients/new">
+                <Users className="h-6 w-6" />
+                <span>Add New Client</span>
+              </Link>
             </Button>
-            <Button variant="outline" className="h-auto flex-col gap-2 py-6">
-              <Package className="h-6 w-6" />
-              <span>Check Inventory</span>
+            <Button variant="outline" className="h-auto flex-col gap-2 py-6" asChild>
+              <Link to="/catalog">
+                <Package className="h-6 w-6" />
+                <span>Check Inventory</span>
+              </Link>
             </Button>
           </div>
         </CardContent>

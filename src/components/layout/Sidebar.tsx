@@ -6,9 +6,12 @@ import {
   FileText,
   Settings,
   LogOut,
-  Film
+  Film,
+  Moon,
+  Sun
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTheme } from '@/hooks/useTheme'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -21,6 +24,7 @@ const navigation = [
 
 export function Sidebar() {
   const location = useLocation()
+  const { theme, toggleTheme } = useTheme()
 
   return (
     <div className="flex h-screen w-64 flex-col border-r border-border bg-card film-perforation">
@@ -57,8 +61,24 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* User info & logout */}
-      <div className="border-t border-border p-4">
+      {/* Theme toggle & User info */}
+      <div className="border-t border-border p-4 space-y-2">
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="flex w-full items-center gap-3 rounded-md px-3 py-2 hover:bg-secondary transition-all cursor-pointer"
+        >
+          {theme === 'dark' ? (
+            <Sun className="h-4 w-4 text-primary" />
+          ) : (
+            <Moon className="h-4 w-4 text-primary" />
+          )}
+          <span className="text-sm font-medium">
+            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+          </span>
+        </button>
+
+        {/* User info & logout */}
         <div className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-secondary transition-all cursor-pointer">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary font-mono text-sm font-bold">
             SA
