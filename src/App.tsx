@@ -4,6 +4,8 @@ import { Dashboard } from './pages/Dashboard'
 import { Login } from './pages/Login'
 import { RentalsList } from './pages/RentalsList'
 import { RentalDetail } from './pages/RentalDetail'
+import { ClientsList } from './pages/ClientsList'
+import { ProductCatalog } from './pages/ProductCatalog'
 
 // Layout wrapper for authenticated pages
 function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
@@ -45,15 +47,18 @@ function App() {
 
         <Route path="/clients" element={
           <AuthenticatedLayout>
-            <div className="p-8"><h1 className="text-3xl font-bold">Clients</h1></div>
+            <ClientsList />
           </AuthenticatedLayout>
         } />
 
         <Route path="/catalog" element={
           <AuthenticatedLayout>
-            <div className="p-8"><h1 className="text-3xl font-bold">Catalog</h1></div>
+            <ProductCatalog />
           </AuthenticatedLayout>
         } />
+
+        {/* Public catalog route (no auth required) */}
+        <Route path="/public/catalog" element={<ProductCatalog />} />
 
         <Route path="/reports" element={
           <AuthenticatedLayout>
