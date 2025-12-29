@@ -187,13 +187,31 @@
     "startDate": "Kezdő Dátum",
     "endDate": "Befejező Dátum",
     "timeRemaining": "Hátralévő idő",
+    "days": "nap",
     "financialSummary": "Pénzügyi Összesítő",
     "returnReady": "Készen áll a visszavétel befejezésére?",
     "returnCheck": "Győződjön meg róla, hogy minden tétel ellenőrizve van és az állapotok rögzítve lettek",
     "completeReturn": "Visszavétel Befejezése",
+    "cancel": "Mégse",
     "downloadInvoice": "Számla Letöltése",
     "downloadContract": "Szerződés Letöltése",
-    "cancelRental": "Bérlés Törlése"
+    "cancelRental": "Bérlés Törlése",
+    "table": {
+      "item": "Tétel",
+      "serial": "Sorozatszám",
+      "qty": "Menny.",
+      "dailyRate": "Napi Díj",
+      "days": "Napok",
+      "subtotal": "Részösszeg",
+      "condition": "Állapot",
+      "return": "Visszavétel"
+    },
+    "conditions": {
+      "excellent": "Kiváló",
+      "good": "Jó",
+      "fair": "Megfelelő",
+      "damaged": "Sérült"
+    }
   },
   "catalog": {
     "title": "Professzionális Eszköz Katalógus",

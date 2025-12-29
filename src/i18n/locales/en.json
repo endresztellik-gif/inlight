@@ -187,13 +187,31 @@
     "startDate": "Start Date",
     "endDate": "End Date",
     "timeRemaining": "Time remaining",
+    "days": "days",
     "financialSummary": "Financial Summary",
     "returnReady": "Ready to complete return?",
     "returnCheck": "Make sure all items are checked and conditions are noted",
     "completeReturn": "Complete Return",
+    "cancel": "Cancel",
     "downloadInvoice": "Download Invoice",
     "downloadContract": "Download Contract",
-    "cancelRental": "Cancel Rental"
+    "cancelRental": "Cancel Rental",
+    "table": {
+      "item": "Item",
+      "serial": "Serial #",
+      "qty": "Qty",
+      "dailyRate": "Daily Rate",
+      "days": "Days",
+      "subtotal": "Subtotal",
+      "condition": "Condition",
+      "return": "Return"
+    },
+    "conditions": {
+      "excellent": "Excellent",
+      "good": "Good",
+      "fair": "Fair",
+      "damaged": "Damaged"
+    }
   },
   "catalog": {
     "title": "Professional Equipment Catalog",

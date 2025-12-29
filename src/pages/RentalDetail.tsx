@@ -198,14 +198,14 @@ export function RentalDetail() {
                 <table className="w-full">
                   <thead className="border-b border-border">
                     <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground">
-                      <th className="p-4 font-medium">Item</th>
-                      <th className="p-4 font-medium">Serial #</th>
-                      <th className="p-4 font-medium">Qty</th>
-                      <th className="p-4 font-medium">Daily Rate</th>
-                      <th className="p-4 font-medium">Days</th>
-                      <th className="p-4 font-medium">Subtotal</th>
-                      {returnMode && <th className="p-4 font-medium">Condition</th>}
-                      {returnMode && <th className="p-4 font-medium">Return</th>}
+                      <th className="p-4 font-medium">{t('rentalDetail.table.item')}</th>
+                      <th className="p-4 font-medium">{t('rentalDetail.table.serial')}</th>
+                      <th className="p-4 font-medium">{t('rentalDetail.table.qty')}</th>
+                      <th className="p-4 font-medium">{t('rentalDetail.table.dailyRate')}</th>
+                      <th className="p-4 font-medium">{t('rentalDetail.table.days')}</th>
+                      <th className="p-4 font-medium">{t('rentalDetail.table.subtotal')}</th>
+                      {returnMode && <th className="p-4 font-medium">{t('rentalDetail.table.condition')}</th>}
+                      {returnMode && <th className="p-4 font-medium">{t('rentalDetail.table.return')}</th>}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
@@ -237,10 +237,10 @@ export function RentalDetail() {
                         {returnMode && (
                           <td className="p-4">
                             <select className="bg-input border border-border rounded px-2 py-1 text-sm">
-                              <option value="excellent">Excellent</option>
-                              <option value="good">Good</option>
-                              <option value="fair">Fair</option>
-                              <option value="damaged">Damaged</option>
+                              <option value="excellent">{t('rentalDetail.conditions.excellent')}</option>
+                              <option value="good">{t('rentalDetail.conditions.good')}</option>
+                              <option value="fair">{t('rentalDetail.conditions.fair')}</option>
+                              <option value="damaged">{t('rentalDetail.conditions.damaged')}</option>
                             </select>
                           </td>
                         )}
@@ -265,18 +265,18 @@ export function RentalDetail() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">Ready to complete return?</p>
+                    <p className="font-medium">{t('rentalDetail.returnReady')}</p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Make sure all items are checked and conditions are noted
+                      {t('rentalDetail.returnCheck')}
                     </p>
                   </div>
                   <div className="flex gap-3">
                     <Button variant="outline" onClick={() => setReturnMode(false)}>
-                      Cancel
+                      {t('rentalDetail.cancel')}
                     </Button>
                     <Button className="gap-2">
                       <CheckCircle className="h-4 w-4" />
-                      Complete Return
+                      {t('rentalDetail.completeReturn')}
                     </Button>
                   </div>
                 </div>
@@ -292,22 +292,22 @@ export function RentalDetail() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-primary" />
-                Rental Period
+                {t('rentalDetail.rentalPeriod')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">Start Date</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">{t('rentalDetail.startDate')}</p>
                 <p className="font-mono text-lg font-semibold mt-1">{rental.dates.start}</p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">End Date</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">{t('rentalDetail.endDate')}</p>
                 <p className="font-mono text-lg font-semibold mt-1">{rental.dates.end}</p>
               </div>
               <div className="pt-3 border-t border-border">
-                <p className="text-sm text-muted-foreground">Time remaining</p>
+                <p className="text-sm text-muted-foreground">{t('rentalDetail.timeRemaining')}</p>
                 <p className="text-2xl font-bold text-primary mt-1">
-                  {rental.dates.daysLeft} days
+                  {rental.dates.daysLeft} {t('rentalDetail.days')}
                 </p>
               </div>
             </CardContent>
@@ -318,26 +318,26 @@ export function RentalDetail() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <DollarSign className="h-5 w-5 text-primary" />
-                Financial Summary
+                {t('rentalDetail.financialSummary')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Subtotal</span>
+                <span className="text-muted-foreground">{t('newRental.financial.subtotal')}</span>
                 <span className="font-mono">€{rental.financial.subtotal}</span>
               </div>
               {rental.financial.discount > 0 && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Discount</span>
+                  <span className="text-muted-foreground">{t('newRental.financial.discount')}</span>
                   <span className="font-mono text-primary">-€{rental.financial.discount}</span>
                 </div>
               )}
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Tax</span>
+                <span className="text-muted-foreground">{t('newRental.financial.tax')}</span>
                 <span className="font-mono">€{rental.financial.tax}</span>
               </div>
               <div className="pt-3 border-t border-border flex justify-between">
-                <span className="font-semibold">Total</span>
+                <span className="font-semibold">{t('newRental.financial.total')}</span>
                 <span className="text-2xl font-bold font-mono text-primary">
                   €{rental.financial.total}
                 </span>
@@ -355,11 +355,11 @@ export function RentalDetail() {
             <CardContent className="p-4 space-y-2">
               <Button variant="outline" className="w-full justify-start gap-2" size="sm">
                 <Download className="h-4 w-4" />
-                Download Invoice
+                {t('rentalDetail.downloadInvoice')}
               </Button>
               <Button variant="outline" className="w-full justify-start gap-2" size="sm">
                 <Download className="h-4 w-4" />
-                Download Contract
+                {t('rentalDetail.downloadContract')}
               </Button>
               <Button
                 variant="ghost"
@@ -367,7 +367,7 @@ export function RentalDetail() {
                 size="sm"
               >
                 <Trash2 className="h-4 w-4" />
-                Cancel Rental
+                {t('rentalDetail.cancelRental')}
               </Button>
             </CardContent>
           </Card>
