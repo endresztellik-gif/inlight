@@ -6,6 +6,7 @@
   "nav": {
     "dashboard": "Irányítópult",
     "rentals": "Bérlések",
+    "subrentals": "Albérletek",
     "clients": "Ügyfelek",
     "catalog": "Katalógus",
     "reports": "Jelentések",
@@ -230,6 +231,156 @@
       "good": "Jó",
       "fair": "Megfelelő",
       "damaged": "Sérült"
+    }
+  },
+  "subrentals": {
+    "title": "Albérletek",
+    "subtitle": "Beszállítóktól bérelt eszközök kezelése",
+    "newSubrental": "Új Albérlet",
+    "rental": "Albérlet",
+    "rentalPlural": "Albérletek",
+    "export": "Export",
+    "search": "Keresés albérlet szám, ügyfél, projekt vagy beszállító alapján...",
+    "filters": {
+      "all": "Összes",
+      "active": "Aktív",
+      "pending": "Visszavételre Vár",
+      "completed": "Lezárva"
+    },
+    "stats": {
+      "active": "Aktív",
+      "pending": "Visszavételre Vár",
+      "completed": "Lezárva",
+      "totalValue": "Össz Érték"
+    },
+    "table": {
+      "rentalNumber": "Albérlet #",
+      "client": "Ügyfél",
+      "project": "Projekt",
+      "supplier": "Beszállító",
+      "period": "Időszak",
+      "total": "Összesen",
+      "status": "Státusz",
+      "actions": "Műveletek",
+      "view": "Megtekint",
+      "daysLeft": "nap van hátra"
+    },
+    "status": {
+      "draft": "Piszkozat",
+      "active": "Aktív",
+      "pending_return": "Visszavételre Vár",
+      "completed": "Lezárva",
+      "cancelled": "Törölve"
+    },
+    "noResults": {
+      "title": "Nincs találat",
+      "subtitle": "Próbáld módosítani a keresési feltételeket"
+    }
+  },
+  "newSubrental": {
+    "title": "Új Albérlet Létrehozása",
+    "subtitle": "Beszállítótól bérelt eszközök készletnyilvántartás nélkül",
+    "sections": {
+      "clientProject": "Ügyfél & Projekt",
+      "rentalPeriod": "Bérlési Időszak",
+      "supplierInfo": "Beszállító Információk",
+      "equipment": "Eszközök",
+      "financial": "Pénzügyi Összesítő"
+    },
+    "fields": {
+      "client": "Ügyfél",
+      "clientPlaceholder": "Válassz ügyfelet...",
+      "project": "Projekt Neve",
+      "projectPlaceholder": "pl. Téli Kampány 2025",
+      "startDate": "Kezdő Dátum",
+      "endDate": "Befejező Dátum",
+      "duration": "Időtartam",
+      "day": "nap",
+      "days": "nap",
+      "supplierName": "Beszállító Neve",
+      "supplierNamePlaceholder": "Beszállító cég neve",
+      "supplierContact": "Elérhetőség",
+      "supplierContactPlaceholder": "email@example.com vagy +36 1 234 5678",
+      "supplierNotes": "Megjegyzések",
+      "supplierNotesPlaceholder": "Szállítási feltételek, speciális kondíciók..."
+    },
+    "equipment": {
+      "items": "tétel",
+      "addItem": "Tétel Hozzáadása",
+      "searchPlaceholder": "Eszközök keresése...",
+      "inStock": "mindig elérhető",
+      "empty": {
+        "title": "Még nincs tétel hozzáadva",
+        "subtitle": "Kattints a \"Tétel Hozzáadása\" gombra a kezdéshez"
+      }
+    },
+    "table": {
+      "item": "Tétel",
+      "qty": "Menny.",
+      "dailyRate": "Napi Díj",
+      "days": "Napok",
+      "purchasePrice": "Beszerzési Ár",
+      "subtotal": "Részösszeg"
+    },
+    "financial": {
+      "subtotal": "Részösszeg",
+      "discount": "Kedvezmény",
+      "tax": "ÁFA",
+      "total": "Összesen",
+      "purchaseCost": "Összes Beszerzési Költség",
+      "profit": "Haszon",
+      "profitMargin": "Haszonkulcs",
+      "notes": "Megjegyzések",
+      "notesPlaceholder": "Fizetési feltételek, speciális kondíciók...",
+      "submit": "Albérlet Létrehozása"
+    }
+  },
+  "subrentalDetail": {
+    "exportPdf": "PDF Export",
+    "edit": "Szerkesztés",
+    "processReturn": "Visszavétel Feldolgozása",
+    "cancelReturn": "Visszavétel Megszakítása",
+    "clientInfo": "Ügyfél Információk",
+    "supplierInfo": "Beszállító Információk",
+    "supplierName": "Beszállító",
+    "contact": "Elérhetőség",
+    "notes": "Megjegyzések",
+    "rentalItems": "Albérlet Tételek",
+    "returnModeActive": "Visszavételi Mód Aktív",
+    "rentalPeriod": "Bérlési Időszak",
+    "startDate": "Kezdő Dátum",
+    "endDate": "Befejező Dátum",
+    "timeRemaining": "Hátralévő idő",
+    "days": "nap",
+    "financialSummary": "Pénzügyi Összesítő",
+    "returnReady": "Készen áll a visszavétel befejezésére?",
+    "returnCheck": "Győződjön meg róla, hogy minden tétel ellenőrizve van és az állapotok rögzítve lettek",
+    "completeReturn": "Visszavétel Befejezése",
+    "cancel": "Mégse",
+    "downloadInvoice": "Számla Letöltése",
+    "downloadContract": "Szerződés Letöltése",
+    "cancelRental": "Albérlet Törlése",
+    "table": {
+      "item": "Tétel",
+      "serial": "Sorozatszám",
+      "qty": "Menny.",
+      "dailyRate": "Napi Díj",
+      "days": "Napok",
+      "purchasePrice": "Beszerzési Ár",
+      "subtotal": "Részösszeg",
+      "condition": "Állapot",
+      "return": "Visszavétel"
+    },
+    "conditions": {
+      "excellent": "Kiváló",
+      "good": "Jó",
+      "fair": "Megfelelő",
+      "damaged": "Sérült"
+    },
+    "financial": {
+      "purchaseCost": "Beszerzési Költség",
+      "profit": "Haszon",
+      "margin": "Haszonkulcs"
     }
   },
   "catalog": {

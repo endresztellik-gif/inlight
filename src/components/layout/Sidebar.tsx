@@ -9,7 +9,8 @@ import {
   Film,
   Moon,
   Sun,
-  Languages
+  Languages,
+  Truck
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTheme } from '@/hooks/useTheme'
@@ -19,6 +20,7 @@ import { useAuth } from '@/contexts/AuthContext'
 const navigation = [
   { key: 'dashboard', href: '/dashboard', icon: LayoutDashboard },
   { key: 'rentals', href: '/rentals', icon: Film },
+  { key: 'subrentals', href: '/subrentals', icon: Truck },
   { key: 'clients', href: '/clients', icon: Users },
   { key: 'catalog', href: '/catalog', icon: Package },
   { key: 'reports', href: '/reports', icon: FileText },

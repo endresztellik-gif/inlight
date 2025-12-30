@@ -7,6 +7,9 @@ import { Login } from './pages/Login'
 import { RentalsList } from './pages/RentalsList'
 import { RentalDetail } from './pages/RentalDetail'
 import { NewRental } from './pages/NewRental'
+import { SubrentalsList } from './pages/SubrentalsList'
+import { SubrentalDetail } from './pages/SubrentalDetail'
+import { NewSubrental } from './pages/NewSubrental'
 import { ClientsList } from './pages/ClientsList'
 import { NewClient } from './pages/NewClient'
 import { ClientDetail } from './pages/ClientDetail'
@@ -57,6 +60,24 @@ function App() {
         <Route path="/rentals/:id" element={
           <AuthenticatedLayout>
             <RentalDetail />
+          </AuthenticatedLayout>
+        } />
+
+        <Route path="/subrentals" element={
+          <AuthenticatedLayout>
+            <SubrentalsList />
+          </AuthenticatedLayout>
+        } />
+
+        <Route path="/subrentals/new" element={
+          <AuthenticatedLayout>
+            <NewSubrental />
+          </AuthenticatedLayout>
+        } />
+
+        <Route path="/subrentals/:id" element={
+          <AuthenticatedLayout>
+            <SubrentalDetail />
           </AuthenticatedLayout>
         } />
 

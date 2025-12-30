@@ -226,6 +226,7 @@ export type Database = {
           is_returned: boolean | null
           notes: string | null
           product_id: string
+          purchase_price: number | null
           quantity: number
           rental_id: string
           returned_at: string | null
@@ -242,6 +243,7 @@ export type Database = {
           is_returned?: boolean | null
           notes?: string | null
           product_id: string
+          purchase_price?: number | null
           quantity?: number
           rental_id: string
           returned_at?: string | null
@@ -258,6 +260,7 @@ export type Database = {
           is_returned?: boolean | null
           notes?: string | null
           product_id?: string
+          purchase_price?: number | null
           quantity?: number
           rental_id?: string
           returned_at?: string | null
@@ -297,6 +300,10 @@ export type Database = {
           rental_number: string
           start_date: string
           status: string | null
+          supplier_contact: string | null
+          supplier_name: string | null
+          supplier_notes: string | null
+          type: string
           updated_at: string
         }
         Insert: {
@@ -314,6 +321,10 @@ export type Database = {
           rental_number: string
           start_date: string
           status?: string | null
+          supplier_contact?: string | null
+          supplier_name?: string | null
+          supplier_notes?: string | null
+          type?: string
           updated_at?: string
         }
         Update: {
@@ -331,6 +342,10 @@ export type Database = {
           rental_number?: string
           start_date?: string
           status?: string | null
+          supplier_contact?: string | null
+          supplier_name?: string | null
+          supplier_notes?: string | null
+          type?: string
           updated_at?: string
         }
         Relationships: [

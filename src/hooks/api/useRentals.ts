@@ -317,3 +317,156 @@ export function useRentalStats() {
     },
   })
 }
+
+// ============================================================
+// Subrental-specific hooks (M2 Module)
+// ============================================================
+
+// Fetch only subrentals with client information
+export function useSubrentals(statusFilter?: string) {
+  return useQuery({
+    queryKey: ['subrentals', statusFilter],
+    queryFn: async () => {
+      let query = supabase
+        .from('rentals')
+        .select(`
+          *,
+          clients (
+            name,
+            email,
+            phone,
+            company,
+            address
+          )
+        `)
+        .eq('type', 'subrental') // Filter by type
+        .order('created_at', { ascending: false })
+
+      // Apply status filter if provided
+      if (statusFilter && statusFilter !== 'all') {
+        query = query.eq('status', statusFilter)
+      }
+
+      const { data, error } = await query
+
+      if (error) throw error
+      return data as RentalWithClient[]
+    },
+  })
+}
+
+// Fetch single subrental with full details
+export function useSubrental(id: string | undefined) {
+  return useQuery({
+    queryKey: ['subrental', id],
+    queryFn: async () => {
+      if (!id) throw new Error('Subrental ID is required')
+
+      const { data, error } = await supabase
+        .from('rentals')
+        .select(`
+          *,
+          clients (
+            name,
+            email,
+            phone,
+            company,
+            address,
+            tax_number,
+            contact_person_name,
+            contact_person_email,
+            contact_person_phone
+          ),
+          rental_items (
+            *,
+            products (
+              name,
+              category_id,
+              serial_number
+            )
+          )
+        `)
+        .eq('id', id)
+        .eq('type', 'subrental') // Ensure it's a subrental
+        .single()
+
+      if (error) throw error
+      return data as RentalWithDetails
+    },
+    enabled: !!id,
+  })
+}
+
+// Generate unique subrental number (format: S-YYYYMMDD-XXXX)
+async function generateSubrentalNumber(): Promise<string> {
+  const today = new Date()
+  const dateStr = today.toISOString().split('T')[0].replace(/-/g, '')
+
+  // Get count of subrentals created today
+  const { count, error } = await supabase
+    .from('rentals')
+    .select('*', { count: 'exact', head: true })
+    .eq('type', 'subrental') // Count only subrentals
+    .gte('created_at', new Date(today.setHours(0, 0, 0, 0)).toISOString())
+    .lt('created_at', new Date(today.setHours(23, 59, 59, 999)).toISOString())
+
+  if (error) throw error
+
+  const nextNumber = (count || 0) + 1
+  const paddedNumber = String(nextNumber).padStart(4, '0')
+
+  return `S-${dateStr}-${paddedNumber}` // S prefix for subrental
+}
+
+// Create subrental with items
+export function useCreateSubrental() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (params: {
+      rental: Omit<RentalInsert, 'rental_number' | 'type'> & {
+        supplier_name?: string
+        supplier_contact?: string
+        supplier_notes?: string
+      }
+      items: Array<Omit<RentalItemInsert, 'rental_id'> & {
+        purchase_price?: number
+      }>
+    }) => {
+      // Generate subrental number
+      const rentalNumber = await generateSubrentalNumber()
+
+      // Create subrental with type = 'subrental'
+      const { data: rentalData, error: rentalError } = await supabase
+        .from('rentals')
+        .insert({
+          ...params.rental,
+          rental_number: rentalNumber,
+          type: 'subrental', // CRITICAL: Set type
+        })
+        .select()
+        .single()
+
+      if (rentalError) throw rentalError
+
+      // Create rental items with purchase_price
+      const itemsWithRentalId = params.items.map(item => ({
+        ...item,
+        rental_id: rentalData.id,
+      }))
+
+      const { error: itemsError } = await supabase
+        .from('rental_items')
+        .insert(itemsWithRentalId)
+
+      if (itemsError) throw itemsError
+
+      return rentalData
+    },
+    onSuccess: () => {
+      // Invalidate both queries
+      queryClient.invalidateQueries({ queryKey: ['subrentals'] })
+      queryClient.invalidateQueries({ queryKey: ['rentals'] })
+    },
+  })
+}

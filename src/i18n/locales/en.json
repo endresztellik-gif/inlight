@@ -6,6 +6,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "rentals": "Rentals",
+    "subrentals": "Subrentals",
     "clients": "Clients",
     "catalog": "Catalog",
     "reports": "Reports",
@@ -230,6 +231,156 @@
       "good": "Good",
       "fair": "Fair",
       "damaged": "Damaged"
+    }
+  },
+  "subrentals": {
+    "title": "Subrentals",
+    "subtitle": "Manage rented equipment from suppliers",
+    "newSubrental": "New Subrental",
+    "rental": "Subrental",
+    "rentalPlural": "Subrentals",
+    "export": "Export",
+    "search": "Search by subrental number, client, project, or supplier...",
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "pending": "Pending Return",
+      "completed": "Completed"
+    },
+    "stats": {
+      "active": "Active",
+      "pending": "Pending Return",
+      "completed": "Completed",
+      "totalValue": "Total Value"
+    },
+    "table": {
+      "rentalNumber": "Subrental #",
+      "client": "Client",
+      "project": "Project",
+      "supplier": "Supplier",
+      "period": "Period",
+      "total": "Total",
+      "status": "Status",
+      "actions": "Actions",
+      "view": "View",
+      "daysLeft": "days left"
+    },
+    "status": {
+      "draft": "Draft",
+      "active": "Active",
+      "pending_return": "Pending Return",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "noResults": {
+      "title": "No subrentals found",
+      "subtitle": "Try adjusting your search or filters"
+    }
+  },
+  "newSubrental": {
+    "title": "Create New Subrental",
+    "subtitle": "Rent equipment from suppliers without inventory tracking",
+    "sections": {
+      "clientProject": "Client & Project",
+      "rentalPeriod": "Rental Period",
+      "supplierInfo": "Supplier Information",
+      "equipment": "Equipment",
+      "financial": "Financial Summary"
+    },
+    "fields": {
+      "client": "Client",
+      "clientPlaceholder": "Select a client...",
+      "project": "Project Name",
+      "projectPlaceholder": "e.g., Winter Campaign 2025",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "duration": "Duration",
+      "day": "day",
+      "days": "days",
+      "supplierName": "Supplier Name",
+      "supplierNamePlaceholder": "Enter supplier company name",
+      "supplierContact": "Contact",
+      "supplierContactPlaceholder": "email@example.com or +36 1 234 5678",
+      "supplierNotes": "Notes",
+      "supplierNotesPlaceholder": "Delivery terms, special conditions..."
+    },
+    "equipment": {
+      "items": "items",
+      "addItem": "Add Item",
+      "searchPlaceholder": "Search equipment...",
+      "inStock": "always available",
+      "empty": {
+        "title": "No items added yet",
+        "subtitle": "Click \"Add Item\" to get started"
+      }
+    },
+    "table": {
+      "item": "Item",
+      "qty": "Qty",
+      "dailyRate": "Daily Rate",
+      "days": "Days",
+      "purchasePrice": "Purchase Price",
+      "subtotal": "Subtotal"
+    },
+    "financial": {
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "tax": "Tax",
+      "total": "Total",
+      "purchaseCost": "Total Purchase Cost",
+      "profit": "Profit",
+      "profitMargin": "Profit Margin",
+      "notes": "Notes",
+      "notesPlaceholder": "Payment terms, special conditions...",
+      "submit": "Create Subrental"
+    }
+  },
+  "subrentalDetail": {
+    "exportPdf": "Export PDF",
+    "edit": "Edit",
+    "processReturn": "Process Return",
+    "cancelReturn": "Cancel Return",
+    "clientInfo": "Client Information",
+    "supplierInfo": "Supplier Information",
+    "supplierName": "Supplier",
+    "contact": "Contact",
+    "notes": "Notes",
+    "rentalItems": "Subrental Items",
+    "returnModeActive": "Return Mode Active",
+    "rentalPeriod": "Rental Period",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "timeRemaining": "Time remaining",
+    "days": "days",
+    "financialSummary": "Financial Summary",
+    "returnReady": "Ready to complete return?",
+    "returnCheck": "Make sure all items are checked and conditions are noted",
+    "completeReturn": "Complete Return",
+    "cancel": "Cancel",
+    "downloadInvoice": "Download Invoice",
+    "downloadContract": "Download Contract",
+    "cancelRental": "Cancel Subrental",
+    "table": {
+      "item": "Item",
+      "serial": "Serial #",
+      "qty": "Qty",
+      "dailyRate": "Daily Rate",
+      "days": "Days",
+      "purchasePrice": "Purchase Price",
+      "subtotal": "Subtotal",
+      "condition": "Condition",
+      "return": "Return"
+    },
+    "conditions": {
+      "excellent": "Excellent",
+      "good": "Good",
+      "fair": "Fair",
+      "damaged": "Damaged"
+    },
+    "financial": {
+      "purchaseCost": "Purchase Cost",
+      "profit": "Profit",
+      "margin": "Margin"
     }
   },
   "catalog": {
