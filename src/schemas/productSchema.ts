@@ -70,6 +70,9 @@ export const productSchema = z.object({
 
   is_featured: z.boolean()
     .optional(),
+
+  is_active: z.boolean()
+    .optional(),
 })
   .refine(
     (data) => data.available_quantity <= data.stock_quantity,
