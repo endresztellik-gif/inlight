@@ -711,6 +711,9 @@
         "invalid": "Kérem adjon meg egy érvényes telefonszámot",
         "maxLength": "A telefonszám maximum 50 karakter lehet"
       },
+      "company": {
+        "maxLength": "A cégnév maximum 255 karakter lehet"
+      },
       "address": {
         "maxLength": "A cím maximum 500 karakter lehet"
       },
@@ -718,8 +721,16 @@
         "invalid": "Az adószám formátuma: XXXXXXXX-X-XX",
         "maxLength": "Az adószám maximum 50 karakter lehet"
       },
-      "contactPerson": {
+      "contactPersonName": {
         "maxLength": "A kapcsolattartó neve maximum 255 karakter lehet"
+      },
+      "contactPersonEmail": {
+        "invalid": "Kérem adjon meg egy érvényes email címet",
+        "maxLength": "A kapcsolattartó email címe maximum 255 karakter lehet"
+      },
+      "contactPersonPhone": {
+        "invalid": "Kérem adjon meg egy érvényes telefonszámot",
+        "maxLength": "A kapcsolattartó telefonszáma maximum 50 karakter lehet"
       },
       "notes": {
         "maxLength": "A megjegyzések maximum 1000 karakter lehet"

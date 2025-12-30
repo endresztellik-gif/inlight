@@ -712,6 +712,9 @@
         "invalid": "Please enter a valid phone number",
         "maxLength": "Phone number must be at most 50 characters"
       },
+      "company": {
+        "maxLength": "Company name must be at most 255 characters"
+      },
       "address": {
         "maxLength": "Address must be at most 500 characters"
       },
@@ -719,8 +722,16 @@
         "invalid": "Tax number must be in format XXXXXXXX-X-XX",
         "maxLength": "Tax number must be at most 50 characters"
       },
-      "contactPerson": {
+      "contactPersonName": {
         "maxLength": "Contact person name must be at most 255 characters"
+      },
+      "contactPersonEmail": {
+        "invalid": "Please enter a valid email address",
+        "maxLength": "Contact person email must be at most 255 characters"
+      },
+      "contactPersonPhone": {
+        "invalid": "Please enter a valid phone number",
+        "maxLength": "Contact person phone must be at most 50 characters"
       },
       "notes": {
         "maxLength": "Notes must be at most 1000 characters"

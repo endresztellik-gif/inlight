@@ -2,14 +2,15 @@ import { z } from 'zod'
 
 /**
  * Client form validation schema
- * 
+ *
  * Validates client information including:
  * - Name (required)
+ * - Company name (optional)
  * - Email (required, valid email format)
  * - Phone (required, international format)
  * - Tax number (optional, Hungarian format: XXXXXXXX-X-XX)
  * - Address (optional)
- * - Contact person (optional)
+ * - Contact person details (optional - name, email, phone)
  * - Notes (optional)
  */
 export const clientSchema = z.object({
@@ -32,6 +33,11 @@ export const clientSchema = z.object({
     .max(50, 'validation.client.phone.maxLength'),
 
   // Optional fields
+  company: z.string()
+    .max(255, 'validation.client.company.maxLength')
+    .optional()
+    .or(z.literal('')),
+
   address: z.string()
     .max(500, 'validation.client.address.maxLength')
     .optional()
@@ -46,8 +52,23 @@ export const clientSchema = z.object({
     .optional()
     .or(z.literal('')),
 
-  contact_person: z.string()
-    .max(255, 'validation.client.contactPerson.maxLength')
+  contact_person_name: z.string()
+    .max(255, 'validation.client.contactPersonName.maxLength')
+    .optional()
+    .or(z.literal('')),
+
+  contact_person_email: z.string()
+    .email('validation.client.contactPersonEmail.invalid')
+    .max(255, 'validation.client.contactPersonEmail.maxLength')
+    .optional()
+    .or(z.literal('')),
+
+  contact_person_phone: z.string()
+    .regex(
+      /^([+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]*)?$/,
+      'validation.client.contactPersonPhone.invalid'
+    )
+    .max(50, 'validation.client.contactPersonPhone.maxLength')
     .optional()
     .or(z.literal('')),
 
