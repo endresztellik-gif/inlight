@@ -695,5 +695,138 @@
   "language": {
     "english": "English",
     "hungarian": "Magyar"
+  },
+  "validation": {
+    "client": {
+      "name": {
+        "required": "Client name is required",
+        "maxLength": "Client name must be at most 255 characters"
+      },
+      "email": {
+        "required": "Email is required",
+        "invalid": "Please enter a valid email address",
+        "maxLength": "Email must be at most 255 characters"
+      },
+      "phone": {
+        "required": "Phone number is required",
+        "invalid": "Please enter a valid phone number",
+        "maxLength": "Phone number must be at most 50 characters"
+      },
+      "address": {
+        "maxLength": "Address must be at most 500 characters"
+      },
+      "taxNumber": {
+        "invalid": "Tax number must be in format XXXXXXXX-X-XX",
+        "maxLength": "Tax number must be at most 50 characters"
+      },
+      "contactPerson": {
+        "maxLength": "Contact person name must be at most 255 characters"
+      },
+      "notes": {
+        "maxLength": "Notes must be at most 1000 characters"
+      }
+    },
+    "category": {
+      "name": {
+        "required": "Category name is required",
+        "maxLength": "Category name must be at most 100 characters"
+      },
+      "description": {
+        "maxLength": "Description must be at most 500 characters"
+      }
+    },
+    "product": {
+      "name": {
+        "required": "Product name is required",
+        "maxLength": "Product name must be at most 255 characters"
+      },
+      "serialNumber": {
+        "required": "Serial number is required",
+        "invalid": "Serial number can only contain letters, numbers, dashes and underscores",
+        "maxLength": "Serial number must be at most 100 characters"
+      },
+      "category": {
+        "required": "Please select a category"
+      },
+      "dailyRate": {
+        "positive": "Daily rate must be greater than 0",
+        "maxValue": "Daily rate must be less than 1,000,000"
+      },
+      "availableQuantity": {
+        "integer": "Available quantity must be a whole number",
+        "nonNegative": "Available quantity cannot be negative",
+        "exceedsTotal": "Available quantity cannot exceed total quantity"
+      },
+      "totalQuantity": {
+        "integer": "Total quantity must be a whole number",
+        "positive": "Total quantity must be at least 1"
+      },
+      "description": {
+        "maxLength": "Description must be at most 1000 characters"
+      },
+      "descriptionHu": {
+        "maxLength": "Hungarian description must be at most 1000 characters"
+      }
+    },
+    "rental": {
+      "client": {
+        "required": "Please select a client"
+      },
+      "projectName": {
+        "required": "Project name is required",
+        "maxLength": "Project name must be at most 255 characters"
+      },
+      "startDate": {
+        "required": "Start date is required",
+        "invalid": "Please enter a valid date (YYYY-MM-DD)"
+      },
+      "endDate": {
+        "required": "End date is required",
+        "invalid": "Please enter a valid date (YYYY-MM-DD)",
+        "beforeStart": "End date must be on or after start date"
+      },
+      "notes": {
+        "maxLength": "Notes must be at most 1000 characters"
+      },
+      "items": {
+        "required": "At least one rental item is required"
+      },
+      "item": {
+        "productId": {
+          "required": "Please select a product"
+        },
+        "quantity": {
+          "integer": "Quantity must be a whole number",
+          "positive": "Quantity must be at least 1"
+        },
+        "dailyRate": {
+          "positive": "Daily rate must be greater than 0"
+        },
+        "days": {
+          "integer": "Days must be a whole number",
+          "positive": "Rental period must be at least 1 day"
+        }
+      }
+    },
+    "subrental": {
+      "supplierName": {
+        "required": "Supplier name is required",
+        "maxLength": "Supplier name must be at most 255 characters"
+      },
+      "supplierContact": {
+        "maxLength": "Supplier contact must be at most 255 characters"
+      },
+      "supplierNotes": {
+        "maxLength": "Supplier notes must be at most 1000 characters"
+      },
+      "items": {
+        "required": "At least one subrental item is required"
+      },
+      "item": {
+        "purchasePrice": {
+          "nonNegative": "Purchase price cannot be negative"
+        }
+      }
+    }
   }
 }

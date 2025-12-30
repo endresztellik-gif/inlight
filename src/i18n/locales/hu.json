@@ -694,5 +694,138 @@
   "language": {
     "english": "English",
     "hungarian": "Magyar"
+  },
+  "validation": {
+    "client": {
+      "name": {
+        "required": "Az ügyfél neve kötelező",
+        "maxLength": "Az ügyfél neve maximum 255 karakter lehet"
+      },
+      "email": {
+        "required": "Az email cím kötelező",
+        "invalid": "Kérem adjon meg egy érvényes email címet",
+        "maxLength": "Az email cím maximum 255 karakter lehet"
+      },
+      "phone": {
+        "required": "A telefonszám kötelező",
+        "invalid": "Kérem adjon meg egy érvényes telefonszámot",
+        "maxLength": "A telefonszám maximum 50 karakter lehet"
+      },
+      "address": {
+        "maxLength": "A cím maximum 500 karakter lehet"
+      },
+      "taxNumber": {
+        "invalid": "Az adószám formátuma: XXXXXXXX-X-XX",
+        "maxLength": "Az adószám maximum 50 karakter lehet"
+      },
+      "contactPerson": {
+        "maxLength": "A kapcsolattartó neve maximum 255 karakter lehet"
+      },
+      "notes": {
+        "maxLength": "A megjegyzések maximum 1000 karakter lehet"
+      }
+    },
+    "category": {
+      "name": {
+        "required": "A kategória neve kötelező",
+        "maxLength": "A kategória neve maximum 100 karakter lehet"
+      },
+      "description": {
+        "maxLength": "A leírás maximum 500 karakter lehet"
+      }
+    },
+    "product": {
+      "name": {
+        "required": "A termék neve kötelező",
+        "maxLength": "A termék neve maximum 255 karakter lehet"
+      },
+      "serialNumber": {
+        "required": "A sorozatszám kötelező",
+        "invalid": "A sorozatszám csak betűket, számokat, kötőjeleket és aláhúzásokat tartalmazhat",
+        "maxLength": "A sorozatszám maximum 100 karakter lehet"
+      },
+      "category": {
+        "required": "Kérem válasszon kategóriát"
+      },
+      "dailyRate": {
+        "positive": "A napi díjnak nagyobbnak kell lennie 0-nál",
+        "maxValue": "A napi díj maximum 1 000 000 lehet"
+      },
+      "availableQuantity": {
+        "integer": "Az elérhető mennyiségnek egész számnak kell lennie",
+        "nonNegative": "Az elérhető mennyiség nem lehet negatív",
+        "exceedsTotal": "Az elérhető mennyiség nem haladhatja meg a teljes mennyiséget"
+      },
+      "totalQuantity": {
+        "integer": "A teljes mennyiségnek egész számnak kell lennie",
+        "positive": "A teljes mennyiségnek legalább 1-nek kell lennie"
+      },
+      "description": {
+        "maxLength": "A leírás maximum 1000 karakter lehet"
+      },
+      "descriptionHu": {
+        "maxLength": "A magyar leírás maximum 1000 karakter lehet"
+      }
+    },
+    "rental": {
+      "client": {
+        "required": "Kérem válasszon ügyfelet"
+      },
+      "projectName": {
+        "required": "A projekt neve kötelező",
+        "maxLength": "A projekt neve maximum 255 karakter lehet"
+      },
+      "startDate": {
+        "required": "A kezdő dátum kötelező",
+        "invalid": "Kérem adjon meg érvényes dátumot (ÉÉÉÉ-HH-NN)"
+      },
+      "endDate": {
+        "required": "A befejező dátum kötelező",
+        "invalid": "Kérem adjon meg érvényes dátumot (ÉÉÉÉ-HH-NN)",
+        "beforeStart": "A befejező dátumnak a kezdő dátummal egyenlőnek vagy későbbinek kell lennie"
+      },
+      "notes": {
+        "maxLength": "A megjegyzések maximum 1000 karakter lehet"
+      },
+      "items": {
+        "required": "Legalább egy bérlési tétel szükséges"
+      },
+      "item": {
+        "productId": {
+          "required": "Kérem válasszon terméket"
+        },
+        "quantity": {
+          "integer": "A mennyiségnek egész számnak kell lennie",
+          "positive": "A mennyiségnek legalább 1-nek kell lennie"
+        },
+        "dailyRate": {
+          "positive": "A napi díjnak nagyobbnak kell lennie 0-nál"
+        },
+        "days": {
+          "integer": "A napok számának egész számnak kell lennie",
+          "positive": "A bérlési időszaknak legalább 1 napnak kell lennie"
+        }
+      }
+    },
+    "subrental": {
+      "supplierName": {
+        "required": "A beszállító neve kötelező",
+        "maxLength": "A beszállító neve maximum 255 karakter lehet"
+      },
+      "supplierContact": {
+        "maxLength": "A beszállító elérhetősége maximum 255 karakter lehet"
+      },
+      "supplierNotes": {
+        "maxLength": "A beszállítói megjegyzések maximum 1000 karakter lehet"
+      },
+      "items": {
+        "required": "Legalább egy albérleti tétel szükséges"
+      },
+      "item": {
+        "purchasePrice": {
+          "nonNegative": "A beszerzési ár nem lehet negatív"
+        }
+      }
+    }
   }
 }
