@@ -12,76 +12,15 @@ import {
   User,
   Package,
   DollarSign,
-  Save
+  Save,
+  Loader2,
+  AlertCircle
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-
-// Mock data - clients
-const clients = [
-  { id: '1', name: 'Budapest Film Studio', email: 'contact@budapestfilm.hu' },
-  { id: '2', name: 'Creative Vision Ltd', email: 'info@creativevision.hu' },
-  { id: '3', name: 'Horizon Productions', email: 'hello@horizonprod.com' },
-  { id: '4', name: 'Skyline Media', email: 'contact@skylinemedia.hu' },
-  { id: '5', name: 'Indie Collective', email: 'team@indiecollective.hu' }
-]
-
-// Mock data - products
-const products = [
-  {
-    id: '1',
-    name: 'ARRI Alexa Mini LF',
-    category: 'cameras',
-    dailyRate: 450,
-    weeklyRate: 2500,
-    stock: 2,
-    icon: '📹'
-  },
-  {
-    id: '2',
-    name: 'Sony FX9',
-    category: 'cameras',
-    dailyRate: 280,
-    weeklyRate: 1500,
-    stock: 3,
-    icon: '📹'
-  },
-  {
-    id: '3',
-    name: 'Canon CN-E 35mm T1.5',
-    category: 'lenses',
-    dailyRate: 80,
-    weeklyRate: 400,
-    stock: 4,
-    icon: '🎥'
-  },
-  {
-    id: '4',
-    name: 'ARRI SkyPanel S60-C',
-    category: 'lighting',
-    dailyRate: 65,
-    weeklyRate: 350,
-    stock: 6,
-    icon: '💡'
-  },
-  {
-    id: '5',
-    name: 'Sennheiser MKH 416',
-    category: 'audio',
-    dailyRate: 35,
-    weeklyRate: 180,
-    stock: 8,
-    icon: '🎤'
-  },
-  {
-    id: '6',
-    name: 'Aputure 600d Pro',
-    category: 'lighting',
-    dailyRate: 95,
-    weeklyRate: 500,
-    stock: 4,
-    icon: '💡'
-  }
-]
+import { useAuth } from '@/contexts/AuthContext'
+import { useClients } from '@/hooks/api/useClients'
+import { useAvailableProducts } from '@/hooks/api/useProducts'
+import { useCreateRental } from '@/hooks/api/useRentals'
 
 interface RentalItem {
   productId: string
@@ -95,6 +34,12 @@ interface RentalItem {
 export function NewRental() {
   const navigate = useNavigate()
   const { t } = useTranslation()
+  const { user } = useAuth()
+
+  // Fetch data
+  const { data: clients, isLoading: clientsLoading } = useClients()
+  const { data: products, isLoading: productsLoading } = useAvailableProducts()
+  const createRental = useCreateRental()
 
   // Form state
   const [selectedClientId, setSelectedClientId] = useState('')
@@ -108,10 +53,11 @@ export function NewRental() {
   // Financial
   const [discount, setDiscount] = useState(0)
   const [notes, setNotes] = useState('')
+  const [error, setError] = useState<string | null>(null)
 
-  const selectedClient = clients.find(c => c.id === selectedClientId)
+  const selectedClient = clients?.find(c => c.id === selectedClientId)
 
-  const filteredProducts = products.filter(p =>
+  const filteredProducts = (products || []).filter(p =>
     p.name.toLowerCase().includes(productSearch.toLowerCase())
   )
 
@@ -125,12 +71,12 @@ export function NewRental() {
 
   const days = calculateDays()
 
-  const addItem = (product: typeof products[0]) => {
+  const addItem = (product: NonNullable<typeof products>[0]) => {
     const existingItem = items.find(i => i.productId === product.id)
     if (existingItem) {
       setItems(items.map(i =>
         i.productId === product.id
-          ? { ...i, quantity: i.quantity + 1, days, subtotal: (i.quantity + 1) * product.dailyRate * days }
+          ? { ...i, quantity: i.quantity + 1, days, subtotal: (i.quantity + 1) * product.daily_rate * days }
           : i
       ))
     } else {
@@ -138,12 +84,13 @@ export function NewRental() {
         productId: product.id,
         productName: product.name,
         quantity: 1,
-        dailyRate: product.dailyRate,
+        dailyRate: product.daily_rate,
         days,
-        subtotal: product.dailyRate * days
+        subtotal: product.daily_rate * days
       }])
     }
     setProductSearch('')
+    setShowProductPicker(false)
   }
 
   const removeItem = (productId: string) => {
@@ -164,22 +111,47 @@ export function NewRental() {
   const tax = (subtotal - discountAmount) * taxRate
   const total = subtotal - discountAmount + tax
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Save to Supabase
-    console.log('Creating rental:', {
-      clientId: selectedClientId,
-      projectName,
-      startDate,
-      endDate,
-      items,
-      discount,
-      notes,
-      subtotal,
-      tax,
-      total
-    })
-    navigate('/rentals')
+    setError(null)
+
+    if (!user) {
+      setError('You must be logged in to create a rental')
+      return
+    }
+
+    if (items.length === 0) {
+      setError('Please add at least one item to the rental')
+      return
+    }
+
+    try {
+      await createRental.mutateAsync({
+        rental: {
+          client_id: selectedClientId,
+          project_name: projectName,
+          start_date: startDate,
+          end_date: endDate,
+          notes: notes || null,
+          final_currency: 'EUR',
+          final_total: total,
+          status: 'active',
+          created_by: user.id,
+        },
+        items: items.map(item => ({
+          product_id: item.productId,
+          quantity: item.quantity,
+          daily_rate: item.dailyRate,
+          days: item.days,
+          subtotal: item.subtotal,
+        })),
+      })
+
+      navigate('/rentals')
+    } catch (err) {
+      console.error('Failed to create rental:', err)
+      setError(err instanceof Error ? err.message : 'Failed to create rental')
+    }
   }
 
   return (
@@ -198,6 +170,19 @@ export function NewRental() {
           </div>
         </div>
       </div>
+
+      {/* Error Alert */}
+      {error && (
+        <Card cinematic className="border-destructive/50">
+          <CardContent className="p-4 flex items-center gap-3 text-destructive">
+            <AlertCircle className="h-5 w-5" />
+            <div>
+              <p className="font-medium">Failed to create rental</p>
+              <p className="text-sm opacity-80">{error}</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <form onSubmit={handleSubmit}>
         <div className="grid gap-6 lg:grid-cols-3">
@@ -222,9 +207,10 @@ export function NewRental() {
                     value={selectedClientId}
                     onChange={(e) => setSelectedClientId(e.target.value)}
                     className="mt-2 w-full h-11 px-4 rounded-md border border-border bg-background text-foreground font-medium"
+                    disabled={clientsLoading}
                   >
-                    <option value="">{t('newRental.fields.clientPlaceholder')}</option>
-                    {clients.map(client => (
+                    <option value="">{clientsLoading ? 'Loading clients...' : t('newRental.fields.clientPlaceholder')}</option>
+                    {clients?.map(client => (
                       <option key={client.id} value={client.id}>
                         {client.name}
                       </option>
@@ -232,7 +218,7 @@ export function NewRental() {
                   </select>
                   {selectedClient && (
                     <p className="mt-2 text-sm text-muted-foreground">
-                      {selectedClient.email}
+                      {selectedClient.email || ''}
                     </p>
                   )}
                 </div>
@@ -333,29 +319,36 @@ export function NewRental() {
                       />
                     </div>
                     <div className="grid gap-2 max-h-64 overflow-y-auto">
-                      {filteredProducts.map(product => (
-                        <button
-                          key={product.id}
-                          type="button"
-                          onClick={() => addItem(product)}
-                          className="flex items-center justify-between p-3 rounded-md border border-border bg-card hover:bg-secondary/50 transition-colors text-left"
-                        >
-                          <div className="flex items-center gap-3">
-                            <span className="text-2xl">{product.icon}</span>
+                      {productsLoading ? (
+                        <div className="flex items-center justify-center py-8">
+                          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                        </div>
+                      ) : filteredProducts.length === 0 ? (
+                        <div className="text-center py-8 text-muted-foreground">
+                          <p className="text-sm">No products found</p>
+                        </div>
+                      ) : (
+                        filteredProducts.map(product => (
+                          <button
+                            key={product.id}
+                            type="button"
+                            onClick={() => addItem(product)}
+                            className="flex items-center justify-between p-3 rounded-md border border-border bg-card hover:bg-secondary/50 transition-colors text-left"
+                          >
                             <div>
                               <p className="font-medium">{product.name}</p>
                               <p className="text-xs text-muted-foreground">
-                                {product.stock} {t('newRental.equipment.inStock')}
+                                {product.available_quantity} {t('newRental.equipment.inStock')}
                               </p>
                             </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-mono font-semibold text-primary">
-                              €{product.dailyRate}/{t('newRental.fields.day')}
-                            </p>
-                          </div>
-                        </button>
-                      ))}
+                            <div className="text-right">
+                              <p className="font-mono font-semibold text-primary">
+                                €{product.daily_rate}/{t('newRental.fields.day')}
+                              </p>
+                            </div>
+                          </button>
+                        ))
+                      )}
                     </div>
                   </div>
                 )}
@@ -497,10 +490,19 @@ export function NewRental() {
                   type="submit"
                   size="lg"
                   className="w-full gap-2"
-                  disabled={!selectedClientId || !projectName || !startDate || !endDate || items.length === 0}
+                  disabled={!selectedClientId || !projectName || !startDate || !endDate || items.length === 0 || createRental.isPending}
                 >
-                  <Save className="h-5 w-5" />
-                  {t('newRental.financial.submit')}
+                  {createRental.isPending ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-5 w-5" />
+                      {t('newRental.financial.submit')}
+                    </>
+                  )}
                 </Button>
               </CardContent>
             </Card>

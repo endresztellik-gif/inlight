@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,78 +16,11 @@ import {
   Download,
   Edit,
   Trash2,
-  RotateCcw
+  RotateCcw,
+  Loader2
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-
-// Mock data
-const rentalData = {
-  id: 'R-20250128-0012',
-  rentalNumber: 'R-20250128-0012',
-  status: 'active',
-  client: {
-    name: 'Budapest Film Studio',
-    email: 'contact@budapestfilm.hu',
-    phone: '+36 1 234 5678',
-    address: '1052 Budapest, Váci utca 45.'
-  },
-  project: {
-    name: 'Winter Campaign 2025',
-    description: 'High-end commercial production for winter clothing brand'
-  },
-  dates: {
-    start: '2025-01-15',
-    end: '2025-02-05',
-    created: '2025-01-10',
-    daysLeft: 7
-  },
-  financial: {
-    subtotal: 2250,
-    discount: 0,
-    tax: 200,
-    total: 2450,
-    currency: 'EUR',
-    notes: 'Payment on delivery. 10% discount for extended rental.'
-  },
-  items: [
-    {
-      id: '1',
-      name: 'ARRI Alexa Mini LF',
-      category: 'Camera',
-      serialNumber: 'ARRI-ALX-2023-089',
-      quantity: 1,
-      dailyRate: 450,
-      days: 5,
-      subtotal: 2250,
-      condition: 'excellent',
-      returned: false
-    },
-    {
-      id: '2',
-      name: 'Canon CN-E 35mm T1.5',
-      category: 'Lens',
-      serialNumber: 'CN-35-2022-145',
-      quantity: 1,
-      dailyRate: 80,
-      days: 5,
-      subtotal: 400,
-      condition: 'good',
-      returned: false
-    },
-    {
-      id: '3',
-      name: 'DJI Ronin 4D',
-      category: 'Gimbal',
-      serialNumber: 'DJI-RON-2023-234',
-      quantity: 1,
-      dailyRate: 120,
-      days: 5,
-      subtotal: 600,
-      condition: 'excellent',
-      returned: false
-    }
-  ]
-}
+import { useRental, useProcessReturn } from '@/hooks/api/useRentals'
 
 const statusConfig = {
   active: { color: 'text-primary bg-primary/20 border-primary/30' },
@@ -97,9 +30,95 @@ const statusConfig = {
 }
 
 export function RentalDetail() {
+  const { id } = useParams<{ id: string }>()
   const { t } = useTranslation()
-  const [rental] = useState(rentalData)
+
+  const { data: rental, isLoading, error } = useRental(id)
+  const processReturn = useProcessReturn()
+
   const [returnMode, setReturnMode] = useState(false)
+  const [returnItems, setReturnItems] = useState<Record<string, { condition: string; returned: boolean }>>({})
+
+  // Calculate days left
+  const calculateDaysLeft = (endDate: string) => {
+    const today = new Date()
+    const end = new Date(endDate)
+    const diffTime = end.getTime() - today.getTime()
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    return diffDays
+  }
+
+  // Handle return item state
+  const handleReturnChange = (itemId: string, field: 'condition' | 'returned', value: string | boolean) => {
+    setReturnItems(prev => ({
+      ...prev,
+      [itemId]: {
+        ...prev[itemId],
+        condition: field === 'condition' ? (value as string) : (prev[itemId]?.condition || 'good'),
+        returned: field === 'returned' ? (value as boolean) : (prev[itemId]?.returned || false),
+      }
+    }))
+  }
+
+  // Complete return process
+  const handleCompleteReturn = async () => {
+    if (!rental) return
+
+    try {
+      const items = rental.rental_items.map(item => ({
+        id: item.id,
+        condition_on_return: returnItems[item.id]?.condition || 'good',
+        is_returned: returnItems[item.id]?.returned || false,
+      }))
+
+      await processReturn.mutateAsync({
+        rentalId: rental.id,
+        items,
+      })
+
+      setReturnMode(false)
+      setReturnItems({})
+    } catch (err) {
+      console.error('Failed to process return:', err)
+    }
+  }
+
+  // Loading State
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  // Error State
+  if (error || !rental) {
+    return (
+      <div className="p-8">
+        <Card cinematic className="border-destructive/50">
+          <CardContent className="p-8 flex items-center gap-4 text-destructive">
+            <AlertCircle className="h-6 w-6" />
+            <div>
+              <p className="font-medium">Failed to load rental</p>
+              <p className="text-sm opacity-80">{error?.message || 'Rental not found'}</p>
+            </div>
+          </CardContent>
+        </Card>
+        <div className="mt-6">
+          <Button variant="outline" asChild>
+            <Link to="/rentals">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Rentals
+            </Link>
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  const status = rental.status || 'draft'
+  const daysLeft = calculateDaysLeft(rental.end_date)
 
   return (
     <div className="space-y-6 p-8 animate-in fade-in duration-500">
@@ -112,14 +131,14 @@ export function RentalDetail() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-4xl font-bold tracking-tight font-mono">{rental.rentalNumber}</h1>
-            <p className="text-muted-foreground mt-1 text-sm">{rental.project.name}</p>
+            <h1 className="text-4xl font-bold tracking-tight font-mono">{rental.rental_number}</h1>
+            <p className="text-muted-foreground mt-1 text-sm">{rental.project_name}</p>
           </div>
           <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium border ${
-            statusConfig[rental.status as keyof typeof statusConfig].color
+            statusConfig[status as keyof typeof statusConfig].color
           }`}>
             <CheckCircle className="h-4 w-4" />
-            {t(`rentals.status.${rental.status}`)}
+            {t(`rentals.status.${status}`)}
           </span>
         </div>
 
@@ -132,7 +151,7 @@ export function RentalDetail() {
             <Edit className="h-5 w-5" />
             {t('rentalDetail.edit')}
           </Button>
-          {rental.status === 'active' && (
+          {status === 'active' && (
             <Button
               size="lg"
               className="gap-2"
@@ -158,21 +177,30 @@ export function RentalDetail() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <p className="text-2xl font-bold">{rental.client.name}</p>
+                <p className="text-2xl font-bold">{rental.clients.name}</p>
+                {rental.clients.company && (
+                  <p className="text-sm text-muted-foreground mt-1">{rental.clients.company}</p>
+                )}
               </div>
               <div className="grid gap-3">
-                <div className="flex items-center gap-3 text-sm">
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                  <span>{rental.client.email}</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-mono">{rental.client.phone}</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span>{rental.client.address}</span>
-                </div>
+                {rental.clients.email && (
+                  <div className="flex items-center gap-3 text-sm">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <span>{rental.clients.email}</span>
+                  </div>
+                )}
+                {rental.clients.phone && (
+                  <div className="flex items-center gap-3 text-sm">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-mono">{rental.clients.phone}</span>
+                  </div>
+                )}
+                {rental.clients.address && (
+                  <div className="flex items-center gap-3 text-sm">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <span>{rental.clients.address}</span>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -183,7 +211,7 @@ export function RentalDetail() {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-xl flex items-center gap-2">
                   <Package className="h-5 w-5 text-primary" />
-                  {t('rentalDetail.rentalItems')} ({rental.items.length})
+                  {t('rentalDetail.rentalItems')} ({rental.rental_items.length})
                 </CardTitle>
                 {returnMode && (
                   <span className="text-sm text-amber-400 flex items-center gap-1.5">
@@ -209,22 +237,22 @@ export function RentalDetail() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
-                    {rental.items.map((item) => (
+                    {rental.rental_items.map((item) => (
                       <tr key={item.id} className="hover:bg-secondary/50 transition-colors">
                         <td className="p-4">
-                          <div className="font-medium">{item.name}</div>
-                          <div className="text-xs text-muted-foreground">{item.category}</div>
+                          <div className="font-medium">{item.products.name}</div>
+                          <div className="text-xs text-muted-foreground">{item.products.category_id}</div>
                         </td>
                         <td className="p-4">
                           <span className="font-mono text-xs text-muted-foreground">
-                            {item.serialNumber}
+                            {item.products.serial_number}
                           </span>
                         </td>
                         <td className="p-4">
                           <span className="font-mono">{item.quantity}</span>
                         </td>
                         <td className="p-4">
-                          <span className="font-mono text-sm">€{item.dailyRate}</span>
+                          <span className="font-mono text-sm">€{item.daily_rate}</span>
                         </td>
                         <td className="p-4">
                           <span className="font-mono">{item.days}</span>
@@ -236,7 +264,11 @@ export function RentalDetail() {
                         </td>
                         {returnMode && (
                           <td className="p-4">
-                            <select className="bg-input border border-border rounded px-2 py-1 text-sm">
+                            <select
+                              className="bg-input border border-border rounded px-2 py-1 text-sm"
+                              value={returnItems[item.id]?.condition || 'good'}
+                              onChange={(e) => handleReturnChange(item.id, 'condition', e.target.value)}
+                            >
                               <option value="excellent">{t('rentalDetail.conditions.excellent')}</option>
                               <option value="good">{t('rentalDetail.conditions.good')}</option>
                               <option value="fair">{t('rentalDetail.conditions.fair')}</option>
@@ -249,6 +281,8 @@ export function RentalDetail() {
                             <input
                               type="checkbox"
                               className="w-5 h-5 rounded border-border text-primary focus:ring-primary"
+                              checked={returnItems[item.id]?.returned || false}
+                              onChange={(e) => handleReturnChange(item.id, 'returned', e.target.checked)}
                             />
                           </td>
                         )}
@@ -271,12 +305,21 @@ export function RentalDetail() {
                     </p>
                   </div>
                   <div className="flex gap-3">
-                    <Button variant="outline" onClick={() => setReturnMode(false)}>
+                    <Button variant="outline" onClick={() => setReturnMode(false)} disabled={processReturn.isPending}>
                       {t('rentalDetail.cancel')}
                     </Button>
-                    <Button className="gap-2">
-                      <CheckCircle className="h-4 w-4" />
-                      {t('rentalDetail.completeReturn')}
+                    <Button className="gap-2" onClick={handleCompleteReturn} disabled={processReturn.isPending}>
+                      {processReturn.isPending ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle className="h-4 w-4" />
+                          {t('rentalDetail.completeReturn')}
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -298,18 +341,20 @@ export function RentalDetail() {
             <CardContent className="space-y-4">
               <div>
                 <p className="text-xs text-muted-foreground uppercase tracking-wider">{t('rentalDetail.startDate')}</p>
-                <p className="font-mono text-lg font-semibold mt-1">{rental.dates.start}</p>
+                <p className="font-mono text-lg font-semibold mt-1">{new Date(rental.start_date).toLocaleDateString('en-GB')}</p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground uppercase tracking-wider">{t('rentalDetail.endDate')}</p>
-                <p className="font-mono text-lg font-semibold mt-1">{rental.dates.end}</p>
+                <p className="font-mono text-lg font-semibold mt-1">{new Date(rental.end_date).toLocaleDateString('en-GB')}</p>
               </div>
-              <div className="pt-3 border-t border-border">
-                <p className="text-sm text-muted-foreground">{t('rentalDetail.timeRemaining')}</p>
-                <p className="text-2xl font-bold text-primary mt-1">
-                  {rental.dates.daysLeft} {t('rentalDetail.days')}
-                </p>
-              </div>
+              {status === 'active' && daysLeft > 0 && (
+                <div className="pt-3 border-t border-border">
+                  <p className="text-sm text-muted-foreground">{t('rentalDetail.timeRemaining')}</p>
+                  <p className="text-2xl font-bold text-primary mt-1">
+                    {daysLeft} {t('rentalDetail.days')}
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -322,29 +367,19 @@ export function RentalDetail() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{t('newRental.financial.subtotal')}</span>
-                <span className="font-mono">€{rental.financial.subtotal}</span>
-              </div>
-              {rental.financial.discount > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{t('newRental.financial.discount')}</span>
-                  <span className="font-mono text-primary">-€{rental.financial.discount}</span>
-                </div>
+              {rental.final_total && (
+                <>
+                  <div className="pt-3 border-t border-border flex justify-between">
+                    <span className="font-semibold">{t('newRental.financial.total')}</span>
+                    <span className="text-2xl font-bold font-mono text-primary">
+                      {rental.final_currency || '€'}{rental.final_total.toFixed(2)}
+                    </span>
+                  </div>
+                </>
               )}
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{t('newRental.financial.tax')}</span>
-                <span className="font-mono">€{rental.financial.tax}</span>
-              </div>
-              <div className="pt-3 border-t border-border flex justify-between">
-                <span className="font-semibold">{t('newRental.financial.total')}</span>
-                <span className="text-2xl font-bold font-mono text-primary">
-                  €{rental.financial.total}
-                </span>
-              </div>
-              {rental.financial.notes && (
+              {rental.notes && (
                 <div className="pt-3 border-t border-border">
-                  <p className="text-xs text-muted-foreground">{rental.financial.notes}</p>
+                  <p className="text-xs text-muted-foreground">{rental.notes}</p>
                 </div>
               )}
             </CardContent>

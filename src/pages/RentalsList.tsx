@@ -15,79 +15,11 @@ import {
   AlertCircle,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  Loader2
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-
-// Mock data
-const rentals = [
-  {
-    id: 'R-20250128-0012',
-    client: 'Budapest Film Studio',
-    project: 'Winter Campaign 2025',
-    startDate: '2025-01-15',
-    endDate: '2025-02-05',
-    total: '€2,450',
-    status: 'active',
-    itemCount: 8,
-    daysLeft: 7
-  },
-  {
-    id: 'R-20250127-0008',
-    client: 'Creative Vision Ltd',
-    project: 'Product Showcase',
-    startDate: '2025-01-20',
-    endDate: '2025-02-03',
-    total: '€1,890',
-    status: 'active',
-    itemCount: 5,
-    daysLeft: 5
-  },
-  {
-    id: 'R-20250126-0015',
-    client: 'Horizon Productions',
-    project: 'Documentary Series',
-    startDate: '2025-01-10',
-    endDate: '2025-01-30',
-    total: '€3,200',
-    status: 'pending_return',
-    itemCount: 12,
-    daysLeft: 1
-  },
-  {
-    id: 'R-20250125-0003',
-    client: 'Skyline Media',
-    project: 'Corporate Video',
-    startDate: '2025-01-05',
-    endDate: '2025-01-25',
-    total: '€980',
-    status: 'completed',
-    itemCount: 3,
-    daysLeft: -4
-  },
-  {
-    id: 'R-20250124-0009',
-    client: 'Indie Collective',
-    project: 'Short Film "Echoes"',
-    startDate: '2025-01-18',
-    endDate: '2025-02-10',
-    total: '€4,200',
-    status: 'active',
-    itemCount: 15,
-    daysLeft: 12
-  },
-  {
-    id: 'R-20250123-0001',
-    client: 'National Theater',
-    project: 'Stage Recording',
-    startDate: '2025-01-01',
-    endDate: '2025-01-20',
-    total: '€1,650',
-    status: 'cancelled',
-    itemCount: 7,
-    daysLeft: -9
-  }
-]
+import { useRentals, useRentalStats } from '@/hooks/api/useRentals'
 
 const statusConfig = {
   active: {
@@ -122,15 +54,29 @@ export function RentalsList() {
   const [statusFilter, setStatusFilter] = useState('all')
   const { t } = useTranslation()
 
-  const filteredRentals = rentals.filter(rental => {
-    const matchesSearch =
-      rental.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      rental.client.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      rental.project.toLowerCase().includes(searchQuery.toLowerCase())
+  // Fetch rentals and stats
+  const { data: rentals, isLoading } = useRentals(statusFilter)
+  const { data: stats } = useRentalStats()
 
-    const matchesStatus = statusFilter === 'all' || rental.status === statusFilter
+  // Calculate days left
+  const calculateDaysLeft = (endDate: string) => {
+    const today = new Date()
+    const end = new Date(endDate)
+    const diffTime = end.getTime() - today.getTime()
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    return diffDays
+  }
 
-    return matchesSearch && matchesStatus
+  // Filter rentals by search query
+  const filteredRentals = (rentals || []).filter(rental => {
+    if (!searchQuery) return true
+
+    const query = searchQuery.toLowerCase()
+    return (
+      rental.rental_number.toLowerCase().includes(query) ||
+      rental.clients.name.toLowerCase().includes(query) ||
+      rental.project_name.toLowerCase().includes(query)
+    )
   })
 
   return (
@@ -213,8 +159,8 @@ export function RentalsList() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">Active</p>
-                <p className="text-2xl font-bold font-mono mt-1">3</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">{t('rentals.stats.active')}</p>
+                <p className="text-2xl font-bold font-mono mt-1">{stats?.active || 0}</p>
               </div>
               <Package className="h-8 w-8 text-primary opacity-50" />
             </div>
@@ -224,8 +170,8 @@ export function RentalsList() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">Pending</p>
-                <p className="text-2xl font-bold font-mono mt-1">1</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">{t('rentals.stats.pending')}</p>
+                <p className="text-2xl font-bold font-mono mt-1">{stats?.pending || 0}</p>
               </div>
               <AlertCircle className="h-8 w-8 text-amber-400 opacity-50" />
             </div>
@@ -235,8 +181,8 @@ export function RentalsList() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">Completed</p>
-                <p className="text-2xl font-bold font-mono mt-1">1</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">{t('rentals.stats.completed')}</p>
+                <p className="text-2xl font-bold font-mono mt-1">{stats?.completed || 0}</p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-500 opacity-50" />
             </div>
@@ -246,8 +192,8 @@ export function RentalsList() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Value</p>
-                <p className="text-2xl font-bold font-mono mt-1">€14,370</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">{t('rentals.stats.totalValue')}</p>
+                <p className="text-2xl font-bold font-mono mt-1">€{stats?.totalValue.toFixed(0) || 0}</p>
               </div>
               <DollarSign className="h-8 w-8 text-primary opacity-50" />
             </div>
@@ -264,97 +210,101 @@ export function RentalsList() {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="border-b border-border">
-                <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground">
-                  <th className="p-4 font-medium">{t('rentals.table.rentalNumber')}</th>
-                  <th className="p-4 font-medium">{t('rentals.table.client')}</th>
-                  <th className="p-4 font-medium">{t('rentals.table.project')}</th>
-                  <th className="p-4 font-medium">{t('rentals.table.period')}</th>
-                  <th className="p-4 font-medium">{t('rentals.table.items')}</th>
-                  <th className="p-4 font-medium">{t('rentals.table.total')}</th>
-                  <th className="p-4 font-medium">{t('rentals.table.status')}</th>
-                  <th className="p-4 font-medium">{t('rentals.table.actions')}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {filteredRentals.map((rental, index) => {
-                  const StatusIcon = statusConfig[rental.status as keyof typeof statusConfig].icon
-                  return (
-                    <tr
-                      key={rental.id}
-                      className="hover:bg-secondary/50 transition-colors animate-in slide-in-from-bottom duration-300"
-                      style={{ animationDelay: `${index * 50}ms` }}
-                    >
-                      <td className="p-4">
-                        <span className="font-mono text-sm text-primary font-semibold">
-                          {rental.id}
-                        </span>
-                      </td>
-                      <td className="p-4">
-                        <div className="font-medium">{rental.client}</div>
-                      </td>
-                      <td className="p-4">
-                        <div className="text-sm text-muted-foreground max-w-xs truncate">
-                          {rental.project}
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center gap-1 text-sm">
-                          <Calendar className="h-3 w-3 text-muted-foreground" />
-                          <span className="font-mono text-xs">
-                            {rental.startDate} → {rental.endDate}
-                          </span>
-                        </div>
-                        {rental.status === 'active' && (
-                          <div className="text-xs text-muted-foreground mt-1">
-                            {rental.daysLeft} {t('rentals.table.daysLeft')}
-                          </div>
-                        )}
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center gap-1">
-                          <Package className="h-4 w-4 text-muted-foreground" />
-                          <span className="font-mono text-sm">{rental.itemCount}</span>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <span className="font-mono font-semibold text-primary">
-                          {rental.total}
-                        </span>
-                      </td>
-                      <td className="p-4">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border ${
-                          statusConfig[rental.status as keyof typeof statusConfig].color
-                        }`}>
-                          <StatusIcon className="h-3 w-3" />
-                          {t(`rentals.status.${rental.status}`)}
-                        </span>
-                      </td>
-                      <td className="p-4">
-                        <Button variant="ghost" size="sm" className="gap-1.5" asChild>
-                          <Link to={`/rentals/${rental.id}`}>
-                            <Eye className="h-4 w-4" />
-                            {t('rentals.table.view')}
-                          </Link>
-                        </Button>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          {filteredRentals.length === 0 && (
-            <div className="text-center py-16">
-              <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <p className="text-lg font-medium text-muted-foreground">{t('rentals.noResults.title')}</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                {t('rentals.noResults.subtitle')}
-              </p>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-16">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
+          ) : (
+            <>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="border-b border-border">
+                    <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground">
+                      <th className="p-4 font-medium">{t('rentals.table.rentalNumber')}</th>
+                      <th className="p-4 font-medium">{t('rentals.table.client')}</th>
+                      <th className="p-4 font-medium">{t('rentals.table.project')}</th>
+                      <th className="p-4 font-medium">{t('rentals.table.period')}</th>
+                      <th className="p-4 font-medium">{t('rentals.table.total')}</th>
+                      <th className="p-4 font-medium">{t('rentals.table.status')}</th>
+                      <th className="p-4 font-medium">{t('rentals.table.actions')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {filteredRentals.map((rental, index) => {
+                      const status = rental.status || 'draft'
+                      const StatusIcon = statusConfig[status as keyof typeof statusConfig].icon
+                      const daysLeft = calculateDaysLeft(rental.end_date)
+
+                      return (
+                        <tr
+                          key={rental.id}
+                          className="hover:bg-secondary/50 transition-colors animate-in slide-in-from-bottom duration-300"
+                          style={{ animationDelay: `${index * 50}ms` }}
+                        >
+                          <td className="p-4">
+                            <span className="font-mono text-sm text-primary font-semibold">
+                              {rental.rental_number}
+                            </span>
+                          </td>
+                          <td className="p-4">
+                            <div className="font-medium">{rental.clients.name}</div>
+                          </td>
+                          <td className="p-4">
+                            <div className="text-sm text-muted-foreground max-w-xs truncate">
+                              {rental.project_name}
+                            </div>
+                          </td>
+                          <td className="p-4">
+                            <div className="flex items-center gap-1 text-sm">
+                              <Calendar className="h-3 w-3 text-muted-foreground" />
+                              <span className="font-mono text-xs">
+                                {new Date(rental.start_date).toLocaleDateString('en-GB')} → {new Date(rental.end_date).toLocaleDateString('en-GB')}
+                              </span>
+                            </div>
+                            {status === 'active' && daysLeft > 0 && (
+                              <div className="text-xs text-muted-foreground mt-1">
+                                {daysLeft} {t('rentals.table.daysLeft')}
+                              </div>
+                            )}
+                          </td>
+                          <td className="p-4">
+                            <span className="font-mono font-semibold text-primary">
+                              {rental.final_currency || '€'}{rental.final_total?.toFixed(0) || 0}
+                            </span>
+                          </td>
+                          <td className="p-4">
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border ${
+                              statusConfig[status as keyof typeof statusConfig].color
+                            }`}>
+                              <StatusIcon className="h-3 w-3" />
+                              {t(`rentals.status.${status}`)}
+                            </span>
+                          </td>
+                          <td className="p-4">
+                            <Button variant="ghost" size="sm" className="gap-1.5" asChild>
+                              <Link to={`/rentals/${rental.id}`}>
+                                <Eye className="h-4 w-4" />
+                                {t('rentals.table.view')}
+                              </Link>
+                            </Button>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {filteredRentals.length === 0 && !isLoading && (
+                <div className="text-center py-16">
+                  <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+                  <p className="text-lg font-medium text-muted-foreground">{t('rentals.noResults.title')}</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {t('rentals.noResults.subtitle')}
+                  </p>
+                </div>
+              )}
+            </>
           )}
         </CardContent>
       </Card>
