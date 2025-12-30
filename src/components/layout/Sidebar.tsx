@@ -10,20 +10,30 @@ import {
   Moon,
   Sun,
   Languages,
-  Truck
+  Truck,
+  Folder,
+  ShieldCheck
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTheme } from '@/hooks/useTheme'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/AuthContext'
 
-const navigation = [
+const mainNavigation = [
   { key: 'dashboard', href: '/dashboard', icon: LayoutDashboard },
   { key: 'rentals', href: '/rentals', icon: Film },
   { key: 'subrentals', href: '/subrentals', icon: Truck },
   { key: 'clients', href: '/clients', icon: Users },
   { key: 'catalog', href: '/catalog', icon: Package },
   { key: 'reports', href: '/reports', icon: FileText },
+]
+
+const adminNavigation = [
+  { key: 'categories', href: '/admin/categories', icon: Folder },
+  { key: 'products', href: '/admin/products', icon: Package },
+]
+
+const settingsNavigation = [
   { key: 'settings', href: '/settings', icon: Settings },
 ]
 
@@ -73,8 +83,9 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 px-3 py-4">
-        {navigation.map((item) => {
+      <nav className="flex-1 space-y-1 px-3 py-4 overflow-y-auto">
+        {/* Main Navigation */}
+        {mainNavigation.map((item) => {
           const isActive = location.pathname === item.href
           return (
             <Link
@@ -92,6 +103,58 @@ export function Sidebar() {
             </Link>
           )
         })}
+
+        {/* Admin Section - Only for admin/super_admin */}
+        {(profile?.role === 'admin' || profile?.role === 'super_admin') && (
+          <div className="pt-4">
+            <div className="px-3 mb-2 flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-primary" />
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                {t('nav.admin')}
+              </span>
+            </div>
+            {adminNavigation.map((item) => {
+              const isActive = location.pathname.startsWith(item.href)
+              return (
+                <Link
+                  key={item.key}
+                  to={item.href}
+                  className={cn(
+                    "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all",
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                      : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                  )}
+                >
+                  <item.icon className="h-5 w-5" />
+                  <span>{t(`nav.${item.key}`)}</span>
+                </Link>
+              )
+            })}
+          </div>
+        )}
+
+        {/* Settings */}
+        <div className="pt-4 border-t border-border mt-4">
+          {settingsNavigation.map((item) => {
+            const isActive = location.pathname === item.href
+            return (
+              <Link
+                key={item.key}
+                to={item.href}
+                className={cn(
+                  "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all",
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                )}
+              >
+                <item.icon className="h-5 w-5" />
+                <span>{t(`nav.${item.key}`)}</span>
+              </Link>
+            )
+          })}
+        </div>
       </nav>
 
       {/* Theme toggle & User info */}

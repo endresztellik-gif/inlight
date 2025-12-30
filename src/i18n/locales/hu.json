@@ -10,7 +10,10 @@
     "clients": "Ügyfelek",
     "catalog": "Katalógus",
     "reports": "Jelentések",
-    "settings": "Beállítások"
+    "settings": "Beállítások",
+    "admin": "Adminisztráció",
+    "categories": "Kategóriák",
+    "products": "Termékek"
   },
   "dashboard": {
     "title": "Irányítópult",
@@ -407,6 +410,121 @@
     "noResults": {
       "title": "Nem található eszköz",
       "subtitle": "Próbálja módosítani a keresést vagy a kategória szűrőt"
+    }
+  },
+  "categories": {
+    "title": "Kategóriák",
+    "subtitle": "Termék kategóriák kezelése",
+    "newCategory": "Új Kategória",
+    "inactive": "Inaktív",
+    "products": "termékek",
+    "deleteConfirm": "Biztosan törölni szeretné a '{{name}}' kategóriát?",
+    "stats": {
+      "total": "Összes",
+      "active": "Aktív",
+      "totalProducts": "Összes Termék"
+    },
+    "search": "Keresés név vagy leírás alapján...",
+    "noResults": {
+      "title": "Nincs találat",
+      "subtitle": "Próbálja módosítani a keresést"
+    },
+    "form": {
+      "title": "Új Kategória",
+      "subtitle": "Új termék kategória létrehozása",
+      "basicInfo": "Alapinformációk",
+      "multilingual": "Többnyelvű Nevek",
+      "preview": "Előnézet",
+      "name": "Név",
+      "namePlaceholder": "pl. Kamerák",
+      "nameHint": "Elsődleges kategória név",
+      "nameRequired": "A kategória név kötelező",
+      "description": "Leírás",
+      "descriptionPlaceholder": "Rövid leírás erről a kategóriáról...",
+      "icon": "Ikon",
+      "iconHint": "Egyetlen emoji a kategória ábrázolására",
+      "displayOrder": "Megjelenítési Sorrend",
+      "displayOrderHint": "Az alacsonyabb számok előbb jelennek meg",
+      "nameEn": "Angol Név",
+      "nameHu": "Magyar Név",
+      "submit": "Kategória Létrehozása",
+      "saving": "Létrehozás...",
+      "createError": "Sikertelen kategória létrehozás"
+    },
+    "edit": {
+      "title": "Kategória Szerkesztése",
+      "subtitle": "Kategória adatok frissítése",
+      "notFound": "Kategória nem található",
+      "submit": "Kategória Frissítése",
+      "updating": "Frissítés...",
+      "updateError": "Sikertelen kategória frissítés"
+    }
+  },
+  "products": {
+    "title": "Termékek",
+    "subtitle": "Eszköz készlet kezelése",
+    "newProduct": "Új Termék",
+    "inactive": "Inaktív",
+    "stock": "Készlet",
+    "dailyRate": "Napi Díj",
+    "deleteConfirm": "Biztosan törölni szeretné a '{{name}}' terméket?",
+    "stats": {
+      "total": "Összes Termék",
+      "active": "Aktív",
+      "lowStock": "Alacsony Készlet",
+      "totalValue": "Össz Érték"
+    },
+    "filters": {
+      "all": "Összes Termék"
+    },
+    "search": "Keresés név, SKU vagy leírás alapján...",
+    "noResults": {
+      "title": "Nincs találat",
+      "subtitle": "Próbálja módosítani a keresést vagy szűrőket"
+    },
+    "form": {
+      "title": "Új Termék",
+      "subtitle": "Új eszköz hozzáadása a készlethez",
+      "basicInfo": "Alapinformációk",
+      "inventory": "Készlet",
+      "pricing": "Árazás",
+      "preview": "Előnézet",
+      "name": "Termék Név",
+      "namePlaceholder": "pl. ARRI ALEXA Mini LF",
+      "nameRequired": "A termék név kötelező",
+      "sku": "SKU",
+      "skuRequired": "SKU kötelező",
+      "category": "Kategória",
+      "categoryRequired": "Kategória kötelező",
+      "selectCategory": "Kategória kiválasztása...",
+      "description": "Leírás",
+      "descriptionPlaceholder": "Részletes termék leírás...",
+      "specifications": "Specifikációk",
+      "specificationsPlaceholder": "Felbontás: 4.5K\nSzenzor: Full Frame 36.70 x 25.54mm\nKodek: ARRIRAW, ProRes",
+      "specificationsHint": "Soronként egy specifikáció",
+      "imageUrl": "Kép URL",
+      "totalQuantity": "Összes Mennyiség",
+      "availableQuantity": "Elérhető",
+      "lowStockThreshold": "Alacsony Készlet Riasztás",
+      "dailyRate": "Napi Díj",
+      "dailyRateRequired": "Napi díj kötelező",
+      "weeklyRate": "Heti Díj",
+      "weeklyRateHint": "Javasolt: €{{amount}} (6 nap fizetett)",
+      "monthlyRate": "Havi Díj",
+      "monthlyRateHint": "Javasolt: €{{amount}} (25 nap fizetett)",
+      "featured": "Kiemelt Termék",
+      "active": "Aktív",
+      "submit": "Termék Létrehozása",
+      "saving": "Létrehozás...",
+      "createError": "Sikertelen termék létrehozás"
+    },
+    "edit": {
+      "title": "Termék Szerkesztése",
+      "subtitle": "Termék adatok frissítése",
+      "notFound": "Termék nem található",
+      "submit": "Termék Frissítése",
+      "updating": "Frissítés...",
+      "updateError": "Sikertelen termék frissítés"
     }
   },
   "reports": {

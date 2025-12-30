@@ -15,6 +15,12 @@ import { NewClient } from './pages/NewClient'
 import { ClientDetail } from './pages/ClientDetail'
 import { ClientEdit } from './pages/ClientEdit'
 import { ProductCatalog } from './pages/ProductCatalog'
+import { CategoriesList } from './pages/admin/CategoriesList'
+import { NewCategory } from './pages/admin/NewCategory'
+import { EditCategory } from './pages/admin/EditCategory'
+import { ProductsList } from './pages/admin/ProductsList'
+import { NewProduct } from './pages/admin/NewProduct'
+import { EditProduct } from './pages/admin/EditProduct'
 
 // Layout wrapper for authenticated pages
 function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
@@ -113,6 +119,44 @@ function App() {
 
         {/* Public catalog route (no auth required) */}
         <Route path="/public/catalog" element={<ProductCatalog />} />
+
+        {/* Admin - Categories */}
+        <Route path="/admin/categories" element={
+          <AuthenticatedLayout>
+            <CategoriesList />
+          </AuthenticatedLayout>
+        } />
+
+        <Route path="/admin/categories/new" element={
+          <AuthenticatedLayout>
+            <NewCategory />
+          </AuthenticatedLayout>
+        } />
+
+        <Route path="/admin/categories/:id/edit" element={
+          <AuthenticatedLayout>
+            <EditCategory />
+          </AuthenticatedLayout>
+        } />
+
+        {/* Admin - Products */}
+        <Route path="/admin/products" element={
+          <AuthenticatedLayout>
+            <ProductsList />
+          </AuthenticatedLayout>
+        } />
+
+        <Route path="/admin/products/new" element={
+          <AuthenticatedLayout>
+            <NewProduct />
+          </AuthenticatedLayout>
+        } />
+
+        <Route path="/admin/products/:id/edit" element={
+          <AuthenticatedLayout>
+            <EditProduct />
+          </AuthenticatedLayout>
+        } />
 
         <Route path="/reports" element={
           <AuthenticatedLayout>

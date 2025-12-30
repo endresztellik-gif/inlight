@@ -1,8 +1,10 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
-import type { Database } from '@/types/database'
+import type { Database } from '@/types/database.types'
 
 type Product = Database['public']['Tables']['products']['Row']
+type ProductInsert = Database['public']['Tables']['products']['Insert']
+type ProductUpdate = Database['public']['Tables']['products']['Update']
 
 interface ProductsFilters {
   categoryId?: string
@@ -121,6 +123,100 @@ export function useAvailableProducts(filters: ProductsFilters = {}) {
 
       if (error) throw error
       return data as (Product & { category: Database['public']['Tables']['categories']['Row'] })[]
+    },
+  })
+}
+
+// Fetch all products (including inactive) - for admin
+export function useAllProducts() {
+  return useQuery({
+    queryKey: ['products', 'all'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select(`
+          *,
+          category:categories(*)
+        `)
+        .order('name', { ascending: true })
+
+      if (error) throw error
+      return data as (Product & { category: Database['public']['Tables']['categories']['Row'] })[]
+    },
+  })
+}
+
+// Create product
+export function useCreateProduct() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (product: Omit<ProductInsert, 'id' | 'created_at' | 'updated_at'>) => {
+      const { data, error } = await supabase
+        .from('products')
+        .insert(product)
+        .select(`
+          *,
+          category:categories(*)
+        `)
+        .single()
+
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] })
+    },
+  })
+}
+
+// Update product
+export function useUpdateProduct() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (params: {
+      id: string
+      updates: ProductUpdate
+    }) => {
+      const { data, error } = await supabase
+        .from('products')
+        .update(params.updates)
+        .eq('id', params.id)
+        .select(`
+          *,
+          category:categories(*)
+        `)
+        .single()
+
+      if (error) throw error
+      return data
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['products'] })
+      queryClient.invalidateQueries({ queryKey: ['products', data.id] })
+    },
+  })
+}
+
+// Delete product (soft delete - set is_active to false)
+export function useDeleteProduct() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data, error } = await supabase
+        .from('products')
+        .update({ is_active: false })
+        .eq('id', id)
+        .select()
+        .single()
+
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] })
     },
   })
 }

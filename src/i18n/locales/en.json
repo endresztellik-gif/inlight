@@ -10,7 +10,10 @@
     "clients": "Clients",
     "catalog": "Catalog",
     "reports": "Reports",
-    "settings": "Settings"
+    "settings": "Settings",
+    "admin": "Administration",
+    "categories": "Categories",
+    "products": "Products"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -407,6 +410,121 @@
     "noResults": {
       "title": "No equipment found",
       "subtitle": "Try adjusting your search or category filter"
+    }
+  },
+  "categories": {
+    "title": "Categories",
+    "subtitle": "Manage product categories",
+    "newCategory": "New Category",
+    "inactive": "Inactive",
+    "products": "products",
+    "deleteConfirm": "Are you sure you want to delete category '{{name}}'?",
+    "stats": {
+      "total": "Total",
+      "active": "Active",
+      "totalProducts": "Total Products"
+    },
+    "search": "Search by name or description...",
+    "noResults": {
+      "title": "No categories found",
+      "subtitle": "Try adjusting your search"
+    },
+    "form": {
+      "title": "New Category",
+      "subtitle": "Create a new product category",
+      "basicInfo": "Basic Information",
+      "multilingual": "Multilingual Names",
+      "preview": "Preview",
+      "name": "Name",
+      "namePlaceholder": "e.g., Cameras",
+      "nameHint": "Primary category name",
+      "nameRequired": "Category name is required",
+      "description": "Description",
+      "descriptionPlaceholder": "Brief description of this category...",
+      "icon": "Icon",
+      "iconHint": "Single emoji to represent this category",
+      "displayOrder": "Display Order",
+      "displayOrderHint": "Lower numbers appear first",
+      "nameEn": "English Name",
+      "nameHu": "Hungarian Name",
+      "submit": "Create Category",
+      "saving": "Creating...",
+      "createError": "Failed to create category"
+    },
+    "edit": {
+      "title": "Edit Category",
+      "subtitle": "Update category information",
+      "notFound": "Category not found",
+      "submit": "Update Category",
+      "updating": "Updating...",
+      "updateError": "Failed to update category"
+    }
+  },
+  "products": {
+    "title": "Products",
+    "subtitle": "Manage your equipment inventory",
+    "newProduct": "New Product",
+    "inactive": "Inactive",
+    "stock": "Stock",
+    "dailyRate": "Daily Rate",
+    "deleteConfirm": "Are you sure you want to delete product '{{name}}'?",
+    "stats": {
+      "total": "Total Products",
+      "active": "Active",
+      "lowStock": "Low Stock",
+      "totalValue": "Total Value"
+    },
+    "filters": {
+      "all": "All Products"
+    },
+    "search": "Search by name, SKU, or description...",
+    "noResults": {
+      "title": "No products found",
+      "subtitle": "Try adjusting your search or filters"
+    },
+    "form": {
+      "title": "New Product",
+      "subtitle": "Add new equipment to inventory",
+      "basicInfo": "Basic Information",
+      "inventory": "Inventory",
+      "pricing": "Pricing",
+      "preview": "Preview",
+      "name": "Product Name",
+      "namePlaceholder": "e.g., ARRI ALEXA Mini LF",
+      "nameRequired": "Product name is required",
+      "sku": "SKU",
+      "skuRequired": "SKU is required",
+      "category": "Category",
+      "categoryRequired": "Category is required",
+      "selectCategory": "Select category...",
+      "description": "Description",
+      "descriptionPlaceholder": "Detailed product description...",
+      "specifications": "Specifications",
+      "specificationsPlaceholder": "Resolution: 4.5K\nSensor: Full Frame 36.70 x 25.54mm\nCodec: ARRIRAW, ProRes",
+      "specificationsHint": "One specification per line",
+      "imageUrl": "Image URL",
+      "totalQuantity": "Total Quantity",
+      "availableQuantity": "Available",
+      "lowStockThreshold": "Low Stock Alert",
+      "dailyRate": "Daily Rate",
+      "dailyRateRequired": "Daily rate is required",
+      "weeklyRate": "Weekly Rate",
+      "weeklyRateHint": "Suggested: €{{amount}} (6 days paid)",
+      "monthlyRate": "Monthly Rate",
+      "monthlyRateHint": "Suggested: €{{amount}} (25 days paid)",
+      "featured": "Featured Product",
+      "active": "Active",
+      "submit": "Create Product",
+      "saving": "Creating...",
+      "createError": "Failed to create product"
+    },
+    "edit": {
+      "title": "Edit Product",
+      "subtitle": "Update product information",
+      "notFound": "Product not found",
+      "submit": "Update Product",
+      "updating": "Updating...",
+      "updateError": "Failed to update product"
     }
   },
   "reports": {
