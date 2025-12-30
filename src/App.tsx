@@ -15,6 +15,7 @@ import { NewClient } from './pages/NewClient'
 import { ClientDetail } from './pages/ClientDetail'
 import { ClientEdit } from './pages/ClientEdit'
 import { ProductCatalog } from './pages/ProductCatalog'
+import { Reports } from './pages/Reports'
 import { CategoriesList } from './pages/admin/CategoriesList'
 import { NewCategory } from './pages/admin/NewCategory'
 import { EditCategory } from './pages/admin/EditCategory'
@@ -119,6 +120,13 @@ function App() {
 
         {/* Public catalog route (no auth required) */}
         <Route path="/public/catalog" element={<ProductCatalog />} />
+
+        {/* Reports */}
+        <Route path="/reports" element={
+          <AuthenticatedLayout>
+            <Reports />
+          </AuthenticatedLayout>
+        } />
 
         {/* Admin - Categories */}
         <Route path="/admin/categories" element={
