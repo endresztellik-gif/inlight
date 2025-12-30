@@ -1,5 +1,6 @@
-import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,6 +17,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useCreateProduct } from '@/hooks/api/useProducts'
 import { useCategories } from '@/hooks/api/useCategories'
+import { productSchema, type ProductFormData } from '@/schemas/productSchema'
 
 export function NewProduct() {
   const navigate = useNavigate()
@@ -23,56 +25,55 @@ export function NewProduct() {
   const createProduct = useCreateProduct()
   const { data: categories } = useCategories()
 
-  const [name, setName] = useState('')
-  const [serialNumber, setSerialNumber] = useState('')
-  const [categoryId, setCategoryId] = useState('')
-  const [description, setDescription] = useState('')
-  const [specifications, setSpecifications] = useState('')
-  const [imageUrl, setImageUrl] = useState('')
-  const [stockQuantity, setStockQuantity] = useState(1)
-  const [availableQuantity, setAvailableQuantity] = useState(1)
-  const [dailyRate, setDailyRate] = useState(0)
-  const [weeklyRate, setWeeklyRate] = useState(0)
-  const [isFeatured, setIsFeatured] = useState(false)
-  const [error, setError] = useState('')
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting },
+    setError: setFormError,
+  } = useForm<ProductFormData>({
+    resolver: zodResolver(productSchema),
+    defaultValues: {
+      name: '',
+      serial_number: '',
+      category_id: '',
+      description: '',
+      description_hu: '',
+      specifications: '',
+      image_url: '',
+      stock_quantity: 1,
+      available_quantity: 1,
+      daily_rate: 0,
+      weekly_rate: 0,
+      is_featured: false,
+    },
+  })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
+  // Watch values for preview
+  const name = watch('name')
+  const serialNumber = watch('serial_number')
+  const description = watch('description')
+  const imageUrl = watch('image_url')
+  const stockQuantity = watch('stock_quantity')
+  const availableQuantity = watch('available_quantity')
+  const dailyRate = watch('daily_rate')
+  const isFeatured = watch('is_featured')
 
-    if (!name.trim()) {
-      setError(t('products.form.nameRequired'))
-      return
-    }
-
-    if (!serialNumber.trim()) {
-      setError(t('products.form.skuRequired'))
-      return
-    }
-
-    if (!categoryId) {
-      setError(t('products.form.categoryRequired'))
-      return
-    }
-
-    if (dailyRate <= 0) {
-      setError(t('products.form.dailyRateRequired'))
-      return
-    }
-
+  const onSubmit = async (data: ProductFormData) => {
     try {
       await createProduct.mutateAsync({
-        name: name.trim(),
-        serial_number: serialNumber.trim().toUpperCase(),
-        category_id: categoryId,
-        description: description.trim() || null,
-        specifications: specifications.trim() ? JSON.parse(`{"text": "${specifications.trim()}"}`) : null,
-        image_url: imageUrl.trim() || null,
-        stock_quantity: stockQuantity,
-        available_quantity: availableQuantity,
-        daily_rate: dailyRate,
-        weekly_rate: weeklyRate > 0 ? weeklyRate : null,
-        is_featured: isFeatured,
+        name: data.name.trim(),
+        serial_number: data.serial_number.trim().toUpperCase(),
+        category_id: data.category_id,
+        description: data.description?.trim() || null,
+        specifications: data.specifications?.trim() ? JSON.parse(`{"text": "${data.specifications.trim()}"}`) : null,
+        image_url: data.image_url?.trim() || null,
+        stock_quantity: data.stock_quantity,
+        available_quantity: data.available_quantity,
+        daily_rate: data.daily_rate,
+        weekly_rate: data.weekly_rate && data.weekly_rate > 0 ? data.weekly_rate : null,
+        is_featured: data.is_featured || false,
         is_active: true,
         condition: 'excellent',
         created_by: 'current-user-id',
@@ -82,7 +83,9 @@ export function NewProduct() {
       navigate('/admin/products')
     } catch (err) {
       console.error('Failed to create product:', err)
-      setError(err instanceof Error ? err.message : t('products.form.createError'))
+      setFormError('root', {
+        message: err instanceof Error ? err.message : t('products.form.createError'),
+      })
     }
   }
 
@@ -106,7 +109,7 @@ export function NewProduct() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Main Form */}
           <div className="lg:col-span-2 space-y-6">
@@ -125,12 +128,15 @@ export function NewProduct() {
                     {t('products.form.name')} *
                   </label>
                   <Input
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    {...register('name')}
                     placeholder={t('products.form.namePlaceholder')}
-                    className="mt-2 h-11"
+                    className={`mt-2 h-11 ${errors.name ? 'border-red-500' : ''}`}
                   />
+                  {errors.name && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.name.message as string)}
+                    </p>
+                  )}
                 </div>
 
                 {/* Serial Number & Category */}
@@ -140,22 +146,26 @@ export function NewProduct() {
                       {t('products.form.sku')} *
                     </label>
                     <Input
-                      required
-                      value={serialNumber}
-                      onChange={(e) => setSerialNumber(e.target.value.toUpperCase())}
+                      {...register('serial_number')}
+                      onChange={(e) => setValue('serial_number', e.target.value.toUpperCase())}
                       placeholder="CAM-001"
-                      className="mt-2 h-11 font-mono"
+                      className={`mt-2 h-11 font-mono ${errors.serial_number ? 'border-red-500' : ''}`}
                     />
+                    {errors.serial_number && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {t(errors.serial_number.message as string)}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
                       {t('products.form.category')} *
                     </label>
                     <select
-                      required
-                      value={categoryId}
-                      onChange={(e) => setCategoryId(e.target.value)}
-                      className="mt-2 w-full h-11 px-3 rounded-md border border-border bg-background text-foreground text-sm"
+                      {...register('category_id')}
+                      className={`mt-2 w-full h-11 px-3 rounded-md border bg-background text-foreground text-sm ${
+                        errors.category_id ? 'border-red-500' : 'border-border'
+                      }`}
                     >
                       <option value="">{t('products.form.selectCategory')}</option>
                       {categories?.map(cat => (
@@ -164,6 +174,11 @@ export function NewProduct() {
                         </option>
                       ))}
                     </select>
+                    {errors.category_id && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {t(errors.category_id.message as string)}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -173,12 +188,18 @@ export function NewProduct() {
                     {t('products.form.description')}
                   </label>
                   <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    {...register('description')}
                     placeholder={t('products.form.descriptionPlaceholder')}
                     rows={3}
-                    className="mt-2 w-full px-3 py-2 rounded-md border border-border bg-background text-foreground text-sm resize-none"
+                    className={`mt-2 w-full px-3 py-2 rounded-md border bg-background text-foreground text-sm resize-none ${
+                      errors.description ? 'border-red-500' : 'border-border'
+                    }`}
                   />
+                  {errors.description && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.description.message as string)}
+                    </p>
+                  )}
                 </div>
 
                 {/* Specifications */}
@@ -187,15 +208,23 @@ export function NewProduct() {
                     {t('products.form.specifications')}
                   </label>
                   <textarea
-                    value={specifications}
-                    onChange={(e) => setSpecifications(e.target.value)}
+                    {...register('specifications')}
                     placeholder={t('products.form.specificationsPlaceholder')}
                     rows={3}
-                    className="mt-2 w-full px-3 py-2 rounded-md border border-border bg-background text-foreground text-sm resize-none font-mono"
+                    className={`mt-2 w-full px-3 py-2 rounded-md border bg-background text-foreground text-sm resize-none font-mono ${
+                      errors.specifications ? 'border-red-500' : 'border-border'
+                    }`}
                   />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {t('products.form.specificationsHint')}
-                  </p>
+                  {errors.specifications && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.specifications.message as string)}
+                    </p>
+                  )}
+                  {!errors.specifications && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {t('products.form.specificationsHint')}
+                    </p>
+                  )}
                 </div>
 
                 {/* Image URL */}
@@ -207,12 +236,16 @@ export function NewProduct() {
                     <ImageIcon className="h-4 w-4 text-muted-foreground" />
                     <Input
                       type="url"
-                      value={imageUrl}
-                      onChange={(e) => setImageUrl(e.target.value)}
+                      {...register('image_url')}
                       placeholder="https://example.com/image.jpg"
-                      className="h-9 font-mono text-sm"
+                      className={`h-9 font-mono text-sm ${errors.image_url ? 'border-red-500' : ''}`}
                     />
                   </div>
+                  {errors.image_url && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.image_url.message as string)}
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -235,18 +268,24 @@ export function NewProduct() {
                     <Input
                       type="number"
                       min="1"
-                      required
-                      value={stockQuantity}
-                      onChange={(e) => {
-                        const val = parseInt(e.target.value) || 1
-                        setStockQuantity(val)
-                        // Auto-adjust available if needed
-                        if (availableQuantity > val) {
-                          setAvailableQuantity(val)
-                        }
-                      }}
-                      className="mt-2 h-11 font-mono"
+                      {...register('stock_quantity', {
+                        valueAsNumber: true,
+                        onChange: (e) => {
+                          const val = parseInt(e.target.value) || 1
+                          // Auto-adjust available if needed
+                          const currentAvailable = watch('available_quantity')
+                          if (currentAvailable > val) {
+                            setValue('available_quantity', val)
+                          }
+                        },
+                      })}
+                      className={`mt-2 h-11 font-mono ${errors.stock_quantity ? 'border-red-500' : ''}`}
                     />
+                    {errors.stock_quantity && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {t(errors.stock_quantity.message as string)}
+                      </p>
+                    )}
                   </div>
 
                   {/* Available Quantity */}
@@ -258,11 +297,14 @@ export function NewProduct() {
                       type="number"
                       min="0"
                       max={stockQuantity}
-                      required
-                      value={availableQuantity}
-                      onChange={(e) => setAvailableQuantity(parseInt(e.target.value) || 0)}
-                      className="mt-2 h-11 font-mono"
+                      {...register('available_quantity', { valueAsNumber: true })}
+                      className={`mt-2 h-11 font-mono ${errors.available_quantity ? 'border-red-500' : ''}`}
                     />
+                    {errors.available_quantity && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {t(errors.available_quantity.message as string)}
+                      </p>
+                    )}
                   </div>
                 </div>
               </CardContent>
@@ -288,12 +330,15 @@ export function NewProduct() {
                       type="number"
                       min="0"
                       step="0.01"
-                      required
-                      value={dailyRate}
-                      onChange={(e) => setDailyRate(parseFloat(e.target.value) || 0)}
-                      className="h-11 font-mono"
+                      {...register('daily_rate', { valueAsNumber: true })}
+                      className={`h-11 font-mono ${errors.daily_rate ? 'border-red-500' : ''}`}
                     />
                   </div>
+                  {errors.daily_rate && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.daily_rate.message as string)}
+                    </p>
+                  )}
                 </div>
 
                 {/* Weekly Rate */}
@@ -307,15 +352,21 @@ export function NewProduct() {
                       type="number"
                       min="0"
                       step="0.01"
-                      value={weeklyRate}
-                      onChange={(e) => setWeeklyRate(parseFloat(e.target.value) || 0)}
+                      {...register('weekly_rate', { valueAsNumber: true })}
                       placeholder={suggestedWeeklyRate.toFixed(2)}
-                      className="h-11 font-mono"
+                      className={`h-11 font-mono ${errors.weekly_rate ? 'border-red-500' : ''}`}
                     />
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {t('products.form.weeklyRateHint', { amount: suggestedWeeklyRate.toFixed(2) })}
-                  </p>
+                  {errors.weekly_rate && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.weekly_rate.message as string)}
+                    </p>
+                  )}
+                  {!errors.weekly_rate && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {t('products.form.weeklyRateHint', { amount: suggestedWeeklyRate.toFixed(2) })}
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -379,8 +430,7 @@ export function NewProduct() {
                   <input
                     type="checkbox"
                     id="featured"
-                    checked={isFeatured}
-                    onChange={(e) => setIsFeatured(e.target.checked)}
+                    {...register('is_featured')}
                     className="h-4 w-4"
                   />
                   <label htmlFor="featured" className="text-sm cursor-pointer flex items-center gap-2">
@@ -390,9 +440,9 @@ export function NewProduct() {
                 </div>
 
                 {/* Error */}
-                {error && (
+                {errors.root && (
                   <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md">
-                    {error}
+                    {errors.root.message}
                   </div>
                 )}
 
@@ -401,9 +451,9 @@ export function NewProduct() {
                   type="submit"
                   size="lg"
                   className="w-full gap-2"
-                  disabled={createProduct.isPending}
+                  disabled={isSubmitting}
                 >
-                  {createProduct.isPending ? (
+                  {isSubmitting ? (
                     <>
                       <Loader2 className="h-5 w-5 animate-spin" />
                       {t('products.form.saving')}
@@ -422,7 +472,7 @@ export function NewProduct() {
                   size="lg"
                   className="w-full"
                   onClick={() => navigate('/admin/products')}
-                  disabled={createProduct.isPending}
+                  disabled={isSubmitting}
                 >
                   {t('common.cancel')}
                 </Button>

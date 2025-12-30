@@ -36,9 +36,9 @@ export const productSchema = z.object({
     .int('validation.product.availableQuantity.integer')
     .min(0, 'validation.product.availableQuantity.nonNegative'),
 
-  total_quantity: z.number()
-    .int('validation.product.totalQuantity.integer')
-    .min(1, 'validation.product.totalQuantity.positive'),
+  stock_quantity: z.number()
+    .int('validation.product.stockQuantity.integer')
+    .min(1, 'validation.product.stockQuantity.positive'),
 
   // Optional fields
   description: z.string()
@@ -50,9 +50,29 @@ export const productSchema = z.object({
     .max(1000, 'validation.product.descriptionHu.maxLength')
     .optional()
     .or(z.literal('')),
+
+  specifications: z.string()
+    .max(2000, 'validation.product.specifications.maxLength')
+    .optional()
+    .or(z.literal('')),
+
+  image_url: z.string()
+    .url('validation.product.imageUrl.invalid')
+    .max(500, 'validation.product.imageUrl.maxLength')
+    .optional()
+    .or(z.literal('')),
+
+  weekly_rate: z.number()
+    .min(0, 'validation.product.weeklyRate.nonNegative')
+    .max(10000000, 'validation.product.weeklyRate.maxValue')
+    .optional()
+    .or(z.literal(0)),
+
+  is_featured: z.boolean()
+    .optional(),
 })
   .refine(
-    (data) => data.available_quantity <= data.total_quantity,
+    (data) => data.available_quantity <= data.stock_quantity,
     {
       message: 'validation.product.availableQuantity.exceedsTotal',
       path: ['available_quantity'],

@@ -785,11 +785,26 @@
         "integer": "Total quantity must be a whole number",
         "positive": "Total quantity must be at least 1"
       },
+      "stockQuantity": {
+        "integer": "Stock quantity must be a whole number",
+        "positive": "Stock quantity must be at least 1"
+      },
       "description": {
         "maxLength": "Description must be at most 1000 characters"
       },
       "descriptionHu": {
         "maxLength": "Hungarian description must be at most 1000 characters"
+      },
+      "specifications": {
+        "maxLength": "Specifications must be at most 2000 characters"
+      },
+      "imageUrl": {
+        "invalid": "Please enter a valid URL",
+        "maxLength": "Image URL must be at most 500 characters"
+      },
+      "weeklyRate": {
+        "nonNegative": "Weekly rate cannot be negative",
+        "maxValue": "Weekly rate must be less than 10,000,000"
       }
     },
     "rental": {
