@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,51 +20,71 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useClient, useUpdateClient } from '@/hooks/api/useClients'
+import { clientSchema, type ClientFormData } from '@/schemas/clientSchema'
 
 export function ClientEdit() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { t } = useTranslation()
 
-  // Fetch client data
   const { data: client, isLoading: isLoadingClient, error: loadError } = useClient(id)
   const updateClient = useUpdateClient()
 
-  // Form states
-  const [name, setName] = useState('')
-  const [companyName, setCompanyName] = useState('')
-  const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
-  const [address, setAddress] = useState('')
-  const [taxNumber, setTaxNumber] = useState('')
-  const [contactPersonName, setContactPersonName] = useState('')
-  const [contactPersonEmail, setContactPersonEmail] = useState('')
-  const [contactPersonPhone, setContactPersonPhone] = useState('')
-  const [notes, setNotes] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors, isSubmitting },
+    setError: setFormError,
+  } = useForm<ClientFormData>({
+    resolver: zodResolver(clientSchema),
+    defaultValues: {
+      name: '',
+      company: '',
+      email: '',
+      phone: '',
+      address: '',
+      tax_number: '',
+      contact_person_name: '',
+      contact_person_email: '',
+      contact_person_phone: '',
+      notes: '',
+    },
+  })
 
-  // Initialize form with client data
+  // Watch values for preview
+  const name = watch('name')
+  const companyName = watch('company')
+  const email = watch('email')
+  const phone = watch('phone')
+  const address = watch('address')
+  const taxNumber = watch('tax_number')
+  const contactPersonName = watch('contact_person_name')
+  const contactPersonEmail = watch('contact_person_email')
+  const contactPersonPhone = watch('contact_person_phone')
+
+  // Load client data into form
   useEffect(() => {
     if (client) {
-      setName(client.name)
-      setCompanyName(client.company || '')
-      setEmail(client.email || '')
-      setPhone(client.phone || '')
-      setAddress(client.address || '')
-      setTaxNumber(client.tax_number || '')
-      setContactPersonName(client.contact_person_name || '')
-      setContactPersonEmail(client.contact_person_email || '')
-      setContactPersonPhone(client.contact_person_phone || '')
-      setNotes(client.notes || '')
+      reset({
+        name: client.name,
+        company: client.company || '',
+        email: client.email || '',
+        phone: client.phone || '',
+        address: client.address || '',
+        tax_number: client.tax_number || '',
+        contact_person_name: client.contact_person_name || '',
+        contact_person_email: client.contact_person_email || '',
+        contact_person_phone: client.contact_person_phone || '',
+        notes: client.notes || '',
+      })
     }
-  }, [client])
+  }, [client, reset])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-
+  const onSubmit = async (data: ClientFormData) => {
     if (!id) {
-      setError('Client ID is missing')
+      setFormError('root', { message: 'Client ID is missing' })
       return
     }
 
@@ -70,24 +92,25 @@ export function ClientEdit() {
       await updateClient.mutateAsync({
         id,
         updates: {
-          name,
-          company: companyName || null,
-          email,
-          phone,
-          address: address || null,
-          tax_number: taxNumber || null,
-          contact_person_name: contactPersonName || null,
-          contact_person_email: contactPersonEmail || null,
-          contact_person_phone: contactPersonPhone || null,
-          notes: notes || null,
-        }
+          name: data.name,
+          company: data.company || null,
+          email: data.email,
+          phone: data.phone,
+          address: data.address || null,
+          tax_number: data.tax_number || null,
+          contact_person_name: data.contact_person_name || null,
+          contact_person_email: data.contact_person_email || null,
+          contact_person_phone: data.contact_person_phone || null,
+          notes: data.notes || null,
+        },
       })
 
-      // Navigate back to client detail on success
       navigate(`/clients/${id}`)
     } catch (err) {
       console.error('Failed to update client:', err)
-      setError(err instanceof Error ? err.message : 'Failed to update client')
+      setFormError('root', {
+        message: err instanceof Error ? err.message : 'Failed to update client',
+      })
     }
   }
 
@@ -143,19 +166,19 @@ export function ClientEdit() {
       </div>
 
       {/* Error Alert */}
-      {error && (
+      {errors.root && (
         <Card cinematic className="border-destructive/50">
           <CardContent className="p-4 flex items-center gap-3 text-destructive">
             <AlertCircle className="h-5 w-5" />
             <div>
               <p className="font-medium">Failed to update client</p>
-              <p className="text-sm opacity-80">{error}</p>
+              <p className="text-sm opacity-80">{errors.root.message}</p>
             </div>
           </CardContent>
         </Card>
       )}
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Main Form */}
           <div className="lg:col-span-2 space-y-6">
@@ -175,12 +198,15 @@ export function ClientEdit() {
                       {t('clients.form.name')} *
                     </label>
                     <Input
-                      required
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      {...register('name')}
                       placeholder="John Doe"
-                      className="mt-2 h-11"
+                      className={`mt-2 h-11 ${errors.name ? 'border-red-500' : ''}`}
                     />
+                    {errors.name && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {t(errors.name.message as string)}
+                      </p>
+                    )}
                   </div>
 
                   {/* Company Name */}
@@ -189,11 +215,15 @@ export function ClientEdit() {
                       {t('clients.form.companyName')}
                     </label>
                     <Input
-                      value={companyName}
-                      onChange={(e) => setCompanyName(e.target.value)}
+                      {...register('company')}
                       placeholder="Film Production Ltd"
-                      className="mt-2 h-11"
+                      className={`mt-2 h-11 ${errors.company ? 'border-red-500' : ''}`}
                     />
+                    {errors.company && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {t(errors.company.message as string)}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -204,13 +234,16 @@ export function ClientEdit() {
                       {t('clients.form.email')} *
                     </label>
                     <Input
-                      required
                       type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      {...register('email')}
                       placeholder="contact@company.com"
-                      className="mt-2 h-11"
+                      className={`mt-2 h-11 ${errors.email ? 'border-red-500' : ''}`}
                     />
+                    {errors.email && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {t(errors.email.message as string)}
+                      </p>
+                    )}
                   </div>
 
                   {/* Phone */}
@@ -219,13 +252,16 @@ export function ClientEdit() {
                       {t('clients.form.phone')} *
                     </label>
                     <Input
-                      required
                       type="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      {...register('phone')}
                       placeholder="+36 30 123 4567"
-                      className="mt-2 h-11 font-mono"
+                      className={`mt-2 h-11 font-mono ${errors.phone ? 'border-red-500' : ''}`}
                     />
+                    {errors.phone && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {t(errors.phone.message as string)}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -235,12 +271,18 @@ export function ClientEdit() {
                     {t('clients.form.address')}
                   </label>
                   <textarea
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
+                    {...register('address')}
                     placeholder="1052 Budapest, Váci utca 45."
                     rows={2}
-                    className="mt-2 w-full px-3 py-2 rounded-md border border-border bg-background text-foreground text-sm resize-none"
+                    className={`mt-2 w-full px-3 py-2 rounded-md border bg-background text-foreground text-sm resize-none ${
+                      errors.address ? 'border-red-500' : 'border-border'
+                    }`}
                   />
+                  {errors.address && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.address.message as string)}
+                    </p>
+                  )}
                 </div>
 
                 {/* Tax Number */}
@@ -249,12 +291,18 @@ export function ClientEdit() {
                     {t('clients.form.taxNumber')}
                   </label>
                   <Input
-                    value={taxNumber}
-                    onChange={(e) => setTaxNumber(e.target.value)}
+                    {...register('tax_number')}
                     placeholder="12345678-2-41"
-                    className="mt-2 h-11 font-mono"
+                    className={`mt-2 h-11 font-mono ${errors.tax_number ? 'border-red-500' : ''}`}
                   />
-                  <p className="text-xs text-muted-foreground mt-1">{t('clients.form.taxNumberHint')}</p>
+                  {errors.tax_number && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.tax_number.message as string)}
+                    </p>
+                  )}
+                  {!errors.tax_number && (
+                    <p className="text-xs text-muted-foreground mt-1">{t('clients.form.taxNumberHint')}</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -274,11 +322,15 @@ export function ClientEdit() {
                     {t('clients.form.contactPersonName')}
                   </label>
                   <Input
-                    value={contactPersonName}
-                    onChange={(e) => setContactPersonName(e.target.value)}
+                    {...register('contact_person_name')}
                     placeholder="Jane Smith"
-                    className="mt-2 h-11"
+                    className={`mt-2 h-11 ${errors.contact_person_name ? 'border-red-500' : ''}`}
                   />
+                  {errors.contact_person_name && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.contact_person_name.message as string)}
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
@@ -289,11 +341,15 @@ export function ClientEdit() {
                     </label>
                     <Input
                       type="email"
-                      value={contactPersonEmail}
-                      onChange={(e) => setContactPersonEmail(e.target.value)}
+                      {...register('contact_person_email')}
                       placeholder="jane@company.com"
-                      className="mt-2 h-11"
+                      className={`mt-2 h-11 ${errors.contact_person_email ? 'border-red-500' : ''}`}
                     />
+                    {errors.contact_person_email && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {t(errors.contact_person_email.message as string)}
+                      </p>
+                    )}
                   </div>
 
                   {/* Contact Person Phone */}
@@ -303,11 +359,15 @@ export function ClientEdit() {
                     </label>
                     <Input
                       type="tel"
-                      value={contactPersonPhone}
-                      onChange={(e) => setContactPersonPhone(e.target.value)}
+                      {...register('contact_person_phone')}
                       placeholder="+36 30 987 6543"
-                      className="mt-2 h-11 font-mono"
+                      className={`mt-2 h-11 font-mono ${errors.contact_person_phone ? 'border-red-500' : ''}`}
                     />
+                    {errors.contact_person_phone && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {t(errors.contact_person_phone.message as string)}
+                      </p>
+                    )}
                   </div>
                 </div>
               </CardContent>
@@ -327,12 +387,18 @@ export function ClientEdit() {
                     {t('clients.form.notes')}
                   </label>
                   <textarea
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
+                    {...register('notes')}
                     placeholder={t('clients.form.notesPlaceholder')}
                     rows={4}
-                    className="mt-2 w-full px-3 py-2 rounded-md border border-border bg-background text-foreground text-sm resize-none"
+                    className={`mt-2 w-full px-3 py-2 rounded-md border bg-background text-foreground text-sm resize-none ${
+                      errors.notes ? 'border-red-500' : 'border-border'
+                    }`}
                   />
+                  {errors.notes && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.notes.message as string)}
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -412,9 +478,9 @@ export function ClientEdit() {
                     type="submit"
                     size="lg"
                     className="w-full gap-2"
-                    disabled={!name || !email || !phone || updateClient.isPending}
+                    disabled={isSubmitting}
                   >
-                    {updateClient.isPending ? (
+                    {isSubmitting ? (
                       <>
                         <Loader2 className="h-5 w-5 animate-spin" />
                         {t('clients.edit.saving')}
@@ -432,7 +498,7 @@ export function ClientEdit() {
                     size="lg"
                     className="w-full"
                     asChild
-                    disabled={updateClient.isPending}
+                    disabled={isSubmitting}
                   >
                     <Link to={`/clients/${id}`}>{t('clients.form.cancel')}</Link>
                   </Button>
