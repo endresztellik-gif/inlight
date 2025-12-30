@@ -1,5 +1,6 @@
-import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,44 +14,57 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useCreateCategory } from '@/hooks/api/useCategories'
+import { categorySchema, type CategoryFormData } from '@/schemas/categorySchema'
 
 export function NewCategory() {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const createCategory = useCreateCategory()
 
-  const [name, setName] = useState('')
-  const [nameEn, setNameEn] = useState('')
-  const [nameHu, setNameHu] = useState('')
-  const [description, setDescription] = useState('')
-  const [icon, setIcon] = useState('')
-  const [displayOrder, setDisplayOrder] = useState(0)
-  const [error, setError] = useState('')
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+    setError: setFormError,
+  } = useForm<CategoryFormData>({
+    resolver: zodResolver(categorySchema),
+    defaultValues: {
+      name: '',
+      name_en: '',
+      name_hu: '',
+      description: '',
+      icon: '',
+      display_order: 0,
+    },
+  })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
+  // Watch values for preview
+  const name = watch('name')
+  const nameEn = watch('name_en')
+  const nameHu = watch('name_hu')
+  const description = watch('description')
+  const icon = watch('icon')
+  const displayOrder = watch('display_order')
 
-    if (!name.trim()) {
-      setError(t('categories.form.nameRequired'))
-      return
-    }
-
+  const onSubmit = async (data: CategoryFormData) => {
     try {
       await createCategory.mutateAsync({
-        name: name.trim(),
-        name_en: nameEn.trim() || null,
-        name_hu: nameHu.trim() || null,
-        description: description.trim() || null,
-        icon: icon.trim() || null,
-        display_order: displayOrder,
+        name: data.name.trim(),
+        name_en: data.name_en?.trim() || null,
+        name_hu: data.name_hu?.trim() || null,
+        description: data.description?.trim() || null,
+        icon: data.icon?.trim() || null,
+        display_order: data.display_order,
         is_active: true,
       })
 
       navigate('/admin/categories')
     } catch (err) {
       console.error('Failed to create category:', err)
-      setError(err instanceof Error ? err.message : t('categories.form.createError'))
+      setFormError('root', {
+        message: err instanceof Error ? err.message : t('categories.form.createError'),
+      })
     }
   }
 
@@ -71,7 +85,7 @@ export function NewCategory() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Main Form */}
           <div className="lg:col-span-2 space-y-6">
@@ -90,15 +104,20 @@ export function NewCategory() {
                     {t('categories.form.name')} *
                   </label>
                   <Input
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    {...register('name')}
                     placeholder={t('categories.form.namePlaceholder')}
-                    className="mt-2 h-11"
+                    className={`mt-2 h-11 ${errors.name ? 'border-red-500' : ''}`}
                   />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {t('categories.form.nameHint')}
-                  </p>
+                  {errors.name && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.name.message as string)}
+                    </p>
+                  )}
+                  {!errors.name && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {t('categories.form.nameHint')}
+                    </p>
+                  )}
                 </div>
 
                 {/* Description */}
@@ -107,12 +126,18 @@ export function NewCategory() {
                     {t('categories.form.description')}
                   </label>
                   <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    {...register('description')}
                     placeholder={t('categories.form.descriptionPlaceholder')}
                     rows={3}
-                    className="mt-2 w-full px-3 py-2 rounded-md border border-border bg-background text-foreground text-sm resize-none"
+                    className={`mt-2 w-full px-3 py-2 rounded-md border bg-background text-foreground text-sm resize-none ${
+                      errors.description ? 'border-red-500' : 'border-border'
+                    }`}
                   />
+                  {errors.description && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.description.message as string)}
+                    </p>
+                  )}
                 </div>
 
                 {/* Icon */}
@@ -121,15 +146,21 @@ export function NewCategory() {
                     {t('categories.form.icon')}
                   </label>
                   <Input
-                    value={icon}
-                    onChange={(e) => setIcon(e.target.value)}
+                    {...register('icon')}
                     placeholder="📷"
-                    className="mt-2 h-11 text-2xl"
+                    className={`mt-2 h-11 text-2xl ${errors.icon ? 'border-red-500' : ''}`}
                     maxLength={2}
                   />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {t('categories.form.iconHint')}
-                  </p>
+                  {errors.icon && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.icon.message as string)}
+                    </p>
+                  )}
+                  {!errors.icon && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {t('categories.form.iconHint')}
+                    </p>
+                  )}
                 </div>
 
                 {/* Display Order */}
@@ -142,14 +173,20 @@ export function NewCategory() {
                     <Input
                       type="number"
                       min="0"
-                      value={displayOrder}
-                      onChange={(e) => setDisplayOrder(parseInt(e.target.value) || 0)}
-                      className="h-9 font-mono"
+                      {...register('display_order', { valueAsNumber: true })}
+                      className={`h-9 font-mono ${errors.display_order ? 'border-red-500' : ''}`}
                     />
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {t('categories.form.displayOrderHint')}
-                  </p>
+                  {errors.display_order && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.display_order.message as string)}
+                    </p>
+                  )}
+                  {!errors.display_order && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {t('categories.form.displayOrderHint')}
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -169,11 +206,15 @@ export function NewCategory() {
                     🇬🇧 {t('categories.form.nameEn')}
                   </label>
                   <Input
-                    value={nameEn}
-                    onChange={(e) => setNameEn(e.target.value)}
+                    {...register('name_en')}
                     placeholder="Cameras"
-                    className="mt-2 h-11"
+                    className={`mt-2 h-11 ${errors.name_en ? 'border-red-500' : ''}`}
                   />
+                  {errors.name_en && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.name_en.message as string)}
+                    </p>
+                  )}
                 </div>
 
                 {/* Hungarian Name */}
@@ -182,11 +223,15 @@ export function NewCategory() {
                     🇭🇺 {t('categories.form.nameHu')}
                   </label>
                   <Input
-                    value={nameHu}
-                    onChange={(e) => setNameHu(e.target.value)}
+                    {...register('name_hu')}
                     placeholder="Kamerák"
-                    className="mt-2 h-11"
+                    className={`mt-2 h-11 ${errors.name_hu ? 'border-red-500' : ''}`}
                   />
+                  {errors.name_hu && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.name_hu.message as string)}
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -245,9 +290,9 @@ export function NewCategory() {
                 </div>
 
                 {/* Error */}
-                {error && (
+                {errors.root && (
                   <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md">
-                    {error}
+                    {errors.root.message}
                   </div>
                 )}
 
@@ -256,9 +301,9 @@ export function NewCategory() {
                   type="submit"
                   size="lg"
                   className="w-full gap-2"
-                  disabled={createCategory.isPending}
+                  disabled={isSubmitting}
                 >
-                  {createCategory.isPending ? (
+                  {isSubmitting ? (
                     <>
                       <Loader2 className="h-5 w-5 animate-spin" />
                       {t('categories.form.saving')}
@@ -277,7 +322,7 @@ export function NewCategory() {
                   size="lg"
                   className="w-full"
                   onClick={() => navigate('/admin/categories')}
-                  disabled={createCategory.isPending}
+                  disabled={isSubmitting}
                 >
                   {t('common.cancel')}
                 </Button>

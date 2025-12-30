@@ -731,8 +731,21 @@
         "required": "Category name is required",
         "maxLength": "Category name must be at most 100 characters"
       },
+      "nameEn": {
+        "maxLength": "English name must be at most 100 characters"
+      },
+      "nameHu": {
+        "maxLength": "Hungarian name must be at most 100 characters"
+      },
       "description": {
         "maxLength": "Description must be at most 500 characters"
+      },
+      "icon": {
+        "maxLength": "Icon must be at most 2 characters"
+      },
+      "displayOrder": {
+        "integer": "Display order must be a whole number",
+        "nonNegative": "Display order cannot be negative"
       }
     },
     "product": {

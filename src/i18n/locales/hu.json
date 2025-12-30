@@ -730,8 +730,21 @@
         "required": "A kategória neve kötelező",
         "maxLength": "A kategória neve maximum 100 karakter lehet"
       },
+      "nameEn": {
+        "maxLength": "Az angol név maximum 100 karakter lehet"
+      },
+      "nameHu": {
+        "maxLength": "A magyar név maximum 100 karakter lehet"
+      },
       "description": {
         "maxLength": "A leírás maximum 500 karakter lehet"
+      },
+      "icon": {
+        "maxLength": "Az ikon maximum 2 karakter lehet"
+      },
+      "displayOrder": {
+        "integer": "A megjelenítési sorrendnek egész számnak kell lennie",
+        "nonNegative": "A megjelenítési sorrend nem lehet negatív"
       }
     },
     "product": {

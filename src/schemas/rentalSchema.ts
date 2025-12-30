@@ -20,16 +20,10 @@ export const rentalItemSchema = z.object({
 })
 
 /**
- * Rental form validation schema
- * 
- * Validates rental information including:
- * - Client (required UUID)
- * - Project name (required)
- * - Date range (start_date, end_date - end must be after start)
- * - Items (array, at least 1 item required)
- * - Notes (optional)
+ * Base rental object schema (without validation)
+ * Used as a base for extending in subrentalSchema
  */
-export const rentalSchema = z.object({
+export const rentalBaseSchema = z.object({
   client_id: z.string()
     .uuid('validation.rental.client.required'),
 
@@ -59,17 +53,28 @@ export const rentalSchema = z.object({
   items: z.array(rentalItemSchema)
     .min(1, 'validation.rental.items.required'),
 })
-  .refine(
-    (data) => {
-      const start = new Date(data.start_date)
-      const end = new Date(data.end_date)
-      return end >= start
-    },
-    {
-      message: 'validation.rental.endDate.beforeStart',
-      path: ['end_date'],
-    }
-  )
+
+/**
+ * Rental form validation schema with date validation
+ *
+ * Validates rental information including:
+ * - Client (required UUID)
+ * - Project name (required)
+ * - Date range (start_date, end_date - end must be after start)
+ * - Items (array, at least 1 item required)
+ * - Notes (optional)
+ */
+export const rentalSchema = rentalBaseSchema.refine(
+  (data) => {
+    const start = new Date(data.start_date)
+    const end = new Date(data.end_date)
+    return end >= start
+  },
+  {
+    message: 'validation.rental.endDate.beforeStart',
+    path: ['end_date'],
+  }
+)
 
 export type RentalItemFormData = z.infer<typeof rentalItemSchema>
 export type RentalFormData = z.infer<typeof rentalSchema>
