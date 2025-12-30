@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useForm, useFieldArray } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -22,16 +24,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useClients } from '@/hooks/api/useClients'
 import { useAvailableProducts } from '@/hooks/api/useProducts'
 import { useCreateSubrental } from '@/hooks/api/useRentals'
-
-interface SubrentalItem {
-  productId: string
-  productName: string
-  quantity: number
-  dailyRate: number
-  days: number
-  purchasePrice: number
-  subtotal: number
-}
+import { subrentalSchema, type SubrentalFormData } from '@/schemas/subrentalSchema'
 
 export function NewSubrental() {
   const navigate = useNavigate()
@@ -43,31 +36,54 @@ export function NewSubrental() {
   const { data: products, isLoading: productsLoading} = useAvailableProducts()
   const createSubrental = useCreateSubrental()
 
-  // Form state
-  const [selectedClientId, setSelectedClientId] = useState('')
-  const [projectName, setProjectName] = useState('')
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
-  const [items, setItems] = useState<SubrentalItem[]>([])
+  // Form state with Zod validation
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<SubrentalFormData>({
+    resolver: zodResolver(subrentalSchema),
+    defaultValues: {
+      client_id: '',
+      project_name: '',
+      start_date: '',
+      end_date: '',
+      supplier_name: '',
+      supplier_contact: '',
+      supplier_notes: '',
+      notes: '',
+      items: [],
+    },
+  })
+
+  // Dynamic items array
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'items',
+  })
+
+  // UI state (not in schema)
   const [productSearch, setProductSearch] = useState('')
   const [showProductPicker, setShowProductPicker] = useState(false)
-
-  // Supplier information (subrental-specific)
-  const [supplierName, setSupplierName] = useState('')
-  const [supplierContact, setSupplierContact] = useState('')
-  const [supplierNotes, setSupplierNotes] = useState('')
-
-  // Financial
   const [discount, setDiscount] = useState(0)
-  const [notes, setNotes] = useState('')
   const [error, setError] = useState<string | null>(null)
 
-  const selectedClient = clients?.find(c => c.id === selectedClientId)
+  // Watch form values
+  const clientId = watch('client_id')
+  const startDate = watch('start_date')
+  const endDate = watch('end_date')
+  const watchedItems = watch('items')
+
+  const selectedClient = clients?.find(c => c.id === clientId)
 
   const filteredProducts = (products || []).filter(p =>
     p.name.toLowerCase().includes(productSearch.toLowerCase())
   )
 
+  // Calculate rental days
   const calculateDays = () => {
     if (!startDate || !endDate) return 0
     const start = new Date(startDate)
@@ -78,62 +94,73 @@ export function NewSubrental() {
 
   const days = calculateDays()
 
-  const addItem = (product: NonNullable<typeof products>[0]) => {
-    const existingItem = items.find(i => i.productId === product.id)
-    if (existingItem) {
-      setItems(items.map(i =>
-        i.productId === product.id
-          ? { ...i, quantity: i.quantity + 1, days, subtotal: (i.quantity + 1) * product.daily_rate * days }
-          : i
-      ))
-    } else {
-      setItems([...items, {
-        productId: product.id,
-        productName: product.name,
-        quantity: 1,
-        dailyRate: product.daily_rate,
-        days,
-        purchasePrice: 0, // User will input
-        subtotal: product.daily_rate * days
-      }])
+  // Update all items' days when date changes
+  useEffect(() => {
+    if (days > 0 && watchedItems.length > 0) {
+      watchedItems.forEach((item, index) => {
+        const newSubtotal = item.quantity * item.daily_rate * days
+        setValue(`items.${index}.days`, days)
+        setValue(`items.${index}.subtotal`, newSubtotal)
+      })
     }
+  }, [days, watchedItems.length])
+
+  // Add item to subrental
+  const addItem = (product: NonNullable<typeof products>[0]) => {
+    const existingIndex = fields.findIndex(f => f.product_id === product.id)
+
+    if (existingIndex >= 0) {
+      // Update existing item quantity
+      const currentItem = watchedItems[existingIndex]
+      const newQuantity = currentItem.quantity + 1
+      const newSubtotal = newQuantity * product.daily_rate * days
+
+      setValue(`items.${existingIndex}.quantity`, newQuantity)
+      setValue(`items.${existingIndex}.subtotal`, newSubtotal)
+    } else {
+      // Add new item
+      append({
+        product_id: product.id,
+        quantity: 1,
+        daily_rate: product.daily_rate,
+        days,
+        purchase_price: 0, // User will input
+        subtotal: product.daily_rate * days,
+      })
+    }
+
     setProductSearch('')
     setShowProductPicker(false)
   }
 
-  const removeItem = (productId: string) => {
-    setItems(items.filter(i => i.productId !== productId))
+  // Update item quantity
+  const updateQuantity = (index: number, quantity: number) => {
+    const item = watchedItems[index]
+    const newSubtotal = quantity * item.daily_rate * days
+
+    setValue(`items.${index}.quantity`, quantity)
+    setValue(`items.${index}.subtotal`, newSubtotal)
   }
 
-  const updateQuantity = (productId: string, quantity: number) => {
-    setItems(items.map(i =>
-      i.productId === productId
-        ? { ...i, quantity, subtotal: quantity * i.dailyRate * days }
-        : i
-    ))
+  // Update item purchase price
+  const updatePurchasePrice = (index: number, purchasePrice: number) => {
+    setValue(`items.${index}.purchase_price`, purchasePrice)
   }
 
-  const updatePurchasePrice = (productId: string, purchasePrice: number) => {
-    setItems(items.map(i =>
-      i.productId === productId
-        ? { ...i, purchasePrice }
-        : i
-    ))
-  }
-
-  const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0)
+  // Calculate financial totals
+  const subtotal = watchedItems.reduce((sum, item) => sum + (item.subtotal || 0), 0)
   const discountAmount = subtotal * (discount / 100)
   const taxRate = 0.27 // 27% Hungarian VAT
   const tax = (subtotal - discountAmount) * taxRate
   const total = subtotal - discountAmount + tax
 
   // Subrental-specific: Calculate profit margin
-  const totalPurchaseCost = items.reduce((sum, item) => sum + (item.purchasePrice * item.quantity), 0)
+  const totalPurchaseCost = watchedItems.reduce((sum, item) => sum + ((item.purchase_price || 0) * item.quantity), 0)
   const profit = total - totalPurchaseCost
   const profitMargin = totalPurchaseCost > 0 ? ((profit / totalPurchaseCost) * 100).toFixed(1) : '0'
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  // Form submit handler
+  const onSubmit = async (data: SubrentalFormData) => {
     setError(null)
 
     if (!user) {
@@ -141,33 +168,28 @@ export function NewSubrental() {
       return
     }
 
-    if (items.length === 0) {
-      setError('Please add at least one item to the rental')
-      return
-    }
-
     try {
       await createSubrental.mutateAsync({
         rental: {
-          client_id: selectedClientId,
-          project_name: projectName,
-          start_date: startDate,
-          end_date: endDate,
-          notes: notes || null,
-          supplier_name: supplierName,
-          supplier_contact: supplierContact || undefined,
-          supplier_notes: supplierNotes || undefined,
+          client_id: data.client_id,
+          project_name: data.project_name,
+          start_date: data.start_date,
+          end_date: data.end_date,
+          notes: data.notes || null,
+          supplier_name: data.supplier_name,
+          supplier_contact: data.supplier_contact || undefined,
+          supplier_notes: data.supplier_notes || undefined,
           final_currency: 'EUR',
           final_total: total,
           status: 'active',
           created_by: user.id,
         },
-        items: items.map(item => ({
-          product_id: item.productId,
+        items: data.items.map(item => ({
+          product_id: item.product_id,
           quantity: item.quantity,
-          daily_rate: item.dailyRate,
+          daily_rate: item.daily_rate,
           days: item.days,
-          purchase_price: item.purchasePrice,
+          purchase_price: item.purchase_price || 0,
           subtotal: item.subtotal,
         })),
       })
@@ -209,7 +231,7 @@ export function NewSubrental() {
         </Card>
       )}
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Main Form */}
           <div className="lg:col-span-2 space-y-6">
@@ -228,10 +250,10 @@ export function NewSubrental() {
                     {t('newSubrental.fields.client')} *
                   </label>
                   <select
-                    required
-                    value={selectedClientId}
-                    onChange={(e) => setSelectedClientId(e.target.value)}
-                    className="mt-2 w-full h-11 px-4 rounded-md border border-border bg-background text-foreground font-medium"
+                    {...register('client_id')}
+                    className={`mt-2 w-full h-11 px-4 rounded-md border bg-background text-foreground font-medium ${
+                      errors.client_id ? 'border-red-500' : 'border-border'
+                    }`}
                     disabled={clientsLoading}
                   >
                     <option value="">{clientsLoading ? 'Loading clients...' : t('newSubrental.fields.clientPlaceholder')}</option>
@@ -241,6 +263,11 @@ export function NewSubrental() {
                       </option>
                     ))}
                   </select>
+                  {errors.client_id && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.client_id.message as string)}
+                    </p>
+                  )}
                   {selectedClient && (
                     <p className="mt-2 text-sm text-muted-foreground">
                       {selectedClient.email || ''}
@@ -254,12 +281,15 @@ export function NewSubrental() {
                     {t('newSubrental.fields.project')} *
                   </label>
                   <Input
-                    required
-                    value={projectName}
-                    onChange={(e) => setProjectName(e.target.value)}
+                    {...register('project_name')}
                     placeholder={t('newSubrental.fields.projectPlaceholder')}
-                    className="mt-2 h-11"
+                    className={`mt-2 h-11 ${errors.project_name ? 'border-red-500' : ''}`}
                   />
+                  {errors.project_name && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.project_name.message as string)}
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -278,35 +308,48 @@ export function NewSubrental() {
                     {t('newSubrental.fields.supplierName')} *
                   </label>
                   <Input
-                    required
-                    value={supplierName}
-                    onChange={(e) => setSupplierName(e.target.value)}
+                    {...register('supplier_name')}
                     placeholder={t('newSubrental.fields.supplierNamePlaceholder')}
-                    className="mt-2 h-11"
+                    className={`mt-2 h-11 ${errors.supplier_name ? 'border-red-500' : ''}`}
                   />
+                  {errors.supplier_name && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.supplier_name.message as string)}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
                     {t('newSubrental.fields.supplierContact')}
                   </label>
                   <Input
-                    value={supplierContact}
-                    onChange={(e) => setSupplierContact(e.target.value)}
+                    {...register('supplier_contact')}
                     placeholder="email@example.com or +36 1 234 5678"
-                    className="mt-2 h-11"
+                    className={`mt-2 h-11 ${errors.supplier_contact ? 'border-red-500' : ''}`}
                   />
+                  {errors.supplier_contact && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.supplier_contact.message as string)}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
                     {t('newSubrental.fields.supplierNotes')}
                   </label>
                   <textarea
-                    value={supplierNotes}
-                    onChange={(e) => setSupplierNotes(e.target.value)}
+                    {...register('supplier_notes')}
                     placeholder={t('newSubrental.fields.supplierNotesPlaceholder')}
                     rows={2}
-                    className="mt-2 w-full px-3 py-2 rounded-md border border-border bg-background text-foreground text-sm resize-none"
+                    className={`mt-2 w-full px-3 py-2 rounded-md border bg-background text-foreground text-sm resize-none ${
+                      errors.supplier_notes ? 'border-red-500' : 'border-border'
+                    }`}
                   />
+                  {errors.supplier_notes && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.supplier_notes.message as string)}
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -326,24 +369,30 @@ export function NewSubrental() {
                       {t('newSubrental.fields.startDate')} *
                     </label>
                     <Input
-                      required
                       type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      className="mt-2 h-11 font-mono"
+                      {...register('start_date')}
+                      className={`mt-2 h-11 font-mono ${errors.start_date ? 'border-red-500' : ''}`}
                     />
+                    {errors.start_date && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {t(errors.start_date.message as string)}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
                       {t('newSubrental.fields.endDate')} *
                     </label>
                     <Input
-                      required
                       type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      className="mt-2 h-11 font-mono"
+                      {...register('end_date')}
+                      className={`mt-2 h-11 font-mono ${errors.end_date ? 'border-red-500' : ''}`}
                     />
+                    {errors.end_date && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {t(errors.end_date.message as string)}
+                      </p>
+                    )}
                   </div>
                 </div>
                 {days > 0 && (
@@ -363,7 +412,7 @@ export function NewSubrental() {
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-xl flex items-center gap-2">
                     <Package className="h-5 w-5 text-primary" />
-                    {t('newSubrental.sections.equipment')} ({items.length} {t('newSubrental.equipment.items')})
+                    {t('newSubrental.sections.equipment')} ({fields.length} {t('newSubrental.equipment.items')})
                   </CardTitle>
                   <Button
                     type="button"
@@ -378,6 +427,11 @@ export function NewSubrental() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
+                {errors.items && (
+                  <p className="text-sm text-red-500">
+                    {t(errors.items.message as string)}
+                  </p>
+                )}
                 {/* Product Picker */}
                 {showProductPicker && (
                   <div className="p-4 rounded-lg border border-primary/30 bg-primary/5 space-y-3">
@@ -426,7 +480,7 @@ export function NewSubrental() {
                 )}
 
                 {/* Items Table */}
-                {items.length > 0 ? (
+                {fields.length > 0 ? (
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead className="border-b border-border">
@@ -441,54 +495,59 @@ export function NewSubrental() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border">
-                        {items.map(item => (
-                          <tr key={item.productId} className="hover:bg-secondary/50 transition-colors">
-                            <td className="p-3">
-                              <span className="font-medium">{item.productName}</span>
-                            </td>
-                            <td className="p-3">
-                              <Input
-                                type="number"
-                                min="1"
-                                value={item.quantity}
-                                onChange={(e) => updateQuantity(item.productId, parseInt(e.target.value) || 1)}
-                                className="w-20 h-9 font-mono"
-                              />
-                            </td>
-                            <td className="p-3">
-                              <span className="font-mono text-sm">€{item.dailyRate}</span>
-                            </td>
-                            <td className="p-3">
-                              <span className="font-mono">{item.days}</span>
-                            </td>
-                            <td className="p-3">
-                              <Input
-                                type="number"
-                                min="0"
-                                step="0.01"
-                                value={item.purchasePrice}
-                                onChange={(e) => updatePurchasePrice(item.productId, parseFloat(e.target.value) || 0)}
-                                className="w-24 h-9 font-mono"
-                              />
-                            </td>
-                            <td className="p-3">
-                              <span className="font-mono font-semibold text-primary">
-                                €{item.subtotal}
-                              </span>
-                            </td>
-                            <td className="p-3">
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-destructive hover:text-destructive"
-                                onClick={() => removeItem(item.productId)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </td>
-                          </tr>
-                        ))}
+                        {fields.map((field, index) => {
+                          const product = products?.find(p => p.id === field.product_id)
+                          const item = watchedItems[index]
+
+                          return (
+                            <tr key={field.id} className="hover:bg-secondary/50 transition-colors">
+                              <td className="p-3">
+                                <span className="font-medium">{product?.name || 'Unknown'}</span>
+                              </td>
+                              <td className="p-3">
+                                <Input
+                                  type="number"
+                                  min="1"
+                                  {...register(`items.${index}.quantity` as const, { valueAsNumber: true })}
+                                  onChange={(e) => updateQuantity(index, parseInt(e.target.value) || 1)}
+                                  className="w-20 h-9 font-mono"
+                                />
+                              </td>
+                              <td className="p-3">
+                                <span className="font-mono text-sm">€{item?.daily_rate || 0}</span>
+                              </td>
+                              <td className="p-3">
+                                <span className="font-mono">{item?.days || 0}</span>
+                              </td>
+                              <td className="p-3">
+                                <Input
+                                  type="number"
+                                  min="0"
+                                  step="0.01"
+                                  {...register(`items.${index}.purchase_price` as const, { valueAsNumber: true })}
+                                  onChange={(e) => updatePurchasePrice(index, parseFloat(e.target.value) || 0)}
+                                  className="w-24 h-9 font-mono"
+                                />
+                              </td>
+                              <td className="p-3">
+                                <span className="font-mono font-semibold text-primary">
+                                  €{item?.subtotal || 0}
+                                </span>
+                              </td>
+                              <td className="p-3">
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-destructive hover:text-destructive"
+                                  onClick={() => remove(index)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </td>
+                            </tr>
+                          )
+                        })}
                       </tbody>
                     </table>
                   </div>
@@ -580,12 +639,18 @@ export function NewSubrental() {
                     {t('newSubrental.financial.notes')}
                   </label>
                   <textarea
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
+                    {...register('notes')}
                     placeholder={t('newSubrental.financial.notesPlaceholder')}
                     rows={3}
-                    className="mt-1 w-full px-3 py-2 rounded-md border border-border bg-background text-foreground text-sm resize-none"
+                    className={`mt-1 w-full px-3 py-2 rounded-md border bg-background text-foreground text-sm resize-none ${
+                      errors.notes ? 'border-red-500' : 'border-border'
+                    }`}
                   />
+                  {errors.notes && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {t(errors.notes.message as string)}
+                    </p>
+                  )}
                 </div>
 
                 {/* Submit Button */}
@@ -593,9 +658,9 @@ export function NewSubrental() {
                   type="submit"
                   size="lg"
                   className="w-full gap-2"
-                  disabled={!selectedClientId || !projectName || !startDate || !endDate || items.length === 0 || createSubrental.isPending}
+                  disabled={isSubmitting}
                 >
-                  {createSubrental.isPending ? (
+                  {isSubmitting ? (
                     <>
                       <Loader2 className="h-5 w-5 animate-spin" />
                       Creating...
