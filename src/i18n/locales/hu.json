@@ -18,28 +18,44 @@
   "dashboard": {
     "title": "Irányítópult",
     "subtitle": "Bérlési műveletek áttekintése",
-    "newRental": "Új Bérlés",
     "stats": {
       "activeRentals": "Aktív Bérlések",
-      "totalRevenue": "Összes Bevétel",
-      "activeClients": "Aktív Ügyfelek",
       "pendingReturns": "Függő Visszavételek",
-      "fromLastMonth": "az előző hónaphoz képest"
+      "revenueMonth": "Havi Bevétel",
+      "activeClients": "Aktív Ügyfelek",
+      "today": "ma",
+      "dueToday": "ma esedékes",
+      "of": "/",
+      "total": "összesen"
+    },
+    "alerts": {
+      "title": "Figyelmeztetések és Értesítések",
+      "overdueReturns": "lejárt visszavétel",
+      "dueToday": "ma esedékes visszavétel",
+      "lowStock": "alacsony készletű termék"
     },
     "quickActions": {
       "title": "Gyors Műveletek",
-      "createRental": "Új Bérlés Létrehozása",
-      "addClient": "Új Ügyfél Hozzáadása",
-      "checkInventory": "Készlet Ellenőrzése"
+      "newRental": "Új Bérlés",
+      "newSubrental": "Új Albérlet",
+      "newClient": "Új Ügyfél",
+      "newProduct": "Új Termék",
+      "viewReports": "Riportok Megtekintése"
     },
-    "recentRentals": {
-      "title": "Legutóbbi Bérlések",
-      "viewAll": "Mind Megtekintése",
-      "due": "Esedékes"
+    "revenueTrend": {
+      "title": "Bevételi Trend",
+      "subtitle": "Utolsó 30 nap"
     },
-    "topEquipment": {
-      "title": "Népszerű Eszközök",
-      "subtitle": "Leggyakrabban bérelt ebben a hónapban",
+    "recentActivity": {
+      "title": "Legutóbbi Tevékenységek",
+      "viewAll": "Mind Megtekintése"
+    },
+    "topProducts": {
+      "title": "Top Termékek",
+      "rentals": "bérlés"
+    },
+    "topClients": {
+      "title": "Top Ügyfelek",
       "rentals": "bérlés"
     }
   },

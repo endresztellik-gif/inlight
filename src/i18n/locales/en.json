@@ -21,25 +21,42 @@
     "newRental": "New Rental",
     "stats": {
       "activeRentals": "Active Rentals",
-      "totalRevenue": "Total Revenue",
-      "activeClients": "Active Clients",
       "pendingReturns": "Pending Returns",
-      "fromLastMonth": "from last month"
+      "revenueMonth": "Revenue This Month",
+      "activeClients": "Active Clients",
+      "today": "today",
+      "dueToday": "due today",
+      "of": "of",
+      "total": "total"
+    },
+    "alerts": {
+      "title": "Alerts & Notifications",
+      "overdueReturns": "overdue returns",
+      "dueToday": "returns due today",
+      "lowStock": "products low on stock"
     },
     "quickActions": {
       "title": "Quick Actions",
-      "createRental": "Create New Rental",
-      "addClient": "Add New Client",
-      "checkInventory": "Check Inventory"
+      "newRental": "New Rental",
+      "newSubrental": "New Subrental",
+      "newClient": "New Client",
+      "newProduct": "New Product",
+      "viewReports": "View Reports"
     },
-    "recentRentals": {
-      "title": "Recent Rentals",
-      "viewAll": "View All",
-      "due": "Due"
+    "revenueTrend": {
+      "title": "Revenue Trend",
+      "subtitle": "Last 30 days"
     },
-    "topEquipment": {
-      "title": "Top Equipment",
-      "subtitle": "Most rented this month",
+    "recentActivity": {
+      "title": "Recent Activity",
+      "viewAll": "View All"
+    },
+    "topProducts": {
+      "title": "Top Products",
+      "rentals": "rentals"
+    },
+    "topClients": {
+      "title": "Top Clients",
       "rentals": "rentals"
     }
   },
