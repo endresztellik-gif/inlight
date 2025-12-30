@@ -17,6 +17,9 @@ export const rentalItemSchema = z.object({
   days: z.number()
     .int('validation.rental.item.days.integer')
     .min(1, 'validation.rental.item.days.positive'),
+
+  subtotal: z.number()
+    .min(0, 'validation.rental.item.subtotal.nonNegative'),
 })
 
 /**
