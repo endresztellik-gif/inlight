@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import {
   FileText,
   Users,
@@ -21,6 +20,8 @@ import { ProductUtilizationView } from '@/components/reports/ProductUtilizationV
 import { RevenueReportView } from '@/components/reports/RevenueReportView'
 import { SubrentalProfitView } from '@/components/reports/SubrentalProfitView'
 import { RentalSubrentalComparisonView } from '@/components/reports/RentalSubrentalComparisonView'
+import { AdvancedFilters, type ReportFilters } from '@/components/reports/AdvancedFilters'
+import { ReportScheduler } from '@/components/reports/ReportScheduler'
 import {
   exportRentalsToExcel,
   exportClientStatsToExcel,
@@ -42,8 +43,16 @@ export function Reports() {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const [selectedReport, setSelectedReport] = useState<ReportType>('rentals')
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
+  const [filters, setFilters] = useState<ReportFilters>({
+    startDate: '',
+    endDate: '',
+    status: [],
+    clientSearch: '',
+    productSearch: '',
+    minAmount: undefined,
+    maxAmount: undefined,
+    rentalType: 'all',
+  })
 
   // Report type options
   const reportTypes = [
@@ -290,111 +299,39 @@ export function Reports() {
         })}
       </div>
 
-      {/* Date Range Filter */}
-      <Card cinematic>
-        <CardHeader>
-          <CardTitle className="text-lg">{t('reports.filters.dateRange')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                {t('reports.filters.startDate')}
-              </label>
-              <Input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="mt-2 h-11"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                {t('reports.filters.endDate')}
-              </label>
-              <Input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="mt-2 h-11"
-              />
-            </div>
-          </div>
+      {/* Advanced Filters */}
+      <AdvancedFilters
+        filters={filters}
+        onFiltersChange={setFilters}
+        showTypeFilter={selectedReport === 'rentals' || selectedReport === 'comparison'}
+      />
 
-          {/* Quick Date Presets */}
-          <div className="flex gap-2 mt-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                const today = new Date()
-                const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1)
-                const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0)
-                setStartDate(lastMonth.toISOString().split('T')[0])
-                setEndDate(lastMonthEnd.toISOString().split('T')[0])
-              }}
-            >
-              {t('reports.filters.lastMonth')}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                const today = new Date()
-                const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1)
-                setStartDate(thisMonthStart.toISOString().split('T')[0])
-                setEndDate(today.toISOString().split('T')[0])
-              }}
-            >
-              {t('reports.filters.thisMonth')}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                const today = new Date()
-                const last30Days = new Date(today)
-                last30Days.setDate(today.getDate() - 30)
-                setStartDate(last30Days.toISOString().split('T')[0])
-                setEndDate(today.toISOString().split('T')[0])
-              }}
-            >
-              {t('reports.filters.last30Days')}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setStartDate('')
-                setEndDate('')
-              }}
-            >
-              {t('reports.filters.clearDates')}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Report Scheduler */}
+      <ReportScheduler
+        currentReportType={selectedReport}
+        currentFilters={filters}
+      />
 
       {/* Report Content */}
       <div className="animate-in fade-in duration-300">
         {selectedReport === 'rentals' && (
-          <RentalReportView startDate={startDate} endDate={endDate} />
+          <RentalReportView filters={filters} />
         )}
         {selectedReport === 'clients' && (
-          <ClientStatisticsView startDate={startDate} endDate={endDate} />
+          <ClientStatisticsView startDate={filters.startDate || ''} endDate={filters.endDate || ''} />
         )}
         {selectedReport === 'products' && (
-          <ProductUtilizationView startDate={startDate} endDate={endDate} />
+          <ProductUtilizationView startDate={filters.startDate || ''} endDate={filters.endDate || ''} />
         )}
         {selectedReport === 'revenue' && (
-          <RevenueReportView startDate={startDate} endDate={endDate} />
+          <RevenueReportView startDate={filters.startDate || ''} endDate={filters.endDate || ''} />
         )}
         {selectedReport === 'profit' && (
-          <SubrentalProfitView startDate={startDate} endDate={endDate} />
+          <SubrentalProfitView startDate={filters.startDate || ''} endDate={filters.endDate || ''} />
         )}
 
         {selectedReport === 'comparison' && (
-          <RentalSubrentalComparisonView startDate={startDate} endDate={endDate} />
+          <RentalSubrentalComparisonView startDate={filters.startDate || ''} endDate={filters.endDate || ''} />
         )}
       </div>
     </div>

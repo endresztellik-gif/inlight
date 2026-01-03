@@ -1,25 +1,74 @@
-import { useState } from 'react'
+import { useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Loader2, Eye } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useRentalReport } from '@/hooks/api/useReports'
 import { Link } from 'react-router-dom'
+import type { ReportFilters } from './AdvancedFilters'
 
 interface RentalReportViewProps {
-  startDate?: string
-  endDate?: string
+  filters: ReportFilters
 }
 
-export function RentalReportView({ startDate, endDate }: RentalReportViewProps) {
+export function RentalReportView({ filters }: RentalReportViewProps) {
   const { t } = useTranslation()
-  const [statusFilter, setStatusFilter] = useState<string>('all')
 
   const { data, isLoading } = useRentalReport({
-    startDate,
-    endDate,
-    status: statusFilter,
+    startDate: filters.startDate,
+    endDate: filters.endDate,
+    status: filters.status && filters.status.length > 0 ? filters.status.join(',') : 'all',
   })
+
+  // Client-side filtering based on advanced filters
+  const filteredRentals = useMemo(() => {
+    if (!data?.rentals) return []
+
+    let result = [...data.rentals]
+
+    // Filter by rental type
+    if (filters.rentalType && filters.rentalType !== 'all') {
+      result = result.filter(rental => rental.type === filters.rentalType)
+    }
+
+    // Filter by client search
+    if (filters.clientSearch) {
+      const search = filters.clientSearch.toLowerCase()
+      result = result.filter(rental =>
+        rental.client_name?.toLowerCase().includes(search)
+      )
+    }
+
+    // Filter by product search (search in rental items - would need to join data)
+    // This would require backend support or additional data fetching
+    // For now, we'll skip this as it requires rental_items data
+
+    // Filter by amount range
+    if (filters.minAmount !== undefined) {
+      result = result.filter(rental => rental.final_total >= filters.minAmount!)
+    }
+
+    if (filters.maxAmount !== undefined) {
+      result = result.filter(rental => rental.final_total <= filters.maxAmount!)
+    }
+
+    return result
+  }, [data?.rentals, filters])
+
+  // Recalculate summary based on filtered rentals
+  const summary = useMemo(() => {
+    const activeCount = filteredRentals.filter(r => r.status === 'active').length
+    const completedCount = filteredRentals.filter(r => r.status === 'completed').length
+    const totalRevenue = filteredRentals.reduce((sum, r) => sum + r.final_total, 0)
+
+    return {
+      totalCount: filteredRentals.length,
+      activeCount,
+      completedCount,
+      totalRevenue,
+      avgDailyRate: data?.summary?.avgDailyRate || 0,
+    }
+  }, [filteredRentals, data?.summary])
 
   if (isLoading) {
     return (
@@ -27,15 +76,6 @@ export function RentalReportView({ startDate, endDate }: RentalReportViewProps) 
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
-  }
-
-  const rentals = data?.rentals || []
-  const summary = data?.summary || {
-    totalCount: 0,
-    totalRevenue: 0,
-    avgDailyRate: 0,
-    activeCount: 0,
-    completedCount: 0,
   }
 
   return (
@@ -92,49 +132,13 @@ export function RentalReportView({ startDate, endDate }: RentalReportViewProps) 
         </Card>
       </div>
 
-      {/* Filters */}
-      <Card cinematic>
-        <CardContent className="p-4">
-          <div className="flex gap-2">
-            <Button
-              variant={statusFilter === 'all' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setStatusFilter('all')}
-            >
-              {t('reports.filters.all')}
-            </Button>
-            <Button
-              variant={statusFilter === 'active' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setStatusFilter('active')}
-            >
-              {t('reports.filters.active')}
-            </Button>
-            <Button
-              variant={statusFilter === 'completed' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setStatusFilter('completed')}
-            >
-              {t('reports.filters.completed')}
-            </Button>
-            <Button
-              variant={statusFilter === 'pending_return' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setStatusFilter('pending_return')}
-            >
-              {t('reports.filters.pendingReturn')}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Rentals Table */}
       <Card cinematic>
         <CardHeader>
           <CardTitle className="text-xl">{t('reports.rental.rentalsList')}</CardTitle>
         </CardHeader>
         <CardContent>
-          {rentals.length === 0 ? (
+          {filteredRentals.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               {t('reports.rental.noRentals')}
             </div>
@@ -170,7 +174,7 @@ export function RentalReportView({ startDate, endDate }: RentalReportViewProps) 
                   </tr>
                 </thead>
                 <tbody>
-                  {rentals.map((rental, index) => (
+                  {filteredRentals.map((rental, index) => (
                     <tr
                       key={rental.id}
                       className={`border-b border-border hover:bg-muted/50 transition-colors ${
