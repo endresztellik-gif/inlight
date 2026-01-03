@@ -262,3 +262,130 @@ export function exportSubrentalProfitToPDF(data: SubrentalProfitData[], filename
 
   doc.save(filename)
 }
+
+/**
+ * Comparison Report Export Types
+ */
+export interface ComparisonData {
+  period: string
+  rentalRevenue: number
+  subrentalRevenue: number
+  rentalCount: number
+  subrentalCount: number
+  subrentalProfit: number
+}
+
+export interface ComparisonSummary {
+  rental: {
+    totalRevenue: number
+    count: number
+    avgValue: number
+  }
+  subrental: {
+    totalRevenue: number
+    totalCost: number
+    profit: number
+    margin: number
+    count: number
+    avgValue: number
+  }
+}
+
+/**
+ * Comparison Report - Excel Export
+ */
+export function exportComparisonToExcel(
+  comparison: ComparisonData[],
+  summary: ComparisonSummary,
+  filename = 'rental-subrental-comparison.xlsx'
+) {
+  // Sheet 1: Summary
+  const summaryData = [
+    { Metric: 'Rental Revenue', Value: summary.rental.totalRevenue.toFixed(2), Type: 'Rental' },
+    { Metric: 'Rental Count', Value: summary.rental.count, Type: 'Rental' },
+    { Metric: 'Avg Rental Value', Value: summary.rental.avgValue.toFixed(2), Type: 'Rental' },
+    { Metric: '', Value: '', Type: '' }, // Empty row
+    { Metric: 'Subrental Revenue', Value: summary.subrental.totalRevenue.toFixed(2), Type: 'Subrental' },
+    { Metric: 'Subrental Count', Value: summary.subrental.count, Type: 'Subrental' },
+    { Metric: 'Avg Subrental Value', Value: summary.subrental.avgValue.toFixed(2), Type: 'Subrental' },
+    { Metric: 'Purchase Cost', Value: summary.subrental.totalCost.toFixed(2), Type: 'Subrental' },
+    { Metric: 'Profit', Value: summary.subrental.profit.toFixed(2), Type: 'Subrental' },
+    { Metric: 'Profit Margin', Value: summary.subrental.margin.toFixed(1) + '%', Type: 'Subrental' },
+  ]
+  const summarySheet = XLSX.utils.json_to_sheet(summaryData)
+
+  // Sheet 2: Detailed Comparison
+  const detailedData = comparison.map(item => ({
+    Period: item.period,
+    'Rental Revenue': item.rentalRevenue.toFixed(2),
+    'Rental Count': item.rentalCount,
+    'Subrental Revenue': item.subrentalRevenue.toFixed(2),
+    'Subrental Count': item.subrentalCount,
+    'Subrental Profit': item.subrentalProfit.toFixed(2),
+    'Total Revenue': (item.rentalRevenue + item.subrentalRevenue).toFixed(2),
+  }))
+  const detailedSheet = XLSX.utils.json_to_sheet(detailedData)
+
+  // Create workbook with both sheets
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, summarySheet, 'Summary')
+  XLSX.utils.book_append_sheet(workbook, detailedSheet, 'Detailed Comparison')
+  XLSX.writeFile(workbook, filename)
+}
+
+/**
+ * Comparison Report - PDF Export
+ */
+export function exportComparisonToPDF(
+  comparison: ComparisonData[],
+  summary: ComparisonSummary,
+  filename = 'rental-subrental-comparison.pdf'
+) {
+  const doc = new jsPDF()
+
+  // Title
+  doc.setFontSize(18)
+  doc.text('Rental vs Subrental Comparison Report', 14, 20)
+
+  // Summary Section
+  doc.setFontSize(14)
+  doc.text('Summary', 14, 35)
+
+  doc.setFontSize(10)
+  let yPos = 45
+
+  // Rental Summary
+  doc.text('Rental:', 14, yPos)
+  doc.text(`Total Revenue: €${summary.rental.totalRevenue.toFixed(2)}`, 20, yPos + 6)
+  doc.text(`Count: ${summary.rental.count}`, 20, yPos + 12)
+  doc.text(`Avg Value: €${summary.rental.avgValue.toFixed(2)}`, 20, yPos + 18)
+
+  yPos += 30
+
+  // Subrental Summary
+  doc.text('Subrental:', 14, yPos)
+  doc.text(`Total Revenue: €${summary.subrental.totalRevenue.toFixed(2)}`, 20, yPos + 6)
+  doc.text(`Count: ${summary.subrental.count}`, 20, yPos + 12)
+  doc.text(`Avg Value: €${summary.subrental.avgValue.toFixed(2)}`, 20, yPos + 18)
+  doc.text(`Purchase Cost: €${summary.subrental.totalCost.toFixed(2)}`, 20, yPos + 24)
+  doc.text(`Profit: €${summary.subrental.profit.toFixed(2)}`, 20, yPos + 30)
+  doc.text(`Margin: ${summary.subrental.margin.toFixed(1)}%`, 20, yPos + 36)
+
+  // Detailed Comparison Table
+  autoTable(doc, {
+    startY: yPos + 45,
+    head: [['Period', 'Rental Rev', 'Rental Count', 'Subrental Rev', 'Subrental Count', 'Subrental Profit']],
+    body: comparison.map(item => [
+      item.period,
+      '€' + item.rentalRevenue.toFixed(2),
+      item.rentalCount,
+      '€' + item.subrentalRevenue.toFixed(2),
+      item.subrentalCount,
+      '€' + item.subrentalProfit.toFixed(2),
+    ]),
+    styles: { fontSize: 8 },
+    headStyles: { fillColor: [41, 128, 185] },
+  })
+
+  doc.save(filename)
+}

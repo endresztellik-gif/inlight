@@ -68,6 +68,21 @@
     "topClients": {
       "title": "Top Ügyfelek",
       "rentals": "bérlés"
+    },
+    "upcomingReturns": {
+      "title": "Közelgő Visszavételek",
+      "subtitle": "Következő 7 napban esedékes",
+      "noReturns": "Nincsenek közelgő visszavételek",
+      "today": "Ma",
+      "tomorrow": "Holnap",
+      "days": "nap"
+    },
+    "lowStock": {
+      "title": "Alacsony Készlet Riasztás",
+      "subtitle": "Termékek alacsony készlettel",
+      "allGood": "Minden termék jól feltöltve",
+      "outOfStock": "Kifogyott",
+      "lowStock": "Alacsony Készlet"
     }
   },
   "clients": {
@@ -572,7 +587,9 @@
       "revenue": "Bevétel",
       "revenueDesc": "Bevétel elemzés",
       "profit": "Haszon",
-      "profitDesc": "Subrental haszon"
+      "profitDesc": "Subrental haszon",
+      "comparison": "Összehasonlítás",
+      "comparisonDesc": "Bérlés vs Subrental összehasonlítás"
     },
     "filters": {
       "dateRange": "Dátum Tartomány",
@@ -668,11 +685,63 @@
       "profitable": "Nyereséges",
       "breakEven": "Nullszaldós",
       "loss": "Veszteséges"
+    },
+    "comparison": {
+      "daily": "Napi",
+      "weekly": "Heti",
+      "monthly": "Havi",
+      "rentalRevenue": "Bérlési Bevétel",
+      "subrentalRevenue": "Subrental Bevétel",
+      "rentals": "bérlés",
+      "subrentals": "subrental",
+      "subrentalProfit": "Subrental Haszon",
+      "margin": "Haszonkulcs",
+      "topPerformer": "Legjobb Teljesítmény",
+      "rental": "Bérlés",
+      "subrental": "Subrental",
+      "more": "több",
+      "revenueComparison": "Bevétel Összehasonlítás",
+      "subrentalProfitTrend": "Subrental Haszon Trend",
+      "profit": "Haszon"
     }
   },
   "settings": {
     "title": "Beállítások",
-    "subtitle": "Alkalmazás beállítások"
+    "subtitle": "Fiók és beállítások kezelése",
+    "profile": {
+      "title": "Profil",
+      "description": "Személyes információk frissítése",
+      "email": "E-mail",
+      "emailReadOnly": "Az e-mail cím nem módosítható",
+      "fullName": "Teljes Név",
+      "fullNamePlaceholder": "Adja meg a teljes nevét",
+      "role": "Szerepkör",
+      "updateButton": "Profil Frissítése",
+      "updating": "Frissítés...",
+      "updateSuccess": "Profil sikeresen frissítve!"
+    },
+    "security": {
+      "title": "Biztonság",
+      "description": "Jelszó módosítása",
+      "currentPassword": "Jelenlegi Jelszó",
+      "newPassword": "Új Jelszó",
+      "newPasswordPlaceholder": "Új jelszó megadása",
+      "confirmPassword": "Jelszó Megerősítése",
+      "confirmPasswordPlaceholder": "Új jelszó megerősítése",
+      "passwordRequirements": "A jelszónak legalább 8 karakter hosszúnak kell lennie",
+      "passwordTooShort": "A jelszónak legalább 8 karakter hosszúnak kell lennie",
+      "passwordMismatch": "A jelszavak nem egyeznek",
+      "changeButton": "Jelszó Módosítása",
+      "changing": "Módosítás...",
+      "changeSuccess": "Jelszó sikeresen módosítva!"
+    },
+    "preferences": {
+      "title": "Beállítások",
+      "description": "Testreszabás",
+      "language": "Nyelv",
+      "theme": "Téma",
+      "autoSave": "A beállítások automatikusan mentve vannak"
+    }
   },
   "auth": {
     "login": "Bejelentkezés",
@@ -685,7 +754,9 @@
     "signingIn": "Bejelentkezés...",
     "welcome": "Üdvözöljük újra",
     "subtitle": "Adja meg bejelentkezési adatait a fiókjához való hozzáféréshez",
-    "footer": "Professzionális Film Eszköz Bérlés Kezelés"
+    "footer": "Professzionális Film Eszköz Bérlés Kezelés",
+    "accessDenied": "Hozzáférés Megtagadva",
+    "superAdminOnly": "Ez az oldal csak Super Adminisztrátorok számára érhető el. A jelenlegi szerepköre nem rendelkezik jogosultsággal a tartalom megtekintéséhez."
   },
   "common": {
     "save": "Mentés",
@@ -695,6 +766,7 @@
     "search": "Keresés",
     "loading": "Töltés...",
     "back": "Vissza",
+    "goBack": "Vissza",
     "view": "Megtekintés",
     "actions": "Műveletek",
     "status": "Státusz",

@@ -11,6 +11,7 @@ import {
   Download,
   FileSpreadsheet,
   Printer,
+  GitCompare,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
@@ -19,20 +20,23 @@ import { ClientStatisticsView } from '@/components/reports/ClientStatisticsView'
 import { ProductUtilizationView } from '@/components/reports/ProductUtilizationView'
 import { RevenueReportView } from '@/components/reports/RevenueReportView'
 import { SubrentalProfitView } from '@/components/reports/SubrentalProfitView'
+import { RentalSubrentalComparisonView } from '@/components/reports/RentalSubrentalComparisonView'
 import {
   exportRentalsToExcel,
   exportClientStatsToExcel,
   exportProductUtilizationToExcel,
   exportRevenueToExcel,
   exportSubrentalProfitToExcel,
+  exportComparisonToExcel,
   exportRentalsToPDF,
   exportClientStatsToPDF,
   exportProductUtilizationToPDF,
   exportRevenueToPDF,
   exportSubrentalProfitToPDF,
+  exportComparisonToPDF,
 } from '@/utils/reportExports'
 
-type ReportType = 'rentals' | 'clients' | 'products' | 'revenue' | 'profit'
+type ReportType = 'rentals' | 'clients' | 'products' | 'revenue' | 'profit' | 'comparison'
 
 export function Reports() {
   const { t } = useTranslation()
@@ -72,6 +76,12 @@ export function Reports() {
       icon: TrendingUp,
       label: t('reports.types.profit'),
       description: t('reports.types.profitDesc'),
+    },
+    {
+      key: 'comparison' as ReportType,
+      icon: GitCompare,
+      label: t('reports.types.comparison'),
+      description: t('reports.types.comparisonDesc'),
     },
   ]
 
@@ -129,6 +139,16 @@ export function Reports() {
         }
         break
       }
+      case 'comparison': {
+        const queries = queryClient.getQueriesData({ queryKey: ['rentalSubrentalComparison'] })
+        const data = queries.length > 0 ? queries[0][1] as any : null
+        if (data && typeof data === 'object' && 'comparison' in data && 'summary' in data) {
+          exportComparisonToExcel(data.comparison, data.summary)
+        } else {
+          console.warn('No comparison data available for export. Please wait for the report to load.')
+        }
+        break
+      }
     }
   }
 
@@ -183,6 +203,16 @@ export function Reports() {
           exportSubrentalProfitToPDF(data.subrentals)
         } else {
           console.warn('No subrental profit data available for export. Please wait for the report to load.')
+        }
+        break
+      }
+      case 'comparison': {
+        const queries = queryClient.getQueriesData({ queryKey: ['rentalSubrentalComparison'] })
+        const data = queries.length > 0 ? queries[0][1] as any : null
+        if (data && typeof data === 'object' && 'comparison' in data && 'summary' in data) {
+          exportComparisonToPDF(data.comparison, data.summary)
+        } else {
+          console.warn('No comparison data available for export. Please wait for the report to load.')
         }
         break
       }
@@ -361,6 +391,10 @@ export function Reports() {
         )}
         {selectedReport === 'profit' && (
           <SubrentalProfitView startDate={startDate} endDate={endDate} />
+        )}
+
+        {selectedReport === 'comparison' && (
+          <RentalSubrentalComparisonView startDate={startDate} endDate={endDate} />
         )}
       </div>
     </div>

@@ -23,6 +23,8 @@ import {
   useTopProducts,
   useTopClients,
   useRevenueTrend,
+  useUpcomingReturns,
+  useLowStockProducts,
 } from '@/hooks/api/useDashboardStats'
 import {
   LineChart,
@@ -47,6 +49,8 @@ export function Dashboard() {
   const { data: topProducts, isLoading: productsLoading } = useTopProducts(5)
   const { data: topClients, isLoading: clientsLoading } = useTopClients(5)
   const { data: revenueTrend, isLoading: trendLoading } = useRevenueTrend(30)
+  const { data: upcomingReturns, isLoading: upcomingLoading } = useUpcomingReturns(7)
+  const { data: lowStockProducts, isLoading: lowStockLoading } = useLowStockProducts(2)
 
   if (statsLoading) {
     return (
@@ -567,6 +571,153 @@ export function Dashboard() {
                       </p>
                     </div>
                   </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Upcoming Returns & Low Stock */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Upcoming Returns (Next 7 Days) */}
+        <Card cinematic>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg">{t('dashboard.upcomingReturns.title')}</CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {t('dashboard.upcomingReturns.subtitle')}
+                </p>
+              </div>
+              <Clock className="h-5 w-5 text-amber-500" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            {upcomingLoading ? (
+              <div className="flex items-center justify-center h-48">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              </div>
+            ) : (upcomingReturns || []).length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-48 text-center">
+                <Clock className="h-12 w-12 text-muted-foreground/30 mb-3" />
+                <p className="text-sm text-muted-foreground">
+                  {t('dashboard.upcomingReturns.noReturns')}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {(upcomingReturns || []).slice(0, 5).map((rental) => (
+                  <Link
+                    key={rental.id}
+                    to={`/${rental.type === 'subrental' ? 'subrentals' : 'rentals'}/${rental.id}`}
+                    className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                  >
+                    <div
+                      className={`p-2 rounded-lg ${
+                        rental.days_until_due <= 1
+                          ? 'bg-red-500/10 text-red-500'
+                          : rental.days_until_due <= 3
+                          ? 'bg-amber-500/10 text-amber-500'
+                          : 'bg-blue-500/10 text-blue-500'
+                      }`}
+                    >
+                      <Clock className="h-4 w-4" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-mono text-sm font-semibold">{rental.rental_number}</p>
+                      <p className="text-xs text-muted-foreground">{rental.client_name}</p>
+                    </div>
+                    <div className="text-right">
+                      <p
+                        className={`text-sm font-semibold ${
+                          rental.days_until_due <= 1
+                            ? 'text-red-500'
+                            : rental.days_until_due <= 3
+                            ? 'text-amber-500'
+                            : 'text-blue-500'
+                        }`}
+                      >
+                        {rental.days_until_due === 0
+                          ? t('dashboard.upcomingReturns.today')
+                          : rental.days_until_due === 1
+                          ? t('dashboard.upcomingReturns.tomorrow')
+                          : `${rental.days_until_due} ${t('dashboard.upcomingReturns.days')}`}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(rental.end_date).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Low Stock Products */}
+        <Card cinematic>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg">{t('dashboard.lowStock.title')}</CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {t('dashboard.lowStock.subtitle')}
+                </p>
+              </div>
+              <Package className="h-5 w-5 text-amber-500" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            {lowStockLoading ? (
+              <div className="flex items-center justify-center h-48">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              </div>
+            ) : (lowStockProducts || []).length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-48 text-center">
+                <Package className="h-12 w-12 text-green-500/30 mb-3" />
+                <p className="text-sm text-muted-foreground">
+                  {t('dashboard.lowStock.allGood')}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {(lowStockProducts || []).slice(0, 5).map((product) => (
+                  <Link
+                    key={product.id}
+                    to={`/admin/products/${product.id}/edit`}
+                    className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                  >
+                    <div
+                      className={`p-2 rounded-lg ${
+                        product.available_quantity === 0
+                          ? 'bg-red-500/10 text-red-500'
+                          : 'bg-amber-500/10 text-amber-500'
+                      }`}
+                    >
+                      <AlertTriangle className="h-4 w-4" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-sm">{product.name}</p>
+                      <p className="text-xs font-mono text-muted-foreground">
+                        {product.serial_number} • {product.category_name}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p
+                        className={`text-sm font-semibold font-mono ${
+                          product.available_quantity === 0 ? 'text-red-500' : 'text-amber-500'
+                        }`}
+                      >
+                        {product.available_quantity}/{product.stock_quantity}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {product.available_quantity === 0
+                          ? t('dashboard.lowStock.outOfStock')
+                          : t('dashboard.lowStock.lowStock')}
+                      </p>
+                    </div>
+                  </Link>
                 ))}
               </div>
             )}

@@ -104,8 +104,8 @@ export function Sidebar() {
           )
         })}
 
-        {/* Admin Section - Only for admin/super_admin */}
-        {(profile?.role === 'admin' || profile?.role === 'super_admin') && (
+        {/* Admin Section - Only for super_admin */}
+        {profile?.role === 'super_admin' && (
           <div className="pt-4">
             <div className="px-3 mb-2 flex items-center gap-2">
               <ShieldCheck className="h-4 w-4 text-primary" />

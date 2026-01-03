@@ -51,6 +51,25 @@ export interface RevenueTrend {
   revenue: number
 }
 
+export interface UpcomingReturn {
+  id: string
+  rental_number: string
+  type: 'rental' | 'subrental'
+  client_name: string
+  end_date: string
+  days_until_due: number
+  status: string
+}
+
+export interface LowStockProduct {
+  id: string
+  name: string
+  serial_number: string
+  available_quantity: number
+  stock_quantity: number
+  category_name: string
+}
+
 /**
  * Get dashboard statistics
  */
@@ -417,5 +436,100 @@ export function useRevenueTrend(days: number = 30) {
       return trend
     },
     refetchInterval: 5 * 60 * 1000,
+  })
+}
+
+/**
+ * Get upcoming returns (next 7 days)
+ */
+export function useUpcomingReturns(days: number = 7) {
+  return useQuery({
+    queryKey: ['upcomingReturns', days],
+    queryFn: async () => {
+      const now = new Date()
+      const futureDate = new Date(now)
+      futureDate.setDate(futureDate.getDate() + days)
+
+      // Fetch rentals that are active or pending return and due within next N days
+      const { data: rentals, error } = await supabase
+        .from('rentals')
+        .select(`
+          id,
+          rental_number,
+          type,
+          end_date,
+          status,
+          clients (
+            name
+          )
+        `)
+        .in('status', ['active', 'pending_return'])
+        .gte('end_date', now.toISOString())
+        .lte('end_date', futureDate.toISOString())
+        .order('end_date', { ascending: true })
+
+      if (error) throw error
+
+      // Transform to upcoming returns
+      const upcomingReturns: UpcomingReturn[] = (rentals || []).map((rental: any) => {
+        const endDate = new Date(rental.end_date)
+        const daysUntilDue = Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+
+        return {
+          id: rental.id,
+          rental_number: rental.rental_number,
+          type: rental.type,
+          client_name: rental.clients?.name || 'Unknown',
+          end_date: rental.end_date,
+          days_until_due: daysUntilDue,
+          status: rental.status,
+        }
+      })
+
+      return upcomingReturns
+    },
+    refetchInterval: 5 * 60 * 1000,
+    refetchOnWindowFocus: true,
+  })
+}
+
+/**
+ * Get low stock products
+ */
+export function useLowStockProducts(threshold: number = 2) {
+  return useQuery({
+    queryKey: ['lowStockProducts', threshold],
+    queryFn: async () => {
+      const { data: products, error } = await supabase
+        .from('products')
+        .select(`
+          id,
+          name,
+          serial_number,
+          available_quantity,
+          stock_quantity,
+          categories (
+            name
+          )
+        `)
+        .eq('is_active', true)
+        .lte('available_quantity', threshold)
+        .order('available_quantity', { ascending: true })
+
+      if (error) throw error
+
+      const lowStockProducts: LowStockProduct[] = (products || []).map((product: any) => ({
+        id: product.id,
+        name: product.name,
+        serial_number: product.serial_number,
+        available_quantity: product.available_quantity,
+        stock_quantity: product.stock_quantity,
+        category_name: product.categories?.name || 'Unknown',
+      }))
+
+      return lowStockProducts
+    },
+    refetchInterval: 5 * 60 * 1000,
+    refetchOnWindowFocus: true,
   })
 }

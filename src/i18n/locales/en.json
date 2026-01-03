@@ -69,6 +69,21 @@
     "topClients": {
       "title": "Top Clients",
       "rentals": "rentals"
+    },
+    "upcomingReturns": {
+      "title": "Upcoming Returns",
+      "subtitle": "Due in the next 7 days",
+      "noReturns": "No upcoming returns",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "days": "days"
+    },
+    "lowStock": {
+      "title": "Low Stock Alert",
+      "subtitle": "Products with low inventory",
+      "allGood": "All products well stocked",
+      "outOfStock": "Out of Stock",
+      "lowStock": "Low Stock"
     }
   },
   "clients": {
@@ -573,7 +588,9 @@
       "revenue": "Revenue",
       "revenueDesc": "Revenue analysis",
       "profit": "Profit",
-      "profitDesc": "Subrental profit"
+      "profitDesc": "Subrental profit",
+      "comparison": "Comparison",
+      "comparisonDesc": "Rental vs Subrental comparison"
     },
     "filters": {
       "dateRange": "Date Range",
@@ -669,11 +686,63 @@
       "profitable": "Profitable",
       "breakEven": "Break Even",
       "loss": "Loss"
+    },
+    "comparison": {
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "rentalRevenue": "Rental Revenue",
+      "subrentalRevenue": "Subrental Revenue",
+      "rentals": "rentals",
+      "subrentals": "subrentals",
+      "subrentalProfit": "Subrental Profit",
+      "margin": "Margin",
+      "topPerformer": "Top Performer",
+      "rental": "Rental",
+      "subrental": "Subrental",
+      "more": "more",
+      "revenueComparison": "Revenue Comparison",
+      "subrentalProfitTrend": "Subrental Profit Trend",
+      "profit": "Profit"
     }
   },
   "settings": {
     "title": "Settings",
-    "subtitle": "Application preferences"
+    "subtitle": "Manage your account and preferences",
+    "profile": {
+      "title": "Profile",
+      "description": "Update your personal information",
+      "email": "Email",
+      "emailReadOnly": "Email cannot be changed",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Enter your full name",
+      "role": "Role",
+      "updateButton": "Update Profile",
+      "updating": "Updating...",
+      "updateSuccess": "Profile updated successfully!"
+    },
+    "security": {
+      "title": "Security",
+      "description": "Change your password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "newPasswordPlaceholder": "Enter new password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "passwordRequirements": "Password must be at least 8 characters long",
+      "passwordTooShort": "Password must be at least 8 characters",
+      "passwordMismatch": "Passwords do not match",
+      "changeButton": "Change Password",
+      "changing": "Changing...",
+      "changeSuccess": "Password changed successfully!"
+    },
+    "preferences": {
+      "title": "Preferences",
+      "description": "Customize your experience",
+      "language": "Language",
+      "theme": "Theme",
+      "autoSave": "Your preferences are saved automatically"
+    }
   },
   "auth": {
     "login": "Login",
@@ -686,7 +755,9 @@
     "signingIn": "Signing in...",
     "welcome": "Welcome back",
     "subtitle": "Enter your credentials to access your account",
-    "footer": "Professional Film Equipment Rental Management"
+    "footer": "Professional Film Equipment Rental Management",
+    "accessDenied": "Access Denied",
+    "superAdminOnly": "This page is only accessible to Super Administrators. Your current role does not have permission to view this content."
   },
   "common": {
     "save": "Save",
@@ -696,6 +767,7 @@
     "search": "Search",
     "loading": "Loading...",
     "back": "Back",
+    "goBack": "Go Back",
     "view": "View",
     "actions": "Actions",
     "status": "Status",

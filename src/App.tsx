@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
+import { SuperAdminRoute } from './components/auth/SuperAdminRoute'
 import { Sidebar } from './components/layout/Sidebar'
 import { Dashboard } from './pages/Dashboard'
 import { Login } from './pages/Login'
@@ -22,6 +23,7 @@ import { EditCategory } from './pages/admin/EditCategory'
 import { ProductsList } from './pages/admin/ProductsList'
 import { NewProduct } from './pages/admin/NewProduct'
 import { EditProduct } from './pages/admin/EditProduct'
+import { Settings } from './pages/Settings'
 
 // Layout wrapper for authenticated pages
 function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
@@ -128,41 +130,53 @@ function App() {
           </AuthenticatedLayout>
         } />
 
-        {/* Admin - Categories */}
+        {/* Admin - Categories (Super Admin Only) */}
         <Route path="/admin/categories" element={
           <AuthenticatedLayout>
-            <CategoriesList />
+            <SuperAdminRoute>
+              <CategoriesList />
+            </SuperAdminRoute>
           </AuthenticatedLayout>
         } />
 
         <Route path="/admin/categories/new" element={
           <AuthenticatedLayout>
-            <NewCategory />
+            <SuperAdminRoute>
+              <NewCategory />
+            </SuperAdminRoute>
           </AuthenticatedLayout>
         } />
 
         <Route path="/admin/categories/:id/edit" element={
           <AuthenticatedLayout>
-            <EditCategory />
+            <SuperAdminRoute>
+              <EditCategory />
+            </SuperAdminRoute>
           </AuthenticatedLayout>
         } />
 
-        {/* Admin - Products */}
+        {/* Admin - Products (Super Admin Only) */}
         <Route path="/admin/products" element={
           <AuthenticatedLayout>
-            <ProductsList />
+            <SuperAdminRoute>
+              <ProductsList />
+            </SuperAdminRoute>
           </AuthenticatedLayout>
         } />
 
         <Route path="/admin/products/new" element={
           <AuthenticatedLayout>
-            <NewProduct />
+            <SuperAdminRoute>
+              <NewProduct />
+            </SuperAdminRoute>
           </AuthenticatedLayout>
         } />
 
         <Route path="/admin/products/:id/edit" element={
           <AuthenticatedLayout>
-            <EditProduct />
+            <SuperAdminRoute>
+              <EditProduct />
+            </SuperAdminRoute>
           </AuthenticatedLayout>
         } />
 
@@ -174,7 +188,7 @@ function App() {
 
         <Route path="/settings" element={
           <AuthenticatedLayout>
-            <div className="p-8"><h1 className="text-3xl font-bold">Settings</h1></div>
+            <Settings />
           </AuthenticatedLayout>
         } />
 
