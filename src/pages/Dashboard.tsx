@@ -27,11 +27,15 @@ import {
 import {
   LineChart,
   Line,
+  PieChart,
+  Pie,
+  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Legend,
 } from 'recharts'
 import { formatDistanceToNow } from 'date-fns'
 
@@ -116,7 +120,7 @@ export function Dashboard() {
       )}
 
       {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {/* Active Rentals */}
         <Card cinematic className="border-l-4 border-l-primary">
           <CardContent className="p-6">
@@ -134,6 +138,27 @@ export function Dashboard() {
                 </p>
               </div>
               <Package className="h-12 w-12 text-primary opacity-50" />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Active Subrentals */}
+        <Card cinematic className="border-l-4 border-l-purple-500">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">
+                  {t('dashboard.stats.activeSubrentals')}
+                </p>
+                <p className="text-3xl font-bold font-mono mt-2">
+                  {stats?.activeSubrentals || 0}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  <span className="text-purple-500 font-semibold">+{stats?.activeSubrentalsToday || 0}</span>{' '}
+                  {t('dashboard.stats.today')}
+                </p>
+              </div>
+              <Truck className="h-12 w-12 text-purple-500 opacity-50" />
             </div>
           </CardContent>
         </Card>
@@ -199,6 +224,46 @@ export function Dashboard() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Total Profit */}
+        <Card cinematic className="border-l-4 border-l-emerald-500">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">
+                  {t('dashboard.stats.totalProfit')}
+                </p>
+                <p className="text-3xl font-bold font-mono mt-2 text-emerald-500">
+                  €{(stats?.totalProfit || 0).toFixed(0)}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {t('dashboard.stats.fromSubrentals')}
+                </p>
+              </div>
+              <TrendingUp className="h-12 w-12 text-emerald-500 opacity-50" />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Profit Margin */}
+        <Card cinematic className="border-l-4 border-l-cyan-500">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">
+                  {t('dashboard.stats.avgProfitMargin')}
+                </p>
+                <p className="text-3xl font-bold font-mono mt-2 text-cyan-500">
+                  {(stats?.avgProfitMargin || 0).toFixed(1)}%
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {t('dashboard.stats.averageMargin')}
+                </p>
+              </div>
+              <BarChart3 className="h-12 w-12 text-cyan-500 opacity-50" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Quick Actions */}
@@ -242,9 +307,9 @@ export function Dashboard() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
         {/* Revenue Trend Chart */}
-        <Card cinematic>
+        <Card cinematic className="lg:col-span-2 xl:col-span-1">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -288,6 +353,63 @@ export function Dashboard() {
                     dot={{ fill: '#10b981' }}
                   />
                 </LineChart>
+              </ResponsiveContainer>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Distribution Pie Chart */}
+        <Card cinematic>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg">{t('dashboard.distribution.title')}</CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {t('dashboard.distribution.subtitle')}
+                </p>
+              </div>
+              <BarChart3 className="h-5 w-5 text-primary" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            {statsLoading ? (
+              <div className="flex items-center justify-center h-48">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={240}>
+                <PieChart>
+                  <Pie
+                    data={[
+                      { name: t('dashboard.distribution.rentals'), value: stats?.rentalCount || 0 },
+                      { name: t('dashboard.distribution.subrentals'), value: stats?.subrentalCount || 0 },
+                    ]}
+                    cx="50%"
+                    cy="45%"
+                    labelLine={false}
+                    label={({ value }) => value}
+                    outerRadius={65}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    <Cell fill="#3b82f6" />
+                    <Cell fill="#a855f7" />
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#1a1a1a',
+                      border: '1px solid #333',
+                      borderRadius: '8px',
+                    }}
+                    formatter={(value: number | undefined, name: string | undefined) => [value ?? 0, name ?? '']}
+                  />
+                  <Legend
+                    verticalAlign="bottom"
+                    height={40}
+                    iconType="circle"
+                    wrapperStyle={{ fontSize: '13px', paddingTop: '10px' }}
+                  />
+                </PieChart>
               </ResponsiveContainer>
             )}
           </CardContent>

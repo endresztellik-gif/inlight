@@ -38,7 +38,7 @@ export function SubrentalDetail() {
   const processReturn = useProcessReturn()
 
   const [returnMode, setReturnMode] = useState(false)
-  const [returnItems, setReturnItems] = useState<Record<string, { condition: string; returned: boolean }>>({})
+  const [returnItems, setReturnItems] = useState<Record<string, { condition: string; returned: boolean; damageDescription?: string }>>({})
 
   // Calculate days left
   const calculateDaysLeft = (endDate: string) => {
@@ -50,13 +50,14 @@ export function SubrentalDetail() {
   }
 
   // Handle return item state
-  const handleReturnChange = (itemId: string, field: 'condition' | 'returned', value: string | boolean) => {
+  const handleReturnChange = (itemId: string, field: 'condition' | 'returned' | 'damageDescription', value: string | boolean) => {
     setReturnItems(prev => ({
       ...prev,
       [itemId]: {
         ...prev[itemId],
         condition: field === 'condition' ? (value as string) : (prev[itemId]?.condition || 'good'),
         returned: field === 'returned' ? (value as boolean) : (prev[itemId]?.returned || false),
+        damageDescription: field === 'damageDescription' ? (value as string) : prev[itemId]?.damageDescription,
       }
     }))
   }
@@ -70,6 +71,7 @@ export function SubrentalDetail() {
         id: item.id,
         condition_on_return: returnItems[item.id]?.condition || 'good',
         is_returned: returnItems[item.id]?.returned || false,
+        damage_description: returnItems[item.id]?.damageDescription || null,
       }))
 
       await processReturn.mutateAsync({
@@ -313,16 +315,28 @@ export function SubrentalDetail() {
                         </td>
                         {returnMode && (
                           <td className="p-4">
-                            <select
-                              className="bg-input border border-border rounded px-2 py-1 text-sm"
-                              value={returnItems[item.id]?.condition || 'good'}
-                              onChange={(e) => handleReturnChange(item.id, 'condition', e.target.value)}
-                            >
-                              <option value="excellent">{t('subrentalDetail.conditions.excellent')}</option>
-                              <option value="good">{t('subrentalDetail.conditions.good')}</option>
-                              <option value="fair">{t('subrentalDetail.conditions.fair')}</option>
-                              <option value="damaged">{t('subrentalDetail.conditions.damaged')}</option>
-                            </select>
+                            <div className="space-y-2">
+                              <select
+                                className="bg-input border border-border rounded px-2 py-1 text-sm w-full"
+                                value={returnItems[item.id]?.condition || 'good'}
+                                onChange={(e) => handleReturnChange(item.id, 'condition', e.target.value)}
+                              >
+                                <option value="excellent">{t('subrentalDetail.conditions.excellent')}</option>
+                                <option value="good">{t('subrentalDetail.conditions.good')}</option>
+                                <option value="fair">{t('subrentalDetail.conditions.fair')}</option>
+                                <option value="damaged">{t('subrentalDetail.conditions.damaged')}</option>
+                              </select>
+                              {(returnItems[item.id]?.condition === 'damaged') && (
+                                <textarea
+                                  className="bg-input border border-border rounded px-2 py-1 text-sm w-full"
+                                  placeholder={t('subrentalDetail.damageDescription')}
+                                  maxLength={200}
+                                  rows={2}
+                                  value={returnItems[item.id]?.damageDescription || ''}
+                                  onChange={(e) => handleReturnChange(item.id, 'damageDescription', e.target.value)}
+                                />
+                              )}
+                            </div>
                           </td>
                         )}
                         {returnMode && (

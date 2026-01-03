@@ -54,8 +54,8 @@ export function RentalsList() {
   const [statusFilter, setStatusFilter] = useState('all')
   const { t } = useTranslation()
 
-  // Fetch rentals and stats
-  const { data: rentals, isLoading } = useRentals(statusFilter)
+  // Fetch rentals and stats (ONLY type = 'rental', exclude subrentals)
+  const { data: rentals, isLoading } = useRentals(statusFilter, 'rental')
   const { data: stats } = useRentalStats()
 
   // Calculate days left

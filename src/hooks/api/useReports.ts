@@ -1,6 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 
+// Security: Sanitize search query to prevent SQL injection
+const sanitizeSearchQuery = (query: string): string => {
+  // Escape SQL special characters: %, _, ', ", \
+  return query.replace(/[%_'"\\]/g, '\\$&')
+}
+
 // Report filter types
 export interface DateRangeFilter {
   startDate?: string
@@ -485,7 +491,8 @@ export function useSubrentalProfitAnalysis(filters: SubrentalProfitFilters = {})
 
       // Supplier filter
       if (filters.supplierName) {
-        query = query.ilike('supplier_name', `%${filters.supplierName}%`)
+        const sanitized = sanitizeSearchQuery(filters.supplierName)
+        query = query.ilike('supplier_name', `%${sanitized}%`)
       }
 
       const { data, error } = await query

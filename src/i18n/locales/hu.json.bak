@@ -6,7 +6,7 @@
   "nav": {
     "dashboard": "Irányítópult",
     "rentals": "Bérlések",
-    "subrentals": "Subrental",
+    "subrentals": "Albérletek",
     "clients": "Ügyfelek",
     "catalog": "Katalógus",
     "reports": "Jelentések",
@@ -20,7 +20,7 @@
     "subtitle": "Bérlési műveletek áttekintése",
     "stats": {
       "activeRentals": "Aktív Bérlések",
-      "activeSubrentals": "Aktív Subrental",
+      "activeSubrentals": "Aktív Albérletek",
       "pendingReturns": "Függő Visszavételek",
       "revenueMonth": "Havi Bevétel",
       "activeClients": "Aktív Ügyfelek",
@@ -30,7 +30,7 @@
       "dueToday": "ma esedékes",
       "of": "/",
       "total": "összesen",
-      "fromSubrentals": "subrentalből",
+      "fromSubrentals": "albérletekből",
       "averageMargin": "átlagos haszonkulcs"
     },
     "alerts": {
@@ -42,7 +42,7 @@
     "quickActions": {
       "title": "Gyors Műveletek",
       "newRental": "Új Bérlés",
-      "newSubrental": "Új Subrental",
+      "newSubrental": "Új Albérlet",
       "newClient": "Új Ügyfél",
       "newProduct": "Új Termék",
       "viewReports": "Riportok Megtekintése"
@@ -53,9 +53,9 @@
     },
     "distribution": {
       "title": "Bérlések Eloszlása",
-      "subtitle": "Bérlések vs Subrental",
+      "subtitle": "Bérlések vs Albérletek",
       "rentals": "Bérlések",
-      "subrentals": "Subrental"
+      "subrentals": "Albérletek"
     },
     "recentActivity": {
       "title": "Legutóbbi Tevékenységek",
@@ -261,17 +261,16 @@
       "good": "Jó",
       "fair": "Megfelelő",
       "damaged": "Sérült"
-    },
-    "damageDescription": "Sérülés leírása (max 200 karakter)"
+    }
   },
   "subrentals": {
-    "title": "Subrental",
+    "title": "Albérletek",
     "subtitle": "Beszállítóktól bérelt eszközök kezelése",
-    "newSubrental": "Új Subrental",
-    "rental": "Subrental",
-    "rentalPlural": "Subrental",
+    "newSubrental": "Új Albérlet",
+    "rental": "Albérlet",
+    "rentalPlural": "Albérletek",
     "export": "Export",
-    "search": "Keresés subrental szám, ügyfél, projekt vagy beszállító alapján...",
+    "search": "Keresés albérlet szám, ügyfél, projekt vagy beszállító alapján...",
     "filters": {
       "all": "Összes",
       "active": "Aktív",
@@ -285,7 +284,7 @@
       "totalValue": "Össz Érték"
     },
     "table": {
-      "rentalNumber": "Subrental #",
+      "rentalNumber": "Albérlet #",
       "client": "Ügyfél",
       "project": "Projekt",
       "supplier": "Beszállító",
@@ -309,7 +308,7 @@
     }
   },
   "newSubrental": {
-    "title": "Új Subrental Létrehozása",
+    "title": "Új Albérlet Létrehozása",
     "subtitle": "Beszállítótól bérelt eszközök készletnyilvántartás nélkül",
     "sections": {
       "clientProject": "Ügyfél & Projekt",
@@ -363,7 +362,7 @@
       "profitMargin": "Haszonkulcs",
       "notes": "Megjegyzések",
       "notesPlaceholder": "Fizetési feltételek, speciális kondíciók...",
-      "submit": "Subrental Létrehozása"
+      "submit": "Albérlet Létrehozása"
     }
   },
   "subrentalDetail": {
@@ -376,7 +375,7 @@
     "supplierName": "Beszállító",
     "contact": "Elérhetőség",
     "notes": "Megjegyzések",
-    "rentalItems": "Subrental Tételek",
+    "rentalItems": "Albérlet Tételek",
     "returnModeActive": "Visszavételi Mód Aktív",
     "rentalPeriod": "Bérlési Időszak",
     "startDate": "Kezdő Dátum",
@@ -390,7 +389,7 @@
     "cancel": "Mégse",
     "downloadInvoice": "Számla Letöltése",
     "downloadContract": "Szerződés Letöltése",
-    "cancelRental": "Subrental Törlése",
+    "cancelRental": "Albérlet Törlése",
     "table": {
       "item": "Tétel",
       "serial": "Sorozatszám",
@@ -412,8 +411,7 @@
       "purchaseCost": "Beszerzési Költség",
       "profit": "Haszon",
       "margin": "Haszonkulcs"
-    },
-    "damageDescription": "Sérülés leírása (max 200 karakter)"
+    }
   },
   "catalog": {
     "title": "Professzionális Eszköz Katalógus",
@@ -572,7 +570,7 @@
       "revenue": "Bevétel",
       "revenueDesc": "Bevétel elemzés",
       "profit": "Haszon",
-      "profitDesc": "Subrental haszon"
+      "profitDesc": "Albérlet haszon"
     },
     "filters": {
       "dateRange": "Dátum Tartomány",
@@ -650,16 +648,16 @@
       "total": "Összesen"
     },
     "profit": {
-      "totalSubrentals": "Subrental",
+      "totalSubrentals": "Albérletek",
       "purchaseCost": "Beszerzési Költség",
       "revenue": "Bevétel",
       "totalProfit": "Össz Haszon",
       "avgMargin": "Átlag Haszonkulcs",
-      "topProfitable": "Legjövedelmezőbb Subrental",
+      "topProfitable": "Legjövedelmezőbb Albérletek",
       "margin": "haszonkulcs",
-      "allSubrentals": "Összes Subrental",
-      "noSubrentals": "Nincs subrental",
-      "subrental": "Subrental Szám",
+      "allSubrentals": "Összes Albérlet",
+      "noSubrentals": "Nincs albérlet",
+      "subrental": "Albérlet Szám",
       "supplier": "Beszállító",
       "client": "Ügyfél",
       "period": "Időszak",
@@ -871,7 +869,7 @@
         "maxLength": "A beszállítói megjegyzések maximum 1000 karakter lehet"
       },
       "items": {
-        "required": "Legalább egy subrentali tétel szükséges"
+        "required": "Legalább egy albérleti tétel szükséges"
       },
       "item": {
         "purchasePrice": {

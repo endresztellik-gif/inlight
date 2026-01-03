@@ -21,13 +21,18 @@
     "newRental": "New Rental",
     "stats": {
       "activeRentals": "Active Rentals",
+      "activeSubrentals": "Active Subrentals",
       "pendingReturns": "Pending Returns",
       "revenueMonth": "Revenue This Month",
       "activeClients": "Active Clients",
+      "totalProfit": "Total Profit",
+      "avgProfitMargin": "Avg Profit Margin",
       "today": "today",
       "dueToday": "due today",
       "of": "of",
-      "total": "total"
+      "total": "total",
+      "fromSubrentals": "from subrentals",
+      "averageMargin": "average margin"
     },
     "alerts": {
       "title": "Alerts & Notifications",
@@ -46,6 +51,12 @@
     "revenueTrend": {
       "title": "Revenue Trend",
       "subtitle": "Last 30 days"
+    },
+    "distribution": {
+      "title": "Rentals Distribution",
+      "subtitle": "Rentals vs Subrentals",
+      "rentals": "Rentals",
+      "subrentals": "Subrentals"
     },
     "recentActivity": {
       "title": "Recent Activity",
@@ -251,7 +262,8 @@
       "good": "Good",
       "fair": "Fair",
       "damaged": "Damaged"
-    }
+    },
+    "damageDescription": "Describe the damage (max 200 chars)"
   },
   "subrentals": {
     "title": "Subrentals",
@@ -401,7 +413,8 @@
       "purchaseCost": "Purchase Cost",
       "profit": "Profit",
       "margin": "Margin"
-    }
+    },
+    "damageDescription": "Describe the damage (max 200 chars)"
   },
   "catalog": {
     "title": "Professional Equipment Catalog",

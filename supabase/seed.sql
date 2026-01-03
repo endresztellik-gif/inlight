@@ -283,8 +283,385 @@ BEGIN
   )
   ON CONFLICT (id) DO NOTHING;
 
+  -- ============================================================
+  -- INSERT PRODUCTS - GRIP & SUPPORT
+  -- ============================================================
+
+  INSERT INTO products (
+    id, category_id, name, name_en, name_hu, description, serial_number,
+    daily_rate, weekly_rate, currency, stock_quantity, available_quantity,
+    condition, is_active, is_featured, created_by, specifications
+  ) VALUES
+  (
+    'e1111111-1111-1111-1111-111111111111',
+    '55555555-5555-5555-5555-555555555555',
+    'Sachtler Video 18 S2 Tripod',
+    'Sachtler Video 18 S2 Tripod',
+    'Sachtler Video 18 S2 Tripod',
+    'Professional fluid head tripod system',
+    'SAC-V18-2022-145',
+    55.00, 300.00, 'EUR', 3, 3,
+    'excellent', TRUE, TRUE, admin_user_id,
+    '{"type": "Tripod System", "capacity": "18 kg", "height": "160 cm", "weight": "6.8 kg"}'::jsonb
+  ),
+  (
+    'e2222222-2222-2222-2222-222222222222',
+    '55555555-5555-5555-5555-555555555555',
+    'DJI Ronin 2 Gimbal',
+    'DJI Ronin 2 Gimbal',
+    'DJI Ronin 2 Gimbal',
+    '3-axis motorized gimbal stabilizer',
+    'DJI-RON-2023-089',
+    150.00, 800.00, 'EUR', 2, 2,
+    'excellent', TRUE, TRUE, admin_user_id,
+    '{"type": "Gimbal", "capacity": "13.6 kg", "battery": "up to 2.5h", "weight": "4.7 kg"}'::jsonb
+  ),
+  (
+    'e3333333-3333-3333-3333-333333333333',
+    '55555555-5555-5555-5555-555555555555',
+    'Dana Dolly Camera Slider',
+    'Dana Dolly Camera Slider',
+    'Dana Dolly Camera Slider',
+    'Professional camera dolly system',
+    'DAN-DOL-2023-234',
+    85.00, 450.00, 'EUR', 2, 2,
+    'good', TRUE, FALSE, admin_user_id,
+    '{"type": "Dolly/Slider", "track_length": "3m", "capacity": "45 kg", "weight": "12 kg"}'::jsonb
+  ),
+  (
+    'e4444444-4444-4444-4444-444444444444',
+    '55555555-5555-5555-5555-555555555555',
+    'Matthews C-Stand Kit',
+    'Matthews C-Stand Kit',
+    'Matthews C-Stand Kit',
+    'Heavy-duty grip stand with arm and grip head',
+    'MAT-CST-2023-087',
+    15.00, 80.00, 'EUR', 8, 8,
+    'good', TRUE, FALSE, admin_user_id,
+    '{"type": "C-Stand", "height": "3.3m", "capacity": "10 kg", "weight": "5.4 kg"}'::jsonb
+  )
+  ON CONFLICT (id) DO NOTHING;
+
+  -- ============================================================
+  -- INSERT CLIENTS
+  -- ============================================================
+
+  INSERT INTO clients (
+    id, name, email, phone, company, address, tax_number,
+    contact_person_name, contact_person_email, contact_person_phone, created_by
+  ) VALUES
+  (
+    'c1111111-1111-1111-1111-111111111111',
+    'Budapest Film Studios',
+    'info@bpfilmstudios.hu',
+    '+36 1 234 5678',
+    'Budapest Film Studios Kft.',
+    '1024 Budapest, Rómer Flóris utca 12.',
+    '12345678-1-41',
+    'Nagy Péter',
+    'peter.nagy@bpfilmstudios.hu',
+    '+36 30 123 4567',
+    admin_user_id
+  ),
+  (
+    'c2222222-2222-2222-2222-222222222222',
+    'CinePro Productions',
+    'office@cinepro.hu',
+    '+36 1 345 6789',
+    'CinePro Productions Ltd.',
+    '1062 Budapest, Andrássy út 45.',
+    '23456789-2-41',
+    'Kovács Anna',
+    'anna.kovacs@cinepro.hu',
+    '+36 30 234 5678',
+    admin_user_id
+  ),
+  (
+    'c3333333-3333-3333-3333-333333333333',
+    'Independent Filmmaker',
+    'szabados.mark@gmail.com',
+    '+36 30 987 6543',
+    NULL,
+    '1051 Budapest, Nádor utca 8.',
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    admin_user_id
+  ),
+  (
+    'c4444444-4444-4444-4444-444444444444',
+    'Vision Media Group',
+    'contact@visionmedia.hu',
+    '+36 1 456 7890',
+    'Vision Media Group Zrt.',
+    '1132 Budapest, Váci út 76.',
+    '34567890-2-41',
+    'Tóth István',
+    'istvan.toth@visionmedia.hu',
+    '+36 30 345 6789',
+    admin_user_id
+  ),
+  (
+    'c5555555-5555-5555-5555-555555555555',
+    'Creative Film Agency',
+    'info@creativefilm.hu',
+    '+36 1 567 8901',
+    'Creative Film Agency Kft.',
+    '1094 Budapest, Ráday utca 23.',
+    '45678901-1-41',
+    'Szabó Éva',
+    'eva.szabo@creativefilm.hu',
+    '+36 30 456 7890',
+    admin_user_id
+  )
+  ON CONFLICT (id) DO NOTHING;
+
+  -- ============================================================
+  -- INSERT RENTALS (M1 - Own inventory)
+  -- ============================================================
+
+  -- Active Rental 1
+  INSERT INTO rentals (
+    id, rental_number, client_id, project_name, start_date, end_date,
+    status, type, notes, final_currency, final_total, created_by
+  ) VALUES
+  (
+    'e0001111-0001-0001-0001-000000000001',
+    'R-20250105-0001',
+    'c1111111-1111-1111-1111-111111111111',
+    'Budapest Nights - Feature Film',
+    '2025-01-05',
+    '2025-01-25',
+    'active',
+    'rental',
+    'Main unit package for 3-week shoot',
+    'EUR',
+    32500.00,
+    admin_user_id
+  )
+  ON CONFLICT (id) DO NOTHING;
+
+  -- Rental items for active rental 1
+  INSERT INTO rental_items (
+    rental_id, product_id, quantity, daily_rate, days, subtotal, condition_on_pickup, is_returned
+  ) VALUES
+  ('e0001111-0001-0001-0001-000000000001', 'a1111111-1111-1111-1111-111111111111', 1, 450.00, 20, 9000.00, 'excellent', false),
+  ('e0001111-0001-0001-0001-000000000001', 'b4444444-4444-4444-4444-444444444444', 1, 120.00, 20, 2400.00, 'excellent', false),
+  ('e0001111-0001-0001-0001-000000000001', 'c1111111-1111-1111-1111-111111111111', 2, 85.00, 20, 3400.00, 'good', false),
+  ('e0001111-0001-0001-0001-000000000001', 'd1111111-1111-1111-1111-111111111111', 2, 45.00, 20, 1800.00, 'good', false)
+  ON CONFLICT DO NOTHING;
+
+  -- Active Rental 2
+  INSERT INTO rentals (
+    id, rental_number, client_id, project_name, start_date, end_date,
+    status, type, notes, final_currency, final_total, created_by
+  ) VALUES
+  (
+    'e0001111-0001-0001-0001-000000000002',
+    'R-20250110-0001',
+    'c2222222-2222-2222-2222-222222222222',
+    'Commercial - Car Brand Launch',
+    '2025-01-12',
+    '2025-01-15',
+    'active',
+    'rental',
+    '3-day commercial shoot',
+    'EUR',
+    2800.00,
+    admin_user_id
+  )
+  ON CONFLICT (id) DO NOTHING;
+
+  INSERT INTO rental_items (
+    rental_id, product_id, quantity, daily_rate, days, subtotal, condition_on_pickup, is_returned
+  ) VALUES
+  ('e0001111-0001-0001-0001-000000000002', 'a2222222-2222-2222-2222-222222222222', 1, 280.00, 3, 840.00, 'excellent', false),
+  ('e0001111-0001-0001-0001-000000000002', 'c2222222-2222-2222-2222-222222222222', 2, 95.00, 3, 570.00, 'excellent', false)
+  ON CONFLICT DO NOTHING;
+
+  -- Completed Rental
+  INSERT INTO rentals (
+    id, rental_number, client_id, project_name, start_date, end_date,
+    status, type, notes, final_currency, final_total, created_by
+  ) VALUES
+  (
+    'e0001111-0001-0001-0001-000000000003',
+    'R-20241201-0001',
+    'c5555555-5555-5555-5555-555555555555',
+    'Corporate Video Package',
+    '2024-12-05',
+    '2024-12-08',
+    'completed',
+    'rental',
+    'Interview and B-roll setup',
+    'EUR',
+    1950.00,
+    admin_user_id
+  )
+  ON CONFLICT (id) DO NOTHING;
+
+  INSERT INTO rental_items (
+    rental_id, product_id, quantity, daily_rate, days, subtotal,
+    condition_on_pickup, is_returned, condition_on_return, returned_at
+  ) VALUES
+  (
+    'e0001111-0001-0001-0001-000000000003',
+    'a4444444-4444-4444-4444-444444444444',
+    1, 220.00, 3, 660.00,
+    'good', true, 'good', '2024-12-08T18:30:00Z'
+  ),
+  (
+    'e0001111-0001-0001-0001-000000000003',
+    'd2222222-2222-2222-2222-222222222222',
+    1, 85.00, 3, 255.00,
+    'excellent', true, 'excellent', '2024-12-08T18:30:00Z'
+  ),
+  (
+    'e0001111-0001-0001-0001-000000000003',
+    'd1111111-1111-1111-1111-111111111111',
+    2, 45.00, 3, 270.00,
+    'excellent', true, 'excellent', '2024-12-08T18:30:00Z'
+  )
+  ON CONFLICT DO NOTHING;
+
+  -- ============================================================
+  -- INSERT SUBRENTALS (M2 - Rented from suppliers)
+  -- ============================================================
+
+  -- Active Subrental 1
+  INSERT INTO rentals (
+    id, rental_number, client_id, project_name, start_date, end_date,
+    status, type, supplier_name, supplier_contact, supplier_notes, notes,
+    final_currency, final_total, created_by
+  ) VALUES
+  (
+    'f0001111-0001-0001-0001-000000000001',
+    'S-20250108-0001',
+    'c4444444-4444-4444-4444-444444444444',
+    'High-End Fashion Campaign',
+    '2025-01-10',
+    '2025-01-14',
+    'active',
+    'subrental',
+    'Pro Camera Rental Budapest',
+    'rentals@procamera.hu / +36 1 999 8888',
+    'Special RED package deal',
+    'Client requested specific RED Raptor package not in our inventory',
+    'EUR',
+    6500.00,
+    admin_user_id
+  )
+  ON CONFLICT (id) DO NOTHING;
+
+  -- Subrental items with purchase_price
+  INSERT INTO rental_items (
+    rental_id, product_id, quantity, daily_rate, days, purchase_price, subtotal,
+    condition_on_pickup, is_returned
+  ) VALUES
+  (
+    'f0001111-0001-0001-0001-000000000001',
+    'a3333333-3333-3333-3333-333333333333',
+    1, 380.00, 4, 250.00, 1520.00,
+    'excellent', false
+  ),
+  (
+    'f0001111-0001-0001-0001-000000000001',
+    'b2222222-2222-2222-2222-222222222222',
+    1, 95.00, 4, 60.00, 380.00,
+    'excellent', false
+  )
+  ON CONFLICT DO NOTHING;
+
+  -- Completed Subrental 1
+  INSERT INTO rentals (
+    id, rental_number, client_id, project_name, start_date, end_date,
+    status, type, supplier_name, supplier_contact, supplier_notes, notes,
+    final_currency, final_total, created_by
+  ) VALUES
+  (
+    'f0001111-0001-0001-0001-000000000002',
+    'S-20241205-0001',
+    'c2222222-2222-2222-2222-222222222222',
+    'TV Series Episode 3',
+    '2024-12-08',
+    '2024-12-15',
+    'completed',
+    'subrental',
+    'Lighting Solutions Hungary',
+    'orders@lightingsolutions.hu / +36 1 777 6666',
+    'Bulk lighting package discount applied',
+    'Large lighting setup for night scenes',
+    'EUR',
+    5600.00,
+    admin_user_id
+  )
+  ON CONFLICT (id) DO NOTHING;
+
+  INSERT INTO rental_items (
+    rental_id, product_id, quantity, daily_rate, days, purchase_price, subtotal,
+    condition_on_pickup, is_returned, condition_on_return, returned_at
+  ) VALUES
+  (
+    'f0001111-0001-0001-0001-000000000002',
+    'c1111111-1111-1111-1111-111111111111',
+    3, 85.00, 7, 55.00, 1785.00,
+    'excellent', true, 'excellent', '2024-12-15T19:00:00Z'
+  ),
+  (
+    'f0001111-0001-0001-0001-000000000002',
+    'c4444444-4444-4444-4444-444444444444',
+    2, 65.00, 7, 40.00, 910.00,
+    'good', true, 'good', '2024-12-15T19:00:00Z'
+  )
+  ON CONFLICT DO NOTHING;
+
+  -- Completed Subrental 2
+  INSERT INTO rentals (
+    id, rental_number, client_id, project_name, start_date, end_date,
+    status, type, supplier_name, supplier_contact, supplier_notes, notes,
+    final_currency, final_total, created_by
+  ) VALUES
+  (
+    'f0001111-0001-0001-0001-000000000003',
+    'S-20241120-0001',
+    'c3333333-3333-3333-3333-333333333333',
+    'Documentary - Audio Package',
+    '2024-11-22',
+    '2024-11-28',
+    'completed',
+    'subrental',
+    'Audio Masters Budapest',
+    'info@audiomasters.hu / +36 1 555 4444',
+    'Premium wireless system rental',
+    'High-end wireless audio not in stock',
+    'EUR',
+    1600.00,
+    admin_user_id
+  )
+  ON CONFLICT (id) DO NOTHING;
+
+  INSERT INTO rental_items (
+    rental_id, product_id, quantity, daily_rate, days, purchase_price, subtotal,
+    condition_on_pickup, is_returned, condition_on_return, returned_at
+  ) VALUES
+  (
+    'f0001111-0001-0001-0001-000000000003',
+    'd4444444-4444-4444-4444-444444444444',
+    2, 95.00, 6, 65.00, 1140.00,
+    'excellent', true, 'excellent', '2024-11-28T17:30:00Z'
+  )
+  ON CONFLICT DO NOTHING;
+
+  RAISE NOTICE '========================================';
   RAISE NOTICE 'Seed data inserted successfully!';
-  RAISE NOTICE 'Categories: 5';
-  RAISE NOTICE 'Products: 20 (Cameras: 4, Lenses: 4, Lighting: 4, Audio: 4)';
+  RAISE NOTICE '========================================';
+  RAISE NOTICE 'Categories: 5 (Cameras, Lenses, Lighting, Audio, Grip & Support)';
+  RAISE NOTICE 'Products: 20 (Cameras: 4, Lenses: 4, Lighting: 4, Audio: 4, Grip: 4)';
+  RAISE NOTICE 'Clients: 5';
+  RAISE NOTICE 'Rentals (M1): 3 (2 active, 1 completed)';
+  RAISE NOTICE 'Subrentals (M2): 3 (1 active, 2 completed)';
+  RAISE NOTICE 'Total Rentals: 6';
   RAISE NOTICE 'Admin user ID used: %', admin_user_id;
+  RAISE NOTICE '========================================';
 END $$;

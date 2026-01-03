@@ -11,6 +11,12 @@ interface ClientsFilters {
   isActive?: boolean
 }
 
+// Security: Sanitize search query to prevent SQL injection
+const sanitizeSearchQuery = (query: string): string => {
+  // Escape SQL special characters: %, _, ', ", \
+  return query.replace(/[%_'"\\]/g, '\\$&')
+}
+
 // Fetch all clients with optional filters
 export function useClients(filters: ClientsFilters = {}) {
   return useQuery({
@@ -23,7 +29,8 @@ export function useClients(filters: ClientsFilters = {}) {
 
       // Apply filters
       if (filters.searchQuery) {
-        query = query.or(`name.ilike.%${filters.searchQuery}%,email.ilike.%${filters.searchQuery}%,company.ilike.%${filters.searchQuery}%`)
+        const sanitized = sanitizeSearchQuery(filters.searchQuery)
+        query = query.or(`name.ilike.%${sanitized}%,email.ilike.%${sanitized}%,company.ilike.%${sanitized}%`)
       }
 
       if (filters.isActive !== undefined) {

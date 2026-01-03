@@ -13,6 +13,12 @@ interface ProductsFilters {
   isFeatured?: boolean
 }
 
+// Security: Sanitize search query to prevent SQL injection
+const sanitizeSearchQuery = (query: string): string => {
+  // Escape SQL special characters: %, _, ', ", \
+  return query.replace(/[%_'"\\]/g, '\\$&')
+}
+
 // Fetch products with optional filters
 export function useProducts(filters: ProductsFilters = {}) {
   return useQuery({
@@ -32,7 +38,8 @@ export function useProducts(filters: ProductsFilters = {}) {
       }
 
       if (filters.searchQuery) {
-        query = query.or(`name.ilike.%${filters.searchQuery}%,description.ilike.%${filters.searchQuery}%`)
+        const sanitized = sanitizeSearchQuery(filters.searchQuery)
+        query = query.or(`name.ilike.%${sanitized}%,description.ilike.%${sanitized}%`)
       }
 
       if (filters.isActive !== undefined) {
@@ -116,7 +123,8 @@ export function useAvailableProducts(filters: ProductsFilters = {}) {
       }
 
       if (filters.searchQuery) {
-        query = query.or(`name.ilike.%${filters.searchQuery}%,description.ilike.%${filters.searchQuery}%`)
+        const sanitized = sanitizeSearchQuery(filters.searchQuery)
+        query = query.or(`name.ilike.%${sanitized}%,description.ilike.%${sanitized}%`)
       }
 
       const { data, error } = await query

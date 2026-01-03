@@ -13,16 +13,30 @@ import {
   Printer,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useQueryClient } from '@tanstack/react-query'
 import { RentalReportView } from '@/components/reports/RentalReportView'
 import { ClientStatisticsView } from '@/components/reports/ClientStatisticsView'
 import { ProductUtilizationView } from '@/components/reports/ProductUtilizationView'
 import { RevenueReportView } from '@/components/reports/RevenueReportView'
 import { SubrentalProfitView } from '@/components/reports/SubrentalProfitView'
+import {
+  exportRentalsToExcel,
+  exportClientStatsToExcel,
+  exportProductUtilizationToExcel,
+  exportRevenueToExcel,
+  exportSubrentalProfitToExcel,
+  exportRentalsToPDF,
+  exportClientStatsToPDF,
+  exportProductUtilizationToPDF,
+  exportRevenueToPDF,
+  exportSubrentalProfitToPDF,
+} from '@/utils/reportExports'
 
 type ReportType = 'rentals' | 'clients' | 'products' | 'revenue' | 'profit'
 
 export function Reports() {
   const { t } = useTranslation()
+  const queryClient = useQueryClient()
   const [selectedReport, setSelectedReport] = useState<ReportType>('rentals')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
@@ -62,13 +76,117 @@ export function Reports() {
   ]
 
   const handleExportExcel = () => {
-    // TODO: Implement Excel export
-    console.log('Export to Excel')
+    switch (selectedReport) {
+      case 'rentals': {
+        // Get all queries that start with ['rentalReport']
+        const queries = queryClient.getQueriesData({ queryKey: ['rentalReport'] })
+        // Take the first (most recent) match
+        const data = queries.length > 0 ? queries[0][1] as any : null
+        if (data && typeof data === 'object' && 'rentals' in data) {
+          exportRentalsToExcel(data.rentals)
+        } else {
+          console.warn('No rental report data available for export. Please wait for the report to load.')
+        }
+        break
+      }
+      case 'clients': {
+        const queries = queryClient.getQueriesData({ queryKey: ['clientStatistics'] })
+        const data = queries.length > 0 ? queries[0][1] as any : null
+        if (data && typeof data === 'object' && 'clients' in data) {
+          exportClientStatsToExcel(data.clients)
+        } else {
+          console.warn('No client statistics data available for export. Please wait for the report to load.')
+        }
+        break
+      }
+      case 'products': {
+        const queries = queryClient.getQueriesData({ queryKey: ['productUtilization'] })
+        const data = queries.length > 0 ? queries[0][1] as any : null
+        if (data && typeof data === 'object' && 'products' in data) {
+          exportProductUtilizationToExcel(data.products)
+        } else {
+          console.warn('No product utilization data available for export. Please wait for the report to load.')
+        }
+        break
+      }
+      case 'revenue': {
+        const queries = queryClient.getQueriesData({ queryKey: ['revenueReport'] })
+        const data = queries.length > 0 ? queries[0][1] as any : null
+        if (data && typeof data === 'object' && 'revenues' in data) {
+          exportRevenueToExcel(data.revenues)
+        } else {
+          console.warn('No revenue report data available for export. Please wait for the report to load.')
+        }
+        break
+      }
+      case 'profit': {
+        const queries = queryClient.getQueriesData({ queryKey: ['subrentalProfit'] })
+        const data = queries.length > 0 ? queries[0][1] as any : null
+        if (data && typeof data === 'object' && 'subrentals' in data) {
+          exportSubrentalProfitToExcel(data.subrentals)
+        } else {
+          console.warn('No subrental profit data available for export. Please wait for the report to load.')
+        }
+        break
+      }
+    }
   }
 
   const handleExportPDF = () => {
-    // TODO: Implement PDF export
-    console.log('Export to PDF')
+    switch (selectedReport) {
+      case 'rentals': {
+        // Get all queries that start with ['rentalReport']
+        const queries = queryClient.getQueriesData({ queryKey: ['rentalReport'] })
+        // Take the first (most recent) match
+        const data = queries.length > 0 ? queries[0][1] as any : null
+        if (data && typeof data === 'object' && 'rentals' in data) {
+          exportRentalsToPDF(data.rentals)
+        } else {
+          console.warn('No rental report data available for export. Please wait for the report to load.')
+        }
+        break
+      }
+      case 'clients': {
+        const queries = queryClient.getQueriesData({ queryKey: ['clientStatistics'] })
+        const data = queries.length > 0 ? queries[0][1] as any : null
+        if (data && typeof data === 'object' && 'clients' in data) {
+          exportClientStatsToPDF(data.clients)
+        } else {
+          console.warn('No client statistics data available for export. Please wait for the report to load.')
+        }
+        break
+      }
+      case 'products': {
+        const queries = queryClient.getQueriesData({ queryKey: ['productUtilization'] })
+        const data = queries.length > 0 ? queries[0][1] as any : null
+        if (data && typeof data === 'object' && 'products' in data) {
+          exportProductUtilizationToPDF(data.products)
+        } else {
+          console.warn('No product utilization data available for export. Please wait for the report to load.')
+        }
+        break
+      }
+      case 'revenue': {
+        const queries = queryClient.getQueriesData({ queryKey: ['revenueReport'] })
+        const data = queries.length > 0 ? queries[0][1] as any : null
+        if (data && typeof data === 'object' && 'revenues' in data) {
+          exportRevenueToPDF(data.revenues)
+        } else {
+          console.warn('No revenue report data available for export. Please wait for the report to load.')
+        }
+        break
+      }
+      case 'profit': {
+        const queries = queryClient.getQueriesData({ queryKey: ['subrentalProfit'] })
+        const data = queries.length > 0 ? queries[0][1] as any : null
+        if (data && typeof data === 'object' && 'subrentals' in data) {
+          exportSubrentalProfitToPDF(data.subrentals)
+        } else {
+          console.warn('No subrental profit data available for export. Please wait for the report to load.')
+        }
+        break
+      }
+    }
   }
 
   const handlePrint = () => {

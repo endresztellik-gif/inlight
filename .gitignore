@@ -27,11 +27,13 @@ dist-ssr
 .env
 .env.local
 .env.production
+.env.test
 
 # Testing
 coverage
 playwright-report
 test-results
+.auth/*.json
 
 # Build
 build

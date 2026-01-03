@@ -1,7 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Loader2, TrendingUp, TrendingDown } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Loader2, TrendingUp, TrendingDown, FileSpreadsheet, Download } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useSubrentalProfitAnalysis } from '@/hooks/api/useReports'
+import { exportSubrentalProfitToXLSX } from '@/utils/exportToXLSX'
+import { exportSubrentalProfitToPDF } from '@/utils/exportToPDF'
 
 interface SubrentalProfitViewProps {
   startDate?: string
@@ -33,8 +36,39 @@ export function SubrentalProfitView({ startDate, endDate }: SubrentalProfitViewP
     avgProfitMargin: 0,
   }
 
+  // Export handlers
+  const handleExportExcel = () => {
+    if (subrentals.length === 0) {
+      alert('No data to export')
+      return
+    }
+    exportSubrentalProfitToXLSX(subrentals, 'subrental-profit-report')
+  }
+
+  const handleExportPDF = () => {
+    if (subrentals.length === 0) {
+      alert('No data to export')
+      return
+    }
+    exportSubrentalProfitToPDF(subrentals, 'subrental-profit-report')
+  }
+
   return (
     <div className="space-y-6">
+      {/* Export Buttons */}
+      {subrentals.length > 0 && (
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" size="sm" className="gap-2" onClick={handleExportExcel}>
+            <FileSpreadsheet className="h-4 w-4" />
+            {t('reports.exportExcel')}
+          </Button>
+          <Button variant="outline" size="sm" className="gap-2" onClick={handleExportPDF}>
+            <Download className="h-4 w-4" />
+            {t('reports.exportPdf')}
+          </Button>
+        </div>
+      )}
+
       {/* Summary Cards */}
       <div className="grid gap-4 md:grid-cols-5">
         <Card cinematic className="border-l-4 border-l-primary">

@@ -4,15 +4,21 @@ import { supabase } from '@/lib/supabase'
 export interface DashboardStats {
   activeRentals: number
   activeRentalsToday: number
+  activeSubrentals: number
+  activeSubrentalsToday: number
   pendingReturns: number
   pendingReturnsToday: number
   overdueReturns: number
   revenueToday: number
   revenueThisWeek: number
   revenueThisMonth: number
+  totalProfit: number
+  avgProfitMargin: number
   lowStockCount: number
   totalClients: number
   activeClients: number
+  rentalCount: number
+  subrentalCount: number
 }
 
 export interface RecentActivity {
@@ -60,18 +66,27 @@ export function useDashboardStats() {
 
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
 
-      // Fetch all rentals
+      // Fetch all rentals (including type for subrental tracking)
       const { data: allRentals, error: rentalsError } = await supabase
         .from('rentals')
-        .select('id, status, final_total, created_at, start_date, end_date')
+        .select('id, type, status, final_total, created_at, start_date, end_date')
         .order('created_at', { ascending: false })
 
       if (rentalsError) throw rentalsError
 
-      // Calculate stats
-      const activeRentals = allRentals?.filter(r => r.status === 'active').length || 0
+      // Calculate stats (separate rentals vs subrentals)
+      const activeRentals = allRentals?.filter(
+        r => r.status === 'active' && r.type === 'rental'
+      ).length || 0
       const activeRentalsToday = allRentals?.filter(
-        r => r.status === 'active' && new Date(r.created_at) >= today
+        r => r.status === 'active' && r.type === 'rental' && new Date(r.created_at) >= today
+      ).length || 0
+
+      const activeSubrentals = allRentals?.filter(
+        r => r.status === 'active' && r.type === 'subrental'
+      ).length || 0
+      const activeSubrentalsToday = allRentals?.filter(
+        r => r.status === 'active' && r.type === 'subrental' && new Date(r.created_at) >= today
       ).length || 0
 
       const pendingReturns = allRentals?.filter(r => r.status === 'pending_return').length || 0
@@ -84,6 +99,10 @@ export function useDashboardStats() {
              new Date(r.end_date) < today
       ).length || 0
 
+      // Distribution counts
+      const rentalCount = allRentals?.filter(r => r.type === 'rental').length || 0
+      const subrentalCount = allRentals?.filter(r => r.type === 'subrental').length || 0
+
       const revenueToday = allRentals
         ?.filter(r => new Date(r.created_at) >= today)
         .reduce((sum, r) => sum + (r.final_total || 0), 0) || 0
@@ -95,6 +114,54 @@ export function useDashboardStats() {
       const revenueThisMonth = allRentals
         ?.filter(r => new Date(r.created_at) >= monthStart)
         .reduce((sum, r) => sum + (r.final_total || 0), 0) || 0
+
+      // Calculate profit for subrentals
+      const subrentalIds = allRentals
+        ?.filter(r => r.type === 'subrental')
+        .map(r => r.id) || []
+
+      let totalProfit = 0
+      let avgProfitMargin = 0
+
+      if (subrentalIds.length > 0) {
+        // Fetch rental items for subrentals with purchase_price
+        const { data: subrentalItems, error: itemsError } = await supabase
+          .from('rental_items')
+          .select('rental_id, quantity, purchase_price, subtotal')
+          .in('rental_id', subrentalIds)
+
+        if (itemsError) throw itemsError
+
+        // Calculate profit for each subrental
+        const subrentalProfits = new Map<string, { revenue: number; cost: number }>()
+
+        subrentalItems?.forEach((item: any) => {
+          const rentalId = item.rental_id
+          if (!subrentalProfits.has(rentalId)) {
+            subrentalProfits.set(rentalId, { revenue: 0, cost: 0 })
+          }
+          const data = subrentalProfits.get(rentalId)!
+          data.revenue += item.subtotal || 0
+          data.cost += (item.purchase_price || 0) * (item.quantity || 0)
+        })
+
+        // Calculate total profit and average margin
+        let totalMargin = 0
+        let marginCount = 0
+
+        subrentalProfits.forEach((data) => {
+          const profit = data.revenue - data.cost
+          totalProfit += profit
+
+          if (data.cost > 0) {
+            const margin = (profit / data.cost) * 100
+            totalMargin += margin
+            marginCount++
+          }
+        })
+
+        avgProfitMargin = marginCount > 0 ? totalMargin / marginCount : 0
+      }
 
       // Fetch products for low stock count
       const { data: products, error: productsError } = await supabase
@@ -123,15 +190,21 @@ export function useDashboardStats() {
       const stats: DashboardStats = {
         activeRentals,
         activeRentalsToday,
+        activeSubrentals,
+        activeSubrentalsToday,
         pendingReturns,
         pendingReturnsToday,
         overdueReturns,
         revenueToday,
         revenueThisWeek,
         revenueThisMonth,
+        totalProfit,
+        avgProfitMargin,
         lowStockCount,
         totalClients: totalClients || 0,
         activeClients: activeClients || 0,
+        rentalCount,
+        subrentalCount,
       }
 
       return stats

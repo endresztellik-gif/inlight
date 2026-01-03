@@ -30,9 +30,9 @@ export interface RentalWithDetails extends RentalWithClient {
 }
 
 // Fetch all rentals with client information
-export function useRentals(statusFilter?: string) {
+export function useRentals(statusFilter?: string, typeFilter?: 'rental' | 'subrental' | 'all') {
   return useQuery({
-    queryKey: ['rentals', statusFilter],
+    queryKey: ['rentals', statusFilter, typeFilter],
     queryFn: async () => {
       let query = supabase
         .from('rentals')
@@ -47,6 +47,11 @@ export function useRentals(statusFilter?: string) {
           )
         `)
         .order('created_at', { ascending: false })
+
+      // Apply type filter if provided
+      if (typeFilter && typeFilter !== 'all') {
+        query = query.eq('type', typeFilter)
+      }
 
       // Apply status filter if provided
       if (statusFilter && statusFilter !== 'all') {
@@ -107,10 +112,11 @@ async function generateRentalNumber(): Promise<string> {
   const today = new Date()
   const dateStr = today.toISOString().split('T')[0].replace(/-/g, '')
 
-  // Get count of rentals created today
+  // Get count of rentals created today (type='rental' only)
   const { count, error } = await supabase
     .from('rentals')
     .select('*', { count: 'exact', head: true })
+    .eq('type', 'rental') // Count only rentals (not subrentals)
     .gte('created_at', new Date(today.setHours(0, 0, 0, 0)).toISOString())
     .lt('created_at', new Date(today.setHours(23, 59, 59, 999)).toISOString())
 
@@ -134,12 +140,13 @@ export function useCreateRental() {
       // Generate rental number
       const rentalNumber = await generateRentalNumber()
 
-      // Create rental
+      // Create rental with type='rental'
       const { data: rentalData, error: rentalError } = await supabase
         .from('rentals')
         .insert({
           ...params.rental,
           rental_number: rentalNumber,
+          type: 'rental', // Explicitly set type
         })
         .select()
         .single()
