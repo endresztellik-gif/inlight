@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,27 +19,39 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from '@/hooks/useTheme'
 import { supabase } from '@/lib/supabase'
+import { passwordChangeSchema, profileUpdateSchema, type PasswordChangeFormData, type ProfileUpdateFormData } from '@/schemas/settingsSchema'
 
 export function Settings() {
   const { t, i18n } = useTranslation()
   const { user, profile } = useAuth()
   const { theme, toggleTheme } = useTheme()
 
-  // Profile state
-  const [fullName, setFullName] = useState(profile?.full_name || '')
+  // Profile form with Zod validation
+  const profileForm = useForm<ProfileUpdateFormData>({
+    resolver: zodResolver(profileUpdateSchema),
+    defaultValues: {
+      full_name: profile?.full_name || ''
+    }
+  })
+
   const [profileLoading, setProfileLoading] = useState(false)
   const [profileSuccess, setProfileSuccess] = useState(false)
   const [profileError, setProfileError] = useState<string | null>(null)
 
-  // Password state
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+  // Password form with Zod validation
+  const passwordForm = useForm<PasswordChangeFormData>({
+    resolver: zodResolver(passwordChangeSchema),
+    defaultValues: {
+      newPassword: '',
+      confirmPassword: ''
+    }
+  })
+
   const [passwordLoading, setPasswordLoading] = useState(false)
   const [passwordSuccess, setPasswordSuccess] = useState(false)
   const [passwordError, setPasswordError] = useState<string | null>(null)
 
-  const handleProfileUpdate = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleProfileUpdate = async (data: ProfileUpdateFormData) => {
     setProfileLoading(true)
     setProfileSuccess(false)
     setProfileError(null)
@@ -45,7 +59,7 @@ export function Settings() {
     try {
       const { error } = await supabase
         .from('user_profiles')
-        .update({ full_name: fullName })
+        .update({ full_name: data.full_name })
         .eq('id', user!.id)
 
       if (error) throw error
@@ -53,45 +67,34 @@ export function Settings() {
       setProfileSuccess(true)
       setTimeout(() => setProfileSuccess(false), 3000)
     } catch (err) {
-      console.error('Profile update error:', err)
+      if (import.meta.env.DEV) {
+        console.error('Profile update error:', err)
+      }
       setProfileError(err instanceof Error ? err.message : 'Failed to update profile')
     } finally {
       setProfileLoading(false)
     }
   }
 
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handlePasswordChange = async (data: PasswordChangeFormData) => {
     setPasswordLoading(true)
     setPasswordSuccess(false)
     setPasswordError(null)
 
-    // Validation
-    if (newPassword.length < 8) {
-      setPasswordError(t('settings.security.passwordTooShort'))
-      setPasswordLoading(false)
-      return
-    }
-
-    if (newPassword !== confirmPassword) {
-      setPasswordError(t('settings.security.passwordMismatch'))
-      setPasswordLoading(false)
-      return
-    }
-
     try {
       const { error } = await supabase.auth.updateUser({
-        password: newPassword,
+        password: data.newPassword,
       })
 
       if (error) throw error
 
       setPasswordSuccess(true)
-      setNewPassword('')
-      setConfirmPassword('')
+      passwordForm.reset()
       setTimeout(() => setPasswordSuccess(false), 3000)
     } catch (err) {
-      console.error('Password change error:', err)
+      if (import.meta.env.DEV) {
+        console.error('Password change error:', err)
+      }
       setPasswordError(err instanceof Error ? err.message : 'Failed to change password')
     } finally {
       setPasswordLoading(false)
@@ -124,7 +127,7 @@ export function Settings() {
             <CardDescription>{t('settings.profile.description')}</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleProfileUpdate} className="space-y-4">
+            <form onSubmit={profileForm.handleSubmit(handleProfileUpdate)} className="space-y-4">
               {/* Email (read-only) */}
               <div className="space-y-2">
                 <Label htmlFor="email">{t('settings.profile.email')}</Label>
@@ -146,10 +149,12 @@ export function Settings() {
                 <Input
                   id="fullName"
                   type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
+                  {...profileForm.register('full_name')}
                   placeholder={t('settings.profile.fullNamePlaceholder')}
                 />
+                {profileForm.formState.errors.full_name && (
+                  <p className="text-sm text-red-500">{profileForm.formState.errors.full_name.message}</p>
+                )}
               </div>
 
               {/* Role (read-only) */}
@@ -207,19 +212,19 @@ export function Settings() {
             <CardDescription>{t('settings.security.description')}</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handlePasswordChange} className="space-y-4">
+            <form onSubmit={passwordForm.handleSubmit(handlePasswordChange)} className="space-y-4">
               {/* New Password */}
               <div className="space-y-2">
                 <Label htmlFor="newPassword">{t('settings.security.newPassword')}</Label>
                 <Input
                   id="newPassword"
                   type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
+                  {...passwordForm.register('newPassword')}
                   placeholder={t('settings.security.newPasswordPlaceholder')}
-                  minLength={8}
-                  required
                 />
+                {passwordForm.formState.errors.newPassword && (
+                  <p className="text-sm text-red-500">{passwordForm.formState.errors.newPassword.message}</p>
+                )}
               </div>
 
               {/* Confirm Password */}
@@ -228,12 +233,12 @@ export function Settings() {
                 <Input
                   id="confirmPassword"
                   type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  {...passwordForm.register('confirmPassword')}
                   placeholder={t('settings.security.confirmPasswordPlaceholder')}
-                  minLength={8}
-                  required
                 />
+                {passwordForm.formState.errors.confirmPassword && (
+                  <p className="text-sm text-red-500">{passwordForm.formState.errors.confirmPassword.message}</p>
+                )}
               </div>
 
               {/* Password Requirements */}
