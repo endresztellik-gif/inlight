@@ -831,6 +831,57 @@
     "english": "English",
     "hungarian": "Magyar"
   },
+  "excelImport": {
+    "button": "Excel Importálás",
+    "dialog": {
+      "title": "Tételek Importálása Excelből",
+      "processing": "Fájl feldolgozása...",
+      "uploadArea": {
+        "dragDrop": "Húzd ide az Excel fájlt",
+        "orClick": "vagy kattints a tallózáshoz",
+        "accepted": "Elfogadott: .xlsx, .xls"
+      },
+      "downloadTemplate": "Sablon Letöltése",
+      "preview": {
+        "title": "Import Előnézet",
+        "status": "Státusz",
+        "code": "Kód",
+        "name": "Név",
+        "quantity": "Menny.",
+        "purchasePrice": "Beszerzési Ár",
+        "matched": "egyezés",
+        "warnings": "figyelmeztetés",
+        "errors": "hiba",
+        "fuzzyMatch": "Hasonlósági egyezés ({{score}}% hasonló)"
+      },
+      "actions": {
+        "back": "Vissza",
+        "cancel": "Mégse",
+        "importValid": "Valid Tételek Importálása ({{count}})"
+      },
+      "warningsMessage": "{{count}} tétel figyelmeztetést tartalmaz, de importálható",
+      "errorsMessage": "{{count}} tétel validálása sikertelen, kihagyásra kerülnek"
+    },
+    "messages": {
+      "success": "{{count}} tétel sikeresen importálva",
+      "skipped": "{{count}} tétel kihagyva"
+    },
+    "errors": {
+      "invalidFileType": "Kérem .xlsx vagy .xls fájlt tölts fel",
+      "fileTooLarge": "A fájl mérete meghaladja az 5MB limitet",
+      "parseError": "Excel fájl feldolgozása sikertelen",
+      "productNotFound": "'{{code}}' termék nem található",
+      "invalidQuantity": "A mennyiségnek pozitívnak kell lennie",
+      "stockShortage": "Csak {{available}} db elérhető",
+      "invalidPurchasePrice": "A beszerzési árnak pozitívnak vagy nullának kell lennie"
+    },
+    "warnings": {
+      "inactiveProduct": "A termék inaktív",
+      "damagedProduct": "A termék sérültként van megjelölve",
+      "fuzzyMatch": "Hasonlósági alapú egyezés",
+      "duplicateProduct": "Duplikáció - mennyiségek összegezve"
+    }
+  },
   "validation": {
     "client": {
       "name": {

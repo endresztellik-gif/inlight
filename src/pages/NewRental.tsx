@@ -16,7 +16,8 @@ import {
   DollarSign,
   Save,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  Upload
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/AuthContext'
@@ -24,6 +25,9 @@ import { useClients } from '@/hooks/api/useClients'
 import { useAvailableProducts } from '@/hooks/api/useProducts'
 import { useCreateRental } from '@/hooks/api/useRentals'
 import { rentalSchema, type RentalFormData } from '@/schemas/rentalSchema'
+import { ExcelImportDialog } from '@/components/rental/ExcelImportDialog'
+import type { RentalItemFormData } from '@/utils/excelImportParser'
+import { useToast } from '@/hooks/use-toast'
 
 export function NewRental() {
   const navigate = useNavigate()
@@ -64,8 +68,10 @@ export function NewRental() {
   // UI state (not in schema)
   const [productSearch, setProductSearch] = useState('')
   const [showProductPicker, setShowProductPicker] = useState(false)
+  const [showExcelImport, setShowExcelImport] = useState(false)
   const [discount, setDiscount] = useState(0)
   const [error, setError] = useState<string | null>(null)
+  const { toast } = useToast()
 
   // Watch form values
   const clientId = watch('client_id')
@@ -135,6 +141,33 @@ export function NewRental() {
 
     setValue(`items.${index}.quantity`, quantity)
     setValue(`items.${index}.subtotal`, newSubtotal)
+  }
+
+  // Handle Excel import
+  const handleExcelImport = (items: RentalItemFormData[]) => {
+    items.forEach(item => {
+      const existingIndex = fields.findIndex(f => f.product_id === item.product_id)
+
+      if (existingIndex >= 0) {
+        // Merge quantities (same as manual add)
+        const currentItem = watchedItems[existingIndex]
+        const newQuantity = currentItem.quantity + item.quantity
+        const newSubtotal = newQuantity * item.daily_rate * days
+
+        setValue(`items.${existingIndex}.quantity`, newQuantity)
+        setValue(`items.${existingIndex}.subtotal`, newSubtotal)
+      } else {
+        // Add new item
+        append(item)
+      }
+    })
+
+    setShowExcelImport(false)
+
+    toast({
+      title: t('excelImport.messages.success', { count: items.length }),
+      variant: 'default',
+    })
   }
 
   // Calculate financial totals
@@ -335,16 +368,28 @@ export function NewRental() {
                     <Package className="h-5 w-5 text-primary" />
                     {t('newRental.sections.equipment')} ({fields.length} {t('newRental.equipment.items')})
                   </CardTitle>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="gap-2"
-                    onClick={() => setShowProductPicker(!showProductPicker)}
-                  >
-                    <Plus className="h-4 w-4" />
-                    {t('newRental.equipment.addItem')}
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="gap-2"
+                      onClick={() => setShowExcelImport(true)}
+                    >
+                      <Upload className="h-4 w-4" />
+                      {t('excelImport.button')}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="gap-2"
+                      onClick={() => setShowProductPicker(!showProductPicker)}
+                    >
+                      <Plus className="h-4 w-4" />
+                      {t('newRental.equipment.addItem')}
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -567,6 +612,16 @@ export function NewRental() {
           </div>
         </div>
       </form>
+
+      {/* Excel Import Dialog */}
+      <ExcelImportDialog
+        open={showExcelImport}
+        onOpenChange={setShowExcelImport}
+        onImport={handleExcelImport}
+        itemType="rental"
+        products={products || []}
+        days={days}
+      />
     </div>
   )
 }

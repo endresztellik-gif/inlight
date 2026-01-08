@@ -832,6 +832,57 @@
     "english": "English",
     "hungarian": "Magyar"
   },
+  "excelImport": {
+    "button": "Import Excel",
+    "dialog": {
+      "title": "Import Items from Excel",
+      "processing": "Processing file...",
+      "uploadArea": {
+        "dragDrop": "Drag & Drop Excel file here",
+        "orClick": "or click to browse",
+        "accepted": "Accepted: .xlsx, .xls"
+      },
+      "downloadTemplate": "Download Template",
+      "preview": {
+        "title": "Import Preview",
+        "status": "Status",
+        "code": "Code",
+        "name": "Name",
+        "quantity": "Qty",
+        "purchasePrice": "Purchase Price",
+        "matched": "matched",
+        "warnings": "warnings",
+        "errors": "errors",
+        "fuzzyMatch": "Fuzzy match ({{score}}% similar)"
+      },
+      "actions": {
+        "back": "Back",
+        "cancel": "Cancel",
+        "importValid": "Import Valid Items ({{count}})"
+      },
+      "warningsMessage": "{{count}} items have warnings but can still be imported",
+      "errorsMessage": "{{count}} items failed validation and will be skipped"
+    },
+    "messages": {
+      "success": "Successfully imported {{count}} items",
+      "skipped": "{{count}} items skipped"
+    },
+    "errors": {
+      "invalidFileType": "Please upload .xlsx or .xls file",
+      "fileTooLarge": "File size exceeds 5MB limit",
+      "parseError": "Failed to parse Excel file",
+      "productNotFound": "Product '{{code}}' not found",
+      "invalidQuantity": "Quantity must be positive",
+      "stockShortage": "Only {{available}} available",
+      "invalidPurchasePrice": "Purchase price must be positive or zero"
+    },
+    "warnings": {
+      "inactiveProduct": "Product is inactive",
+      "damagedProduct": "Product marked as damaged",
+      "fuzzyMatch": "Matched by similarity",
+      "duplicateProduct": "Duplicate - quantities merged"
+    }
+  },
   "validation": {
     "client": {
       "name": {

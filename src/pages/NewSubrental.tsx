@@ -17,7 +17,8 @@ import {
   Save,
   Loader2,
   AlertCircle,
-  Truck
+  Truck,
+  Upload
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/AuthContext'
@@ -25,6 +26,9 @@ import { useClients } from '@/hooks/api/useClients'
 import { useAvailableProducts } from '@/hooks/api/useProducts'
 import { useCreateSubrental } from '@/hooks/api/useRentals'
 import { subrentalSchema, type SubrentalFormData } from '@/schemas/subrentalSchema'
+import { ExcelImportDialog } from '@/components/rental/ExcelImportDialog'
+import type { RentalItemFormData, SubrentalItemFormData } from '@/utils/excelImportParser'
+import { useToast } from '@/hooks/use-toast'
 
 export function NewSubrental() {
   const navigate = useNavigate()
@@ -68,8 +72,10 @@ export function NewSubrental() {
   // UI state (not in schema)
   const [productSearch, setProductSearch] = useState('')
   const [showProductPicker, setShowProductPicker] = useState(false)
+  const [showExcelImport, setShowExcelImport] = useState(false)
   const [discount, setDiscount] = useState(0)
   const [error, setError] = useState<string | null>(null)
+  const { toast } = useToast()
 
   // Watch form values
   const clientId = watch('client_id')
@@ -131,6 +137,40 @@ export function NewSubrental() {
 
     setProductSearch('')
     setShowProductPicker(false)
+  }
+
+  // Handle Excel import
+  const handleExcelImport = (items: RentalItemFormData[] | SubrentalItemFormData[]) => {
+    // Since itemType="subrental", items will be SubrentalItemFormData[]
+    const subrentalItems = items as SubrentalItemFormData[]
+
+    subrentalItems.forEach(item => {
+      const existingIndex = fields.findIndex(f => f.product_id === item.product_id)
+
+      if (existingIndex >= 0) {
+        // Merge quantities (same as manual add)
+        const currentItem = watchedItems[existingIndex]
+        const newQuantity = currentItem.quantity + item.quantity
+        const newSubtotal = newQuantity * item.daily_rate * days
+
+        setValue(`items.${existingIndex}.quantity`, newQuantity)
+        setValue(`items.${existingIndex}.subtotal`, newSubtotal)
+
+        // Update purchase price if provided
+        if (item.purchase_price !== undefined && item.purchase_price > 0) {
+          setValue(`items.${existingIndex}.purchase_price`, item.purchase_price)
+        }
+      } else {
+        // Add new item
+        append(item)
+      }
+    })
+
+    setShowExcelImport(false)
+
+    toast({
+      title: t('excelImport.messages.success', { count: subrentalItems.length }),
+    })
   }
 
   // Update item quantity
@@ -414,16 +454,28 @@ export function NewSubrental() {
                     <Package className="h-5 w-5 text-primary" />
                     {t('newSubrental.sections.equipment')} ({fields.length} {t('newSubrental.equipment.items')})
                   </CardTitle>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="gap-2"
-                    onClick={() => setShowProductPicker(!showProductPicker)}
-                  >
-                    <Plus className="h-4 w-4" />
-                    {t('newSubrental.equipment.addItem')}
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="gap-2"
+                      onClick={() => setShowExcelImport(true)}
+                    >
+                      <Upload className="h-4 w-4" />
+                      {t('excelImport.button')}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="gap-2"
+                      onClick={() => setShowProductPicker(!showProductPicker)}
+                    >
+                      <Plus className="h-4 w-4" />
+                      {t('newSubrental.equipment.addItem')}
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -677,6 +729,16 @@ export function NewSubrental() {
           </div>
         </div>
       </form>
+
+      {/* Excel Import Dialog */}
+      <ExcelImportDialog
+        open={showExcelImport}
+        onOpenChange={setShowExcelImport}
+        onImport={handleExcelImport}
+        itemType="subrental"
+        products={products || []}
+        days={days}
+      />
     </div>
   )
 }
