@@ -1054,5 +1054,51 @@
         }
       }
     }
+  },
+  "offline": {
+    "syncStart": "Syncing {{count}} offline changes...",
+    "syncDescription": "Please wait while we sync your changes",
+    "syncSuccess": "Successfully synced {{count}} changes",
+    "syncFailed": "Failed to sync {{count}} changes",
+    "syncConflicts": "{{count}} changes had conflicts",
+    "syncConflictsDescription": "Please resolve conflicts to complete sync",
+    "syncError": "Sync failed. Please try again.",
+    "backOnline": "Back online",
+    "backOnlineDescription": "Syncing offline changes...",
+    "nowOffline": "You are offline",
+    "nowOfflineDescription": "Changes will be saved and synced when online",
+    "indicator": {
+      "offline": "Offline Mode",
+      "offlineDescription": "Your changes will be saved and synced when back online",
+      "syncing": "Syncing changes...",
+      "syncingDescription": "Please wait",
+      "pendingChanges": "{{count}} pending changes",
+      "clickToSync": "Click to sync now",
+      "syncNow": "Sync Now",
+      "failed": "failed"
+    },
+    "conflict": {
+      "title": "Sync Conflict Detected",
+      "description": "This offline change conflicts with server data. Please choose how to resolve it.",
+      "mutationDetails": "Offline Change Details",
+      "type": "Type",
+      "timestamp": "Created",
+      "chooseResolution": "Choose how to resolve this conflict:",
+      "keepLocal": "Keep My Changes (Warehouse Priority)",
+      "keepLocalDescription": "Your offline changes will overwrite the server data. Recommended for warehouse operations.",
+      "keepRemote": "Keep Server Data (Discard Mine)",
+      "keepRemoteDescription": "Your offline changes will be discarded. Use if the server data is more accurate.",
+      "merge": "Merge Both (Manual Review)",
+      "mergeDescription": "Combine both changes. This requires manual review of the merged data.",
+      "resolve": "Resolve Conflict"
+    }
+  },
+  "common": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close"
   }
 }

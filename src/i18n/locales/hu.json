@@ -1053,5 +1053,51 @@
         }
       }
     }
+  },
+  "offline": {
+    "syncStart": "{{count}} offline változás szinkronizálása...",
+    "syncDescription": "Kérem várjon amíg szinkronizáljuk a változásokat",
+    "syncSuccess": "{{count}} változás sikeresen szinkronizálva",
+    "syncFailed": "{{count}} változás szinkronizálása sikertelen",
+    "syncConflicts": "{{count}} változásnál konfliktus történt",
+    "syncConflictsDescription": "Kérem oldja fel a konfliktusokat a szinkronizálás befejezéséhez",
+    "syncError": "Szinkronizálás sikertelen. Kérem próbálja újra.",
+    "backOnline": "Újra online",
+    "backOnlineDescription": "Offline változások szinkronizálása...",
+    "nowOffline": "Offline módban vagy",
+    "nowOfflineDescription": "A változások el lesznek mentve és szinkronizálva amikor újra online vagy",
+    "indicator": {
+      "offline": "Offline Mód",
+      "offlineDescription": "A változások el lesznek mentve és szinkronizálva amikor újra online vagy",
+      "syncing": "Változások szinkronizálása...",
+      "syncingDescription": "Kérem várj",
+      "pendingChanges": "{{count}} függőben lévő változás",
+      "clickToSync": "Kattints a szinkronizáláshoz",
+      "syncNow": "Szinkronizálás Most",
+      "failed": "sikertelen"
+    },
+    "conflict": {
+      "title": "Szinkronizálási Konfliktus Észlelve",
+      "description": "Ez az offline változás konfliktusba került a szerver adataival. Kérem válassza ki hogyan oldja fel.",
+      "mutationDetails": "Offline Változás Részletei",
+      "type": "Típus",
+      "timestamp": "Létrehozva",
+      "chooseResolution": "Válassza ki hogyan oldja fel a konfliktust:",
+      "keepLocal": "Saját Változásaim Megtartása (Raktár Prioritás)",
+      "keepLocalDescription": "Az offline változásaid felülírják a szerver adatokat. Ajánlott raktári műveletekhez.",
+      "keepRemote": "Szerver Adat Megtartása (Sajátom Elvetése)",
+      "keepRemoteDescription": "Az offline változásaid el lesznek vetve. Használd ha a szerver adat pontosabb.",
+      "merge": "Mindkettő Összevonása (Manuális Ellenőrzés)",
+      "mergeDescription": "Mindkét változás kombinálása. Ez manuális ellenőrzést igényel az összevont adatoknál.",
+      "resolve": "Konfliktus Feloldása"
+    }
+  },
+  "common": {
+    "cancel": "Mégse",
+    "confirm": "Megerősítés",
+    "save": "Mentés",
+    "delete": "Törlés",
+    "edit": "Szerkesztés",
+    "close": "Bezárás"
   }
 }

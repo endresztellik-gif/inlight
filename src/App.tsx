@@ -3,6 +3,8 @@ import { AuthProvider } from './contexts/AuthContext'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { SuperAdminRoute } from './components/auth/SuperAdminRoute'
 import { Sidebar } from './components/layout/Sidebar'
+import { OfflineIndicator } from './components/offline/OfflineIndicator'
+import { Toaster } from './components/ui/toaster'
 import { Dashboard } from './pages/Dashboard'
 import { Login } from './pages/Login'
 import { RentalsList } from './pages/RentalsList'
@@ -42,6 +44,7 @@ function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <AuthProvider>
+      <OfflineIndicator />
       <Router>
         <Routes>
         {/* Public routes */}
@@ -196,6 +199,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
+      <Toaster />
     </AuthProvider>
   )
 }

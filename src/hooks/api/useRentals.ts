@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
+import { addToQueue } from '@/lib/offlineQueue'
 import type { Database } from '@/types/database.types'
 
 type Rental = Database['public']['Tables']['rentals']['Row']
@@ -137,6 +138,21 @@ export function useCreateRental() {
       rental: Omit<RentalInsert, 'rental_number'>
       items: Array<Omit<RentalItemInsert, 'rental_id'>>
     }) => {
+      // Check if online
+      if (!navigator.onLine) {
+        // Add to offline queue
+        const queueId = await addToQueue('rental_create', params)
+
+        return {
+          id: `offline_${queueId}`,
+          rental_number: 'OFFLINE',
+          ...params.rental,
+          type: 'rental' as const,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        } as Rental
+      }
+
       // Generate rental number
       const rentalNumber = await generateRentalNumber()
 
@@ -440,6 +456,21 @@ export function useCreateSubrental() {
         purchase_price?: number
       }>
     }) => {
+      // Check if online
+      if (!navigator.onLine) {
+        // Add to offline queue
+        const queueId = await addToQueue('subrental_create', params)
+
+        return {
+          id: `offline_${queueId}`,
+          rental_number: 'OFFLINE',
+          ...params.rental,
+          type: 'subrental' as const,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        } as Rental
+      }
+
       // Generate subrental number
       const rentalNumber = await generateSubrentalNumber()
 
